@@ -5,7 +5,7 @@
 namespace CurvesPlan
 {
 	/*
-
+	 
 	*/
 	
 	enum CurveType {STRAIGHT=1,ELLIPSE,CUBICSPLINE};
@@ -255,7 +255,7 @@ namespace CurvesPlan
 
 	};
 
-	
+	/* Time span */
 	class TimeSpanBase
 	{
 	public:
@@ -334,4 +334,11 @@ namespace CurvesPlan
 			}
 		}
 	};
+
+	/* Trajectories */
+	class TrajectoriesBase
+	{
+	public:
+	};
+
 }

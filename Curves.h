@@ -335,10 +335,11 @@ namespace CurvesPlan
 		}
 	};
 
-	/* Trajectories */
-	class TrajectoriesBase
+	class CurvesSequenceBase
 	{
 	public:
+		virtual void reset()=0;
+		virtual Eigen::Vector3d getPoint(double t)=0;
 	};
 
 }

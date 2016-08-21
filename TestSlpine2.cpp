@@ -15,6 +15,9 @@ int main()
 	cbase = &st;
 	std::cout<<cbase->getDelta(0,1)<<std::endl<<cbase->_refBound->getCurveType()<<std::endl;
 
+	CurvesPlan::NormalSequence ns;
+	ns.init();
+
 	getchar();
 
 

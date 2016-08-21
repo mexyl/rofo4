@@ -2,6 +2,8 @@
 #include "Eigen/Dense"
 #include <memory>
 #include <iostream>
+#include <array>
+#include <vector>
 namespace CurvesPlan
 {
 	/*
@@ -162,6 +164,7 @@ namespace CurvesPlan
 			for example clockwise pi->0
 			counter clockwise 0->pi
 			*/
+			_u = t;
 			double theta = theta0 + (theta1 - theta0)*t;
 			Eigen::Vector3d origin,point;
 			origin = bound._bound_mat.row(3);
@@ -223,6 +226,7 @@ namespace CurvesPlan
 
 		virtual Eigen::Vector3d getPoint(double t)
 		{
+			_u = t;
 			param_vector << t*t*t, t*t, t, 1;
 			Eigen::Vector3d point;
 			point = control_mat.transpose()*_basis.transpose()*param_vector;
@@ -338,8 +342,93 @@ namespace CurvesPlan
 	class CurvesSequenceBase
 	{
 	public:
-		virtual void reset()=0;
+		/* for memory allocation, run at very first. */
+		virtual void init() = 0;
+		/* Every time  start the gait */
+		virtual void reset() = 0;
+		
 		virtual Eigen::Vector3d getPoint(double t)=0;
 	};
+	/* 
+		There are there kind of sequences: 
+		Normal: str-ell-str; 
+		Obstacle: ell-ell-str; 
+		Tentative: ell-str-ell-str 
+	*/
+	class NormalSequence :public CurvesSequenceBase
+	{
+	// Normal: str - ell - str
+	public:
+		NormalSequence()
+		{
+			this->init();
+		}
+		~NormalSequence()
+		{
+			//delete[] this->_curveSequences;
+		}
+		virtual void init()
+		{
+			//this->_curveSequences = new CurveBase*[3];
+			this->_curveSequences.at(0) = &this->_strLineUp;
+			this->_curveSequences.at(1) = &this->_ellMid;
+			this->_curveSequences.at(2) = &this->_strLineDown;
+			this->_currentCurveIndex = 0;
+		}
+		virtual void reset()
+		{
+			/* calculate curve length */
+			double total_length=0.0;
+			std::vector<double> length(3);
+			std::vector<double>::iterator j = length.begin();
+			for (auto &i : _curveSequences)
+			{
+				*j = i->getLength();
+				total_length += *j;
+			}
+			/* redistribute time counts */
 
+		}
+		virtual Eigen::Vector3d getPoint(double t)
+		{
+			Eigen::Vector3d point;
+			return point;
+		}
+
+		/* these bound are set in trajectory generator
+		   then, reset will calculate the time span
+		*/
+		StraightBound _strBoundUp;
+		Straight _strLineUp;
+		EllipseBound _ellMidBound;
+		Ellipse _ellMid;
+		StraightBound _strBoundDown;
+		Straight _strLineDown;
+		int total_counts;
+
+		/*Generate by reset*/
+		std::vector<int> _countSequences=std::vector<int>(3);
+
+		int _currentCurveIndex;
+		std::vector<CurveBase*> _curveSequences= std::vector<CurveBase*>(3);
+
+		
+		
+		
+	};
+	class ObstacleSequence :public CurvesSequenceBase
+	{
+	// Obstacle: ell-ell-str
+	public:
+		virtual void reset()
+		{}
+	};
+	class Tentative :public CurvesSequenceBase
+	{
+	//Tentative: ell-str-ell-str
+	public:
+		virtual void reset()
+		{}
+
+	};
 }

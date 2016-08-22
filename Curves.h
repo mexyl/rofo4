@@ -153,10 +153,10 @@ namespace CurvesPlan
 			_refBound = &bound;
 			auto tmp = static_cast<EllipseBound&>(bd);
 			bound = tmp;
-			a = bound._parameters(0);
-			b = bound._parameters(1);
-			theta0 = bound._parameters(2);
-			theta1 = bound._parameters(3);
+			a = bound._parameters(0,0);
+			b = bound._parameters(1,0);
+			theta0 = bound._parameters(2,0);
+			theta1 = bound._parameters(3,0);
 		}
 		
 		virtual Eigen::Vector3d getPoint(double t)
@@ -169,9 +169,13 @@ namespace CurvesPlan
 			_u = t;
 			double theta = theta0 + (theta1 - theta0)*t;
 			Eigen::Vector3d origin,point;
-			origin = bound._bound_mat.row(3);
+			origin = bound._bound_mat.row(2);
 			point(0) = origin(0) + cos(theta)*a;
-			point(1) = origin(1) + sin(theta)*b;			
+			point(1) = origin(1) + sin(theta)*b;	
+			// third axis
+			Eigen::Vector3d startPoint;
+			startPoint = bound.getStartPoint();
+			point(2) = startPoint(2);
 			return point;
 		};
 
@@ -456,25 +460,28 @@ namespace CurvesPlan
 		virtual Eigen::Vector3d getPoint(int t)
 		{
 			Eigen::Vector3d point;
-			
+			//std::cout <<"getPoint"<< point << std::endl;
 			if (t <= _countSequences.at(0))
 			{
 				/*first*/
 				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_countSequences.at(0));
+				//std::cout << point << std::endl;
 			}
-			else if (t> _countSequences.at(0) && t<=_countSequences.at(1))
+			else if (t> _countSequences.at(0) 
+				&& t<=(_countSequences.at(0)+_countSequences.at(1)))
 			{
 				/* second */
 				point = _pairedSequence.at(1).first->getPoint(
 					(double)(t - _countSequences.at(0)) / (double)_countSequences.at(1));
 			}
-			else if (t>_countSequences.at(2) && t<=_countSequences.at(2))
+			else if (t>(_countSequences.at(0) + _countSequences.at(1)) 
+				&& t<=(_countSequences.at(0)+ _countSequences.at(1)+ _countSequences.at(2)))
 			{
 				/* third */
 				point = _pairedSequence.at(2).first->getPoint(
 					(double)(t - _countSequences.at(0)-_countSequences.at(1)) / (double)_countSequences.at(2));
 			}
-			else if(t>_countSequences.at(2))
+			else if(t>(_countSequences.at(0) + _countSequences.at(1) + _countSequences.at(2)))
 			{
 				/* just return last point */
 				point = _pairedSequence.at(2).first->getPoint(1.0);

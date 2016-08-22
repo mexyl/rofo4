@@ -26,8 +26,17 @@ int main()
 	std::ofstream fs("data.txt");
 	std::cout << csb->getTotalCounts() <<"\t"<<csb->getTotalLength()<< std::endl;
 
+	int count = 0;
+	Eigen::Vector3d point;
+	while (count < csb->getTotalCounts())
+	{
+		//std::cout << "running" << std::endl;
+		point = csb->getPoint(count);
+		fs << point.transpose() << std::endl;
+		count++;
+	}
 
-	
+	fs.close();
 
 	getchar();
 

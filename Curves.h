@@ -125,6 +125,8 @@ namespace CurvesPlan
 			_refBound = &bound;
 			auto tmp = static_cast<StraightBound&>(bd);
 			bound = tmp;
+			std::cout << "Curve type straight " << bd.getCurveType() << "\t"
+				<< _refBound->getCurveType() << "\t" << bound.getCurveType()<<std::endl;
 		}
 
 		virtual Eigen::Vector3d getPoint(double t)
@@ -355,6 +357,12 @@ namespace CurvesPlan
 		virtual Eigen::Vector3d getPoint(int t) = 0;
 
 		virtual Eigen::Vector3d getPoint(double t)=0;
+
+		virtual int getTotalCounts() { return this->_total_counts; };
+		virtual double getTotalLength() { return this->_total_length; };
+
+		int _total_counts;
+		double _total_length;
 	};
 	/* 
 		There are there kind of sequences: 
@@ -392,6 +400,8 @@ namespace CurvesPlan
 			{
 				i.first = *j_cur;
 				i.second = *j_bnd;
+				j_cur++;
+				j_bnd++;
 			}
 
 			this->_currentCurveIndex = 0;
@@ -399,27 +409,38 @@ namespace CurvesPlan
 			/* init settings for bounds */
 			
 			this->_strBoundUp._bound_mat << 0, 0, 0,
-				0, 0.5, 0;
+				0, 0.05, 0;
 			this->_strBoundDown._bound_mat << 0.5, 0.05, 0,
-				0.05, -0.1, 0;
+				0.5, -0.1, 0;
+
 			this->_ellMidBound._bound_mat << 0, 0.5, 0,
 				0.5, 0.05, 0,
 				0.25, 0.5, 0;
 			this->_ellMidBound._parameters << 0.25, 0.05, M_PI, 0;
 
+			this->_total_counts = 5000;
 			/* init settings finished */
 
 		}
 		virtual void reset()
 		{
 			/* don't forget set each bounds and total counts*/
+
+			/* set all bounds */
+			for (auto &i : _pairedSequence)
+			{
+				i.first->setBound(*i.second);
+			}
+
 			/* calculate curve length */
 			_total_length=0.0;
 			std::vector<double>::iterator j = _length.begin();
-			for (auto &i : _curveSequences)
+			for (auto &i : _pairedSequence)
 			{
-				*j = i->getLength();
+				std::cout << i.first->getLength()<<" "<<(int)i.first->_refBound->getCurveType()<< std::endl;
+				*j = i.first->getLength();
 				_total_length += *j;
+				j++;
 			}
 			/* redistribute time counts */
 			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
@@ -429,11 +450,7 @@ namespace CurvesPlan
 				- this->_countSequences.at(1);
 			_overall_vel_ref = _total_length / (double)_total_counts;
 
-			/* set all bounds */
-			for (auto &i : _pairedSequence)
-			{
-				i.first->setBound(*i.second);
-			}
+			
 
 		}
 		virtual Eigen::Vector3d getPoint(int t)
@@ -476,6 +493,8 @@ namespace CurvesPlan
 			Eigen::Vector3d point;
 			return point;
 		}
+		
+
 
 		/* these bound are set in trajectory generator
 		   then, reset will calculate the time span
@@ -486,8 +505,8 @@ namespace CurvesPlan
 		Ellipse _ellMid;
 		StraightBound _strBoundDown;
 		Straight _strLineDown;
-		int _total_counts;
-		double _total_length;
+		
+		
 		std::vector<double> _length= std::vector<double>(3);
 		double _overall_vel_ref = 0.0;// m/s used to estimate other sequences/s time
 
@@ -501,6 +520,8 @@ namespace CurvesPlan
 		
 		
 	};
+
+
 	class ObstacleSequence :public CurvesSequenceBase
 	{
 	// Obstacle: ell-ell-str

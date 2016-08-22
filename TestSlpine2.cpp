@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Curves.h"
+#include <fstream>
 
 int main()
 {	
@@ -15,8 +16,18 @@ int main()
 	cbase = &st;
 	std::cout<<cbase->getDelta(0,1)<<std::endl<<cbase->_refBound->getCurveType()<<std::endl;
 
+	/* test normal sequence */
 	CurvesPlan::NormalSequence ns;
-	ns.init();
+	CurvesPlan::CurvesSequenceBase *csb;
+	csb = &ns;
+	csb->init();
+	csb->reset();
+
+	std::ofstream fs("data.txt");
+	std::cout << csb->getTotalCounts() <<"\t"<<csb->getTotalLength()<< std::endl;
+
+
+	
 
 	getchar();
 

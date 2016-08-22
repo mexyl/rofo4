@@ -28,10 +28,10 @@ int main()
 
 	int count = 0;
 	Eigen::Vector3d point;
-	while (count < csb->getTotalCounts())
+	while (count <= csb->getTotalCounts())
 	{
 		//std::cout << "running" << std::endl;
-		point = csb->getPoint(count);
+		point = csb->getPoint((double)count/ (double)csb->getTotalCounts());
 		fs << point.transpose() << std::endl;
 		count++;
 	}

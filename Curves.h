@@ -768,27 +768,165 @@ namespace CurvesPlan
 	// Tentative: ell-str
 	// two TentativeSequnences combination one tentative motion
 	public:
-		virtual void reset()
-		{}
+		TentativeSequences()
+		{
+			this->init();
+		}
 
+		virtual void init()
+		{
+			this->_curveSequences.at(0) = &this->_strDown;
+			this->_curveSequences.at(1) = &this->_elltentative;
+		 
+			this->_curveBounds.at(0) = &this->_strDownBound;
+			this->_curveBounds.at(1) = &this->_ellTentativeBound;
+		 
+
+			_pairedSequence.at(0).first = this->_curveSequences.at(0);
+			_pairedSequence.at(0).first = this->_curveSequences.at(0);
+			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
+			std::vector<BoundBase*>::iterator j_bnd = this->_curveBounds.begin();
+			for (auto &i : _pairedSequence)
+			{
+				i.first = *j_cur;
+				i.second = *j_bnd;
+				j_cur++;
+				j_bnd++;
+			}
+
+			/* this part should be used with reset() */
+
+			this->_currentCurveIndex = 0;
+
+			/* init settings for bounds */
+			this->_ellTentativeBound._bound_mat << 0, 0, 0,
+				0.05, 0, 0,
+				0.025, 0, 0;
+			this->_ellTentativeBound._parameters << 0.025, 0.02, M_PI, 0;
+
+			this->_strDownBound._bound_mat << 0.05, 0, 0,
+				0.05, -0.1, 0;
+			this->_total_counts = 5000;
+		}
+
+		virtual void reset()
+		{
+			/* don't forget set each bounds and total counts*/
+
+			/* set all bounds */
+			for (auto &i : _pairedSequence)
+			{
+				i.first->setBound(*i.second);
+			}
+
+			/* calculate curve length */
+			_total_length = 0.0;
+			std::vector<double>::iterator j = _length.begin();
+			for (auto &i : _pairedSequence)
+			{
+				std::cout << i.first->getLength() << " " << (int)i.first->_refBound->getCurveType() << std::endl;
+				*j = i.first->getLength();
+				_total_length += *j;
+				j++;
+			}
+			/* redistribute time counts */
+			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
+			this->_countSequences.at(1) = this->_total_counts - this->_countSequences.at(0);
+			
+			this->_ratioSequences.at(0) = _length[0] / _total_length;
+			this->_ratioSequences.at(1) = _length[1] / _total_length;
+
+			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
+
+		}
+
+		virtual Eigen::Vector3d getPoint(int t)
+		{
+			Eigen::Vector3d point;
+			_currentCurveIndex = t;
+			//std::cout <<"getPoint"<< point << std::endl;
+			if (t <= _countSequences.at(0))
+			{
+				/*first*/
+				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_countSequences.at(0));
+				//std::cout << point << std::endl;
+			}
+			else if (t> _countSequences.at(0)
+				&& t <= (_countSequences.at(0) + _countSequences.at(1)))
+			{
+				/* second */
+				point = _pairedSequence.at(1).first->getPoint(
+					(double)(t - _countSequences.at(0)) / (double)_countSequences.at(1));
+			}
+			else if (t>(_countSequences.at(0) + _countSequences.at(1)))
+			{
+				/* just return last point */
+				point = _pairedSequence.at(1).first->getPoint(1.0);
+			}
+			else
+			{
+				/* error  return the origin points */
+				std::cout << "negetive counts " << t << std::endl;
+				point = _pairedSequence.front().first->getPoint(0.0);
+			}
+			return point;
+		}
+
+		virtual Eigen::Vector3d getPoint(double t)
+		{
+			Eigen::Vector3d point;
+			_currentCurveRatio = t;
+			//std::cout <<"getPoint"<< point << std::endl;
+			if (t <= _ratioSequences.at(0))
+			{
+				/*first*/
+				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_ratioSequences.at(0));
+				//std::cout << point << std::endl;
+			}
+			else if (t> _ratioSequences.at(0)
+				&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1)))
+			{
+				/* second */
+				point = _pairedSequence.at(1).first->getPoint(
+					(double)(t - _ratioSequences.at(0)) / (double)_ratioSequences.at(1));
+			}
+			else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1)))
+			{
+				/* just return last point */
+				point = _pairedSequence.at(1).first->getPoint(1.0);
+			}
+			else
+			{
+				/* error  return the origin points */
+				std::cout << "negetive ratio " << t << std::endl;
+				point = _pairedSequence.front().first->getPoint(0.0);
+			}
+			return point;
+		}
+
+
+		/* reverse is specially designed for this sequences */
+		void reverse()
+		{
+		}
 		EllipseBound _ellTentativeBound;
 		Ellipse _elltentative;
 		StraightBound _strDownBound;
 		Straight _strDown;
 
-		const static int sections = 2;
+		const static int sectionsNum = 2;
 
-		std::vector<double> _length = std::vector<double>(sections);// _length of each curve
+		std::vector<double> _length = std::vector<double>(sectionsNum);// _length of each curve
 		double _overall_vel_ref = 0.0;// m/s used to estimate other sequences/s time
 
+		std::vector<int> _countSequences = std::vector<int>(sectionsNum);
+		std::vector<double> _ratioSequences = std::vector<double>(sectionsNum);
 
-		std::vector<int> _countSequences = std::vector<int>(sections);
-		std::vector<double> _ratioSequences = std::vector<double>(sections);
-
-		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(sections);
-		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sections);
+		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(sectionsNum);
+		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sectionsNum);
 		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
-			= std::vector<std::pair<CurveBase*, BoundBase*>>(sections);
+			= std::vector<std::pair<CurveBase*, BoundBase*>>(sectionsNum);
+
 
 	};
 }

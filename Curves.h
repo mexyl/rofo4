@@ -102,7 +102,7 @@ namespace CurvesPlan
 	public:
 		virtual void setBound(BoundBase &bd) = 0;
 		virtual Eigen::Vector3d getPoint(double t) = 0;
-		virtual Eigen::Vector3d getPoint(int t) = 0;
+		//virtual Eigen::Vector3d getPoint(int t) = 0;
 		virtual double getLength() = 0;
 		virtual Eigen::Vector3d getDelta(double t_minus, double t_plus)
 		{

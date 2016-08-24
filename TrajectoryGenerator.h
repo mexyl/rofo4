@@ -1,5 +1,7 @@
 #pragma once
 #include"Curves.h"
+#include <Robot_Type_I.h>
+#include <Robot_Gait.h>
 
 namespace TrajectoryGenerator
 {

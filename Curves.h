@@ -10,7 +10,7 @@ namespace CurvesPlan
 	 
 	*/
 	
-	enum CurveType {STRAIGHT=1,ELLIPSE,CUBICSPLINE};
+	enum CurveType {STRAIGHT=1,ELLIPSE,CUBICSPLINE,STANDSTILL};
 
 	/* Bounds for Curves */
 	class BoundBase
@@ -27,6 +27,17 @@ namespace CurvesPlan
 		virtual CurveType getCurveType() = 0;
 		virtual Eigen::Vector3d getStartPoint() = 0;
 		virtual Eigen::Vector3d getEndPoint() = 0;
+	};
+	class StandStillBound :public BoundBase
+	{
+	public:
+		CurveType _curveType = STANDSTILL;
+		Eigen::Vector3d _bound_mat;
+	public:
+		virtual CurveType getCurveType() { return _curveType; };
+		virtual Eigen::Vector3d getStartPoint() { return _bound_mat; };
+		virtual Eigen::Vector3d getEndPoint() { return _bound_mat; };
+
 	};
 
 	class StraightBound :public BoundBase
@@ -113,9 +124,26 @@ namespace CurvesPlan
 	public:
 		BoundBase* _base_refBound;
 		double _base_u;//one parameter of the curve
-		double _base_portion;// portion of 1.0 of the sequence
-		double _base_ratio;
+	};
+	class StandStill :public CurveBase
+	{
+	public:
+		StandStillBound bound;
+	public:
+		virtual void setBound(BoundBase &bd)
+		{
+			auto tmp = static_cast<StandStillBound&>(bd);
+			bound = tmp;
+			_base_refBound = &bound;
+		}
+		virtual Eigen::Vector3d getPoint(double t) {
+			_base_u = t;
+			return bound._bound_mat; };
+		virtual double getLength() { return 0; };
+
+
 		
+
 	};
 
 	class Straight :public CurveBase
@@ -372,6 +400,7 @@ namespace CurvesPlan
 	{
 	public:
 		/* for memory allocation, run at very first. */
+		
 		virtual void init() = 0;
 		/* Every time  start the gait */
 		virtual void reset() = 0;
@@ -382,11 +411,19 @@ namespace CurvesPlan
 
 		virtual Eigen::Vector3d getTargetPoint(double t)
 		{
+			_currentCurveRatio = t;
 			Eigen::Vector3d point;
+			if (this->_sequencesPair.at(0).first->_base_refBound->getCurveType() == STANDSTILL)
+			{
+				_currentCurveType = STANDSTILL;
+				return  this->_sequencesPair.at(0).first->getPoint(t);
+			}
+
 			for (unsigned int i = 0;i < this->_sequencesPair.size();i++)
 			{
 				if (t > this->_ratioSegment.at(i).first && t <= this->_ratioSegment.at(i).second)
 				{
+					_currentCurveType = this->_sequencesPair.at(i).first->_base_refBound->getCurveType();
 					point = this->_sequencesPair.at(i).first->getPoint((t- this->_ratioSegment.at(i).first)/
 						(this->_ratioSegment.at(i).second-this->_ratioSegment.at(i).first));
 					break;
@@ -402,7 +439,6 @@ namespace CurvesPlan
 			}
 			else if(t>1.0)
 			{
-				
 				point = this->_sequencesPair.back().first->getPoint(1);
 			}
 
@@ -414,17 +450,17 @@ namespace CurvesPlan
 		virtual int getCurrentIndex() { return this->_currentCurveIndex; };
 		virtual double getCurrentRatio() { return this->_currentCurveRatio; };
 		virtual void setTotalCounts(int t) { this->_total_counts = t; };
+		virtual CurveType getCurrentCurveType() { return _currentCurveType; };
 
 		int _total_counts;
 		double _total_length;
 		int _currentCurveIndex;
 		double _currentCurveRatio;
 		double _overall_vel_ref = 0.0;// m/s used to estimate other sequences/s time
+		CurveType _currentCurveType;
 		
 		std::vector<std::pair<double, double>> _ratioSegment;
 		std::vector<std::pair<CurveBase*, BoundBase*>> _sequencesPair;
-
-
 
 	};
 	/* 
@@ -432,7 +468,41 @@ namespace CurvesPlan
 		Normal: str-ell-str; 
 		Obstacle: ell-ell-str; 
 		Tentative: ell-str-ell-str 
+
+		standstill is another sequence
 	*/
+	class StandStillSequence :public CurvesSequenceBase
+	{
+	public:
+		StandStillSequence()
+		{
+			this->init();
+			this->_sequencesPair.push_back(std::make_pair(&this->_stsCurve,&this->_stsBound));
+
+		}
+		virtual void init()
+		{
+			
+		}
+		virtual void reset()
+		{
+			this->_sequencesPair.at(0).first->setBound(*this->_sequencesPair.at(0).second);
+		}
+
+		virtual Eigen::Vector3d getPoint(double t)
+		{
+			return _stsCurve.getPoint(t);
+		}
+
+
+		StandStillBound _stsBound;
+		StandStill _stsCurve;
+
+		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(3);
+		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(3);
+		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
+			= std::vector<std::pair<CurveBase*, BoundBase*>>(3);
+	};
 	class NormalSequence :public CurvesSequenceBase
 	{
 	// Normal: str - ell - str

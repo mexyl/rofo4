@@ -3,6 +3,30 @@
 
 namespace TrajectoryGenerator
 {
+	enum LegID { LF = 0, LM, LR, RF, RM, RR };
+
+	class SinglePointTrajBase
+	{
+	public:
+	};
+	class HexapodSingleLeg :public SinglePointTrajBase
+	{
+	public:
+		CurvesPlan::NormalSequence normalSequence;
+		CurvesPlan::ObstacleSequence obstacleSquence;
+		CurvesPlan::TentativeSequence tentativeSequence;
+		CurvesPlan::StandStill standstillSequence;
+
+		CurvesPlan::CurvesSequenceBase *currentSequence;
+		CurvesPlan::CurvesSequenceBase *lastSequence;
+
+		Eigen::Vector3d _refPosition;
+		int _sequenceCounts;
+		int _currentCounts;
+
+	};
+
+
 	/* Trajectories */
 	class HexapodTrajectoriesBase
 	{
@@ -22,9 +46,9 @@ namespace TrajectoryGenerator
 		virtual void getTargetBodyPos(Eigen::Matrix<double, 2, 3>&bee) = 0;
 
 		Eigen::Matrix<double, 18, 1> torque, position;
-		Eigen::Matrix<double, 6, 3> currentPee, targetPee;
-		Eigen::Matrix<double, 2, 3> currentBee, targetBee;
-		Eigen::Matrix<double, 6, 6> fce_data;
+		Eigen::Matrix<double, 6, 3> currentPee, targetPee; // feet
+		Eigen::Matrix<double, 2, 3> currentBee, targetBee; // body
+		Eigen::Matrix<double, 6, 6> sensorFceData;
 
 		/*model calculation*/
 		// set filters in the derived class;
@@ -37,6 +61,16 @@ namespace TrajectoryGenerator
 
 	class HexapodRofoGait :public HexapodTrajectoriesBase
 	{
+		/* have a function to control force sensor */
+		/* have a function to control indirect force sensor */
+		enum ForceMode {NONE,INDIRECT,SENSOR};
+	public:
+		void indirectForceEstimation() {};
+
+	public:
+		std::vector<HexapodSingleLeg> legTraj;
+		
+
 
 	};
 }

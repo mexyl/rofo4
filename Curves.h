@@ -763,25 +763,24 @@ namespace CurvesPlan
 			= std::vector<std::pair<CurveBase*, BoundBase*>>(3);
 
 	};
-	class TentativeSequences :public CurvesSequenceBase
+	class TentativeSequence :public CurvesSequenceBase
 	{
 	// Tentative: ell-str
 	// two TentativeSequnences combination one tentative motion
 	public:
-		TentativeSequences()
+		TentativeSequence()
 		{
 			this->init();
 		}
 
 		virtual void init()
 		{
-			this->_curveSequences.at(0) = &this->_strDown;
-			this->_curveSequences.at(1) = &this->_elltentative;
-		 
-			this->_curveBounds.at(0) = &this->_strDownBound;
-			this->_curveBounds.at(1) = &this->_ellTentativeBound;
-		 
-
+			this->_curveSequences.at(0) = &this->_elltentative;
+			this->_curveSequences.at(1) = &this->_strDown;
+			
+			this->_curveBounds.at(0) = &this->_ellTentativeBound;
+			this->_curveBounds.at(1) = &this->_strDownBound;
+			
 			_pairedSequence.at(0).first = this->_curveSequences.at(0);
 			_pairedSequence.at(0).first = this->_curveSequences.at(0);
 			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
@@ -926,7 +925,6 @@ namespace CurvesPlan
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sectionsNum);
 		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
 			= std::vector<std::pair<CurveBase*, BoundBase*>>(sectionsNum);
-
 
 	};
 }

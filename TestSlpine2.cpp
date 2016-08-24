@@ -19,9 +19,11 @@ int main()
 	/* test normal sequence */
 	CurvesPlan::NormalSequence ns;
 	CurvesPlan::ObstacleSequence os;
+	CurvesPlan::TentativeSequence ts;
 	CurvesPlan::CurvesSequenceBase *csb;
 	csb = &ns;
 	csb = &os;
+	csb = &ts;
 	csb->init();
 	std::cout << "init ok" << std::endl;
 	csb->reset();

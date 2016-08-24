@@ -905,8 +905,26 @@ namespace CurvesPlan
 
 
 		/* reverse is specially designed for this sequences */
-		void reverse()
+		void reverse(double t)
 		{
+			/* set new bounds */
+			this->_ellTentativeBound._bound_mat.row(1) = this->_ellTentativeBound._bound_mat.row(0);
+			this->_ellTentativeBound._bound_mat.row(0) = this->getPoint(t);
+			// row(2) is the origin, it should not be changed
+			// then change the parameters a,b is the same
+			// change start theta to end theta, then calculate the start theta
+			double current_theta = this->_ellTentativeBound._parameters(2)
+				+ (t / this->_ratioSequences[0])
+				*(this->_ellTentativeBound._parameters(3) - this->_ellTentativeBound._parameters(2));
+			this->_ellTentativeBound._parameters(3) = this->_ellTentativeBound._parameters(2);
+			this->_ellTentativeBound._parameters(2) = current_theta;
+			//Eigen::Vector3d currentRad = this->_ellTentativeBound._bound_mat.row(0) - this->_ellTentativeBound._bound_mat.row(2);
+			
+			for (auto &i : _pairedSequence)
+			{
+				i.first->setBound(*i.second);
+			}
+			/* */
 		}
 		EllipseBound _ellTentativeBound;
 		Ellipse _elltentative;

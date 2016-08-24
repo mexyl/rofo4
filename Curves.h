@@ -370,7 +370,7 @@ namespace CurvesPlan
 		int _total_counts;
 		double _total_length;
 		int _currentCurveIndex;
-		int _currentCurveRatio;
+		double _currentCurveRatio;
 	};
 	/* 
 		There are there kind of sequences: 
@@ -574,13 +574,159 @@ namespace CurvesPlan
 			this->init();
 		}
 		virtual void init()
-		{}
+		{
+			this->_curveSequences.at(0) = &this->_ellReflex;
+			this->_curveSequences.at(1) = &this->_ellForward;
+			this->_curveSequences.at(2) = &this->_strDown;
+			this->_curveBounds.at(0) = &this->_ellReflexBound;
+			this->_curveBounds.at(1) = &this->_ellForwardBound;
+			this->_curveBounds.at(2) = &this->_strDownBound;
+
+			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
+			std::vector<BoundBase*>::iterator j_bnd = this->_curveBounds.begin();
+			for (auto &i : _pairedSequence)
+			{
+				i.first = *j_cur;
+				i.second = *j_bnd;
+				j_cur++;
+				j_bnd++;
+			}
+
+			this->_currentCurveIndex = 0;
+
+			/* init settings for bounds */
+
+			this->_ellReflexBound._bound_mat << 0, 0, 0,
+				0, 0.1, 0,
+				0, 0.05, 0;
+			this->_ellReflexBound._parameters <<0.03,0.05,-0.5*M_PI,-1.5*M_PI;
+
+			this->_ellForwardBound._bound_mat.row(0) = this->_ellReflexBound.getEndPoint();
+			this->_ellForwardBound._bound_mat.row(1) << this->_ellForwardBound._bound_mat(0, 0) + 0.1,
+				this->_ellForwardBound._bound_mat(0, 1) - 0.03,
+				this->_ellForwardBound._bound_mat(0, 3);
+			this->_ellForwardBound._parameters << this->_ellForwardBound._bound_mat(0, 0),
+				this->_ellForwardBound._bound_mat(1, 1),
+				0.5*M_PI,0;
+
+			this->_strDownBound._bound_mat.row(0) = this->_ellForwardBound.getEndPoint();
+			this->_strDownBound._bound_mat.row(1)= this->_ellForwardBound.getEndPoint();
+			this->_strDownBound._bound_mat(1, 1) = -1.0;// must add reference points later
+
+			this->_total_counts = 5000;
+			/* init settings finished */
+
+
+		}
 		virtual void reset()
-		{}
+		{
+			/* don't forget set each bounds and total counts*/
+
+			/* set all bounds */
+			for (auto &i : _pairedSequence)
+			{
+				i.first->setBound(*i.second);
+			}
+
+			/* calculate curve length */
+			_total_length = 0.0;
+			std::vector<double>::iterator j = _length.begin();
+			for (auto &i : _pairedSequence)
+			{
+				std::cout << i.first->getLength() << " " << (int)i.first->_refBound->getCurveType() << std::endl;
+				*j = i.first->getLength();
+				_total_length += *j;
+				j++;
+			}
+			/* redistribute time counts */
+			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
+			this->_countSequences.at(1) = (int)round(_length[1] / _total_length*(double)this->_total_counts);
+			this->_countSequences.at(2) = this->_total_counts
+				- this->_countSequences.at(0)
+				- this->_countSequences.at(1);
+			this->_ratioSequences.at(0) = _length[0] / _total_length;
+			this->_ratioSequences.at(1) = _length[1] / _total_length;
+			this->_ratioSequences.at(2) = _length[2] / _total_length;
+
+			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
+		
+		}
 		virtual Eigen::Vector3d getPoint(int t)
-		{}
+		{
+			Eigen::Vector3d point;
+			_currentCurveIndex = t;
+			//std::cout <<"getPoint"<< point << std::endl;
+			if (t <= _countSequences.at(0))
+			{
+				/*first*/
+				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_countSequences.at(0));
+				//std::cout << point << std::endl;
+			}
+			else if (t> _countSequences.at(0)
+				&& t <= (_countSequences.at(0) + _countSequences.at(1)))
+			{
+				/* second */
+				point = _pairedSequence.at(1).first->getPoint(
+					(double)(t - _countSequences.at(0)) / (double)_countSequences.at(1));
+			}
+			else if (t>(_countSequences.at(0) + _countSequences.at(1))
+				&& t <= (_countSequences.at(0) + _countSequences.at(1) + _countSequences.at(2)))
+			{
+				/* third */
+				point = _pairedSequence.at(2).first->getPoint(
+					(double)(t - _countSequences.at(0) - _countSequences.at(1)) / (double)_countSequences.at(2));
+			}
+			else if (t>(_countSequences.at(0) + _countSequences.at(1) + _countSequences.at(2)))
+			{
+				/* just return last point */
+				point = _pairedSequence.at(2).first->getPoint(1.0);
+			}
+			else
+			{
+				/* error  return the origin points */
+				std::cout << "negetive counts " << t << std::endl;
+				point = _pairedSequence.at(0).first->getPoint(0.0);
+			}
+			return point;
+		}
 		virtual Eigen::Vector3d getPoint(double t)
-		{}
+		{
+			Eigen::Vector3d point;
+			_currentCurveRatio = t;
+			//std::cout <<"getPoint"<< point << std::endl;
+			if (t <= _ratioSequences.at(0))
+			{
+				/*first*/
+				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_ratioSequences.at(0));
+				//std::cout << point << std::endl;
+			}
+			else if (t> _ratioSequences.at(0)
+				&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1)))
+			{
+				/* second */
+				point = _pairedSequence.at(1).first->getPoint(
+					(double)(t - _ratioSequences.at(0)) / (double)_ratioSequences.at(1));
+			}
+			else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1))
+				&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
+			{
+				/* third */
+				point = _pairedSequence.at(2).first->getPoint(
+					(double)(t - _ratioSequences.at(0) - _ratioSequences.at(1)) / (double)_ratioSequences.at(2));
+			}
+			else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
+			{
+				/* just return last point */
+				point = _pairedSequence.at(2).first->getPoint(1.0);
+			}
+			else
+			{
+				/* error  return the origin points */
+				std::cout << "negetive ratio " << t << std::endl;
+				point = _pairedSequence.at(0).first->getPoint(0.0);
+			}
+			return point;
+		}
 
 		EllipseBound _ellReflexBound;
 		Ellipse _ellReflex;
@@ -600,10 +746,6 @@ namespace CurvesPlan
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(3);
 		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
 			= std::vector<std::pair<CurveBase*, BoundBase*>>(3);
-
-
-
-
 
 	};
 	class Tentative :public CurvesSequenceBase

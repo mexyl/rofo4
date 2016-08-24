@@ -22,8 +22,8 @@ int main()
 	CurvesPlan::TentativeSequence ts;
 	CurvesPlan::CurvesSequenceBase *csb;
 	csb = &ns;
-	csb = &os;
-	csb = &ts;
+	//csb = &os;
+	//csb = &ts;
 	csb->init();
 	std::cout << "init ok" << std::endl;
 	csb->reset();
@@ -31,16 +31,17 @@ int main()
 	std::cout << csb->getTotalCounts() << "\t" << csb->getTotalLength() << std::endl;
 	std::ofstream fs("data.txt");
 	std::cout << csb->getTotalCounts() <<"\t"<<csb->getTotalLength()<< std::endl;
-	fs.close();
-	getchar();
-	return 0;
+	//fs.close();
+	//getchar();
+	//return 0;
 	int count = 0;
 	Eigen::Vector3d point;
-	ts.reverse(0.2);
+	//ts.reverse(0.2);
 	while (count <= csb->getTotalCounts())
 	{
 		//std::cout << "running" << std::endl;
 		point = csb->getPoint((double)count/ (double)csb->getTotalCounts());
+		//point = csb->getTargetPoint((double)count / (double)csb->getTotalCounts());
 		fs << point.transpose() << std::endl;
 		count++;
 	}

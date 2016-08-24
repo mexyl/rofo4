@@ -387,7 +387,9 @@ namespace CurvesPlan
 			{
 				if (t > this->_ratioSegment.at(i).first && t <= this->_ratioSegment.at(i).second)
 				{
-					point = this->_sequencesPair.at(i).first->getPoint(t);
+					point = this->_sequencesPair.at(i).first->getPoint((t- this->_ratioSegment.at(i).first)/
+						(this->_ratioSegment.at(i).second-this->_ratioSegment.at(i).first));
+					break;
 				}
 				else
 				{
@@ -398,8 +400,9 @@ namespace CurvesPlan
 			{
 				point = this->_sequencesPair.at(0).first->getPoint(0);
 			}
-			else
+			else if(t>1.0)
 			{
+				
 				point = this->_sequencesPair.back().first->getPoint(1);
 			}
 
@@ -476,9 +479,9 @@ namespace CurvesPlan
 			this->_strBoundDown._bound_mat << 0.5, 0.05, 0,
 				0.5, -0.1, 0;
 
-			this->_ellMidBound._bound_mat << 0, 0.5, 0,
+			this->_ellMidBound._bound_mat << 0, 0.05, 0,
 				0.5, 0.05, 0,
-				0.25, 0.5, 0;
+				0.25, 0.05, 0;
 			this->_ellMidBound._parameters << 0.25, 0.05, M_PI, 0;
 
 			this->_total_counts = 5000;
@@ -524,11 +527,6 @@ namespace CurvesPlan
 			this->_ratioSegment.at(2).first = this->_ratioSegment.at(1).second;
 			this->_ratioSegment.at(2).second = 1;
 
-
-			for (auto &i : _pairedSequence)
-			{
-				//i.first->_base_portion = 0;
-			}
 
 			_overall_vel_ref = _total_length / (double)_total_counts*1000; // m/s
 
@@ -847,7 +845,7 @@ namespace CurvesPlan
 		TentativeSequence()
 		{
 			this->init();
-			this->_sequencesPair.push_back(std::make_pair(&this->_elltentative, &this->_ellTentativeBound));
+			this->_sequencesPair.push_back(std::make_pair(&this->_ellTentative, &this->_ellTentativeBound));
 			this->_sequencesPair.push_back(std::make_pair(&this->_strDown, &this->_strDownBound));
 
 			for (int i = 0;i < this->_countSequences.size();i++)
@@ -858,7 +856,7 @@ namespace CurvesPlan
 
 		virtual void init()
 		{
-			this->_curveSequences.at(0) = &this->_elltentative;
+			this->_curveSequences.at(0) = &this->_ellTentative;
 			this->_curveSequences.at(1) = &this->_strDown;
 			
 			this->_curveBounds.at(0) = &this->_ellTentativeBound;
@@ -1030,7 +1028,7 @@ namespace CurvesPlan
 			/*  */
 		}
 		EllipseBound _ellTentativeBound;
-		Ellipse _elltentative;
+		Ellipse _ellTentative;
 		StraightBound _strDownBound;
 		Straight _strDown;
 

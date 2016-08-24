@@ -413,11 +413,13 @@ namespace CurvesPlan
 		virtual double getTotalLength() { return this->_total_length; };
 		virtual int getCurrentIndex() { return this->_currentCurveIndex; };
 		virtual double getCurrentRatio() { return this->_currentCurveRatio; };
+		virtual void setTotalCounts(int t) { this->_total_counts = t; };
 
 		int _total_counts;
 		double _total_length;
 		int _currentCurveIndex;
 		double _currentCurveRatio;
+		double _overall_vel_ref = 0.0;// m/s used to estimate other sequences/s time
 		
 		std::vector<std::pair<double, double>> _ratioSegment;
 		std::vector<std::pair<CurveBase*, BoundBase*>> _sequencesPair;
@@ -473,7 +475,7 @@ namespace CurvesPlan
 			this->_currentCurveIndex = 0;
 
 			/* init settings for bounds */
-			
+
 			this->_strBoundUp._bound_mat << 0, 0, 0,
 				0, 0.05, 0;
 			this->_strBoundDown._bound_mat << 0.5, 0.05, 0,
@@ -483,7 +485,19 @@ namespace CurvesPlan
 				0.5, 0.05, 0,
 				0.25, 0.05, 0;
 			this->_ellMidBound._parameters << 0.25, 0.05, M_PI, 0;
+			
 
+			/**
+			this->_strBoundUp._bound_mat << 0, 0, 0,
+				0, 0.05, 0;
+			this->_strBoundDown._bound_mat << 0.5, 0.05, 0,
+				0.5, -0.1, 0;
+
+			this->_ellMidBound._bound_mat << 0, 0.05, 0,
+				0.5, 0.05, 0,
+				0.25, 0.05, 0;
+			this->_ellMidBound._parameters << 0.25, 0.05, M_PI, 0;
+			*/
 			this->_total_counts = 5000;
 			/* init settings finished */
 
@@ -825,7 +839,7 @@ namespace CurvesPlan
 		Straight _strDown;
 
 		std::vector<double> _length = std::vector<double>(3);// _length of each curve
-		double _overall_vel_ref = 0.0;// m/s used to estimate other sequences/s time
+		
 
 									  /*Generate by reset*/
 		std::vector<int> _countSequences = std::vector<int>(3);

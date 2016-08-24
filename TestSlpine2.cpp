@@ -40,8 +40,8 @@ int main()
 	while (count <= csb->getTotalCounts())
 	{
 		//std::cout << "running" << std::endl;
-		point = csb->getPoint((double)count/ (double)csb->getTotalCounts());
-		//point = csb->getTargetPoint((double)count / (double)csb->getTotalCounts());
+		//point = csb->getPoint((double)count/ (double)csb->getTotalCounts());
+		point = csb->getTargetPoint((double)count / (double)csb->getTotalCounts());
 		fs << point.transpose() << std::endl;
 		count++;
 	}

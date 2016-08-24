@@ -14,7 +14,7 @@ int main()
 	CurvesPlan::Straight st;
 	st.setBound(sb);
 	cbase = &st;
-	std::cout<<cbase->getDelta(0,1)<<std::endl<<cbase->_refBound->getCurveType()<<std::endl;
+	std::cout<<cbase->getDelta(0,1)<<std::endl<<cbase->_base_refBound->getCurveType()<<std::endl;
 
 	/* test normal sequence */
 	CurvesPlan::NormalSequence ns;
@@ -31,9 +31,9 @@ int main()
 	std::cout << csb->getTotalCounts() << "\t" << csb->getTotalLength() << std::endl;
 	std::ofstream fs("data.txt");
 	std::cout << csb->getTotalCounts() <<"\t"<<csb->getTotalLength()<< std::endl;
-	//fs.close();
-	//getchar();
-	//return 0;
+	fs.close();
+	getchar();
+	return 0;
 	int count = 0;
 	Eigen::Vector3d point;
 	ts.reverse(0.2);

@@ -102,16 +102,19 @@ namespace CurvesPlan
 	public:
 		virtual void setBound(BoundBase &bd) = 0;
 		virtual Eigen::Vector3d getPoint(double t) = 0;
+		virtual Eigen::Vector3d getPoint(int t) = 0;
 		virtual double getLength() = 0;
 		virtual Eigen::Vector3d getDelta(double t_minus, double t_plus)
 		{
 			return this->getPoint(t_plus) - this->getPoint(t_minus);
 		};
-		virtual double getCurrentParameter() { return this->_u; };
+		virtual double getCurrentParameter() { return this->_base_u; };
 
 	public:
-		BoundBase* _refBound;
-		double _u;//one parameter of the curve
+		BoundBase* _base_refBound;
+		double _base_u;//one parameter of the curve
+		double _base_portion;// portion of 1.0 of the sequence
+		double _base_ratio;
 		
 	};
 
@@ -122,16 +125,16 @@ namespace CurvesPlan
 	public:
 		virtual void setBound(BoundBase &bd)
 		{
-			_refBound = &bound;
+			_base_refBound = &bound;
 			auto tmp = static_cast<StraightBound&>(bd);
 			bound = tmp;
 			std::cout << "Curve type straight " << bd.getCurveType() << "\t"
-				<< _refBound->getCurveType() << "\t" << bound.getCurveType()<<std::endl;
+				<< _base_refBound->getCurveType() << "\t" << bound.getCurveType()<<std::endl;
 		}
 
 		virtual Eigen::Vector3d getPoint(double t)
 		{
-			_u = t;
+			_base_u = t;
 			return bound.getStartPoint()+(bound.getEndPoint() - bound.getStartPoint())*t;
 		};
 
@@ -150,7 +153,7 @@ namespace CurvesPlan
 	public:
 		virtual void setBound(BoundBase &bd)
 		{
-			_refBound = &bound;
+			_base_refBound = &bound;
 			auto tmp = static_cast<EllipseBound&>(bd);
 			bound = tmp;
 			a = bound._parameters(0,0);
@@ -166,7 +169,7 @@ namespace CurvesPlan
 			for example clockwise pi->0
 			counter clockwise 0->pi
 			*/
-			_u = t;
+			_base_u = t;
 			double theta = theta0 + (theta1 - theta0)*t;
 			Eigen::Vector3d origin,point;
 			origin = bound._bound_mat.row(2);
@@ -240,7 +243,7 @@ namespace CurvesPlan
 	public:
 		virtual void setBound(BoundBase &bd)
 		{
-			_refBound = &bound;
+			_base_refBound = &bound;
 			auto tmp = static_cast<CubicBound&>(bd);
 			bound = tmp;
 			_basis << 2, -2, 1, 1,
@@ -252,7 +255,7 @@ namespace CurvesPlan
 
 		virtual Eigen::Vector3d getPoint(double t)
 		{
-			_u = t;
+			_base_u = t;
 			param_vector << t*t*t, t*t, t, 1;
 			Eigen::Vector3d point;
 			point = control_mat.transpose()*_basis.transpose()*param_vector;
@@ -377,6 +380,32 @@ namespace CurvesPlan
 
 		virtual Eigen::Vector3d getPoint(double t)=0;
 
+		virtual Eigen::Vector3d getTargetPoint(double t)
+		{
+			Eigen::Vector3d point;
+			for (int i = 0;i < this->_sequencesPair.size();i++)
+			{
+				if (t > this->_ratioSegment.at(i).first && t <= this->_ratioSegment.at(i).second)
+				{
+					point = this->_sequencesPair.at(i).first->getPoint(t);
+				}
+				else
+				{
+					continue;
+				}
+			}
+			if (t <= this->_ratioSegment.at(0).first)
+			{
+				point = this->_sequencesPair.at(0).first->getPoint(0);
+			}
+			else
+			{
+				point = this->_sequencesPair.back().first->getPoint(1);
+			}
+
+			return point;
+		};
+
 		virtual int getTotalCounts() { return this->_total_counts; };
 		virtual double getTotalLength() { return this->_total_length; };
 		virtual int getCurrentIndex() { return this->_currentCurveIndex; };
@@ -386,6 +415,12 @@ namespace CurvesPlan
 		double _total_length;
 		int _currentCurveIndex;
 		double _currentCurveRatio;
+		
+		std::vector<std::pair<double, double>> _ratioSegment;
+		std::vector<std::pair<CurveBase*, BoundBase*>> _sequencesPair;
+
+
+
 	};
 	/* 
 		There are there kind of sequences: 
@@ -400,6 +435,15 @@ namespace CurvesPlan
 		NormalSequence()
 		{
 			this->init();
+			this->_sequencesPair.push_back(std::make_pair(&this->_strLineUp,&this->_strBoundUp));
+			this->_sequencesPair.push_back(std::make_pair(&this->_ellMid, &this->_ellMidBound));
+			this->_sequencesPair.push_back(std::make_pair(&this->_strLineDown,&this->_strBoundDown));
+			std::cout << "Construct Normal Sequence "
+				<< _sequencesPair.size() << std::endl;
+			for (int i = 0;i < this->_countSequences.size();i++)
+			{
+				this->_ratioSegment.push_back(std::make_pair(0,0));
+			}
 		}
 		virtual void init()
 		{
@@ -456,7 +500,7 @@ namespace CurvesPlan
 			std::vector<double>::iterator j = _length.begin();
 			for (auto &i : _pairedSequence)
 			{
-				std::cout << i.first->getLength()<<" "<<(int)i.first->_refBound->getCurveType()<< std::endl;
+				std::cout << i.first->getLength()<<" "<<(int)i.first->_base_refBound->getCurveType()<< std::endl;
 				*j = i.first->getLength();
 				_total_length += *j;
 				j++;
@@ -470,6 +514,21 @@ namespace CurvesPlan
 			this->_ratioSequences.at(0) = _length[0] / _total_length;
 			this->_ratioSequences.at(1) = _length[1] / _total_length;
 			this->_ratioSequences.at(2) = _length[2] / _total_length;
+
+			this->_ratioSegment.at(0).first = 0;
+			this->_ratioSegment.at(0).second = this->_ratioSequences.at(0);
+
+			this->_ratioSegment.at(1).first = this->_ratioSequences.at(0);
+			this->_ratioSegment.at(1).second = this->_ratioSequences.at(0)+ this->_ratioSequences.at(1);
+
+			this->_ratioSegment.at(2).first = this->_ratioSegment.at(1).second;
+			this->_ratioSegment.at(2).second = 1;
+
+
+			for (auto &i : _pairedSequence)
+			{
+				//i.first->_base_portion = 0;
+			}
 
 			_overall_vel_ref = _total_length / (double)_total_counts*1000; // m/s
 
@@ -587,6 +646,14 @@ namespace CurvesPlan
 		ObstacleSequence()
 		{
 			this->init();
+			this->_sequencesPair.push_back(std::make_pair(&this->_ellReflex,&this->_ellReflexBound));
+			this->_sequencesPair.push_back(std::make_pair(&this->_ellForward, &this->_ellForwardBound));
+			this->_sequencesPair.push_back(std::make_pair(&this->_strDown, &this->_strDownBound));
+
+			for (int i = 0;i < this->_countSequences.size();i++)
+			{
+				this->_ratioSegment.push_back(std::make_pair(0, 0));
+			}
 		}
 		virtual void init()
 		{
@@ -647,7 +714,7 @@ namespace CurvesPlan
 			std::vector<double>::iterator j = _length.begin();
 			for (auto &i : _pairedSequence)
 			{
-				std::cout << i.first->getLength() << " " << (int)i.first->_refBound->getCurveType() << std::endl;
+				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
 				*j = i.first->getLength();
 				_total_length += *j;
 				j++;
@@ -662,6 +729,15 @@ namespace CurvesPlan
 			this->_ratioSequences.at(0) = _length[0] / _total_length;
 			this->_ratioSequences.at(1) = _length[1] / _total_length;
 			this->_ratioSequences.at(2) = _length[2] / _total_length;
+
+			this->_ratioSegment.at(0).first = 0;
+			this->_ratioSegment.at(0).second = this->_ratioSequences.at(0);
+
+			this->_ratioSegment.at(1).first = this->_ratioSequences.at(0);
+			this->_ratioSegment.at(1).second = this->_ratioSequences.at(0) + this->_ratioSequences.at(1);
+
+			this->_ratioSegment.at(2).first = this->_ratioSegment.at(1).second;
+			this->_ratioSegment.at(2).second = 1;
 
 			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
 		
@@ -771,6 +847,13 @@ namespace CurvesPlan
 		TentativeSequence()
 		{
 			this->init();
+			this->_sequencesPair.push_back(std::make_pair(&this->_elltentative, &this->_ellTentativeBound));
+			this->_sequencesPair.push_back(std::make_pair(&this->_strDown, &this->_strDownBound));
+
+			for (int i = 0;i < this->_countSequences.size();i++)
+			{
+				this->_ratioSegment.push_back(std::make_pair(0, 0));
+			}
 		}
 
 		virtual void init()
@@ -823,7 +906,7 @@ namespace CurvesPlan
 			std::vector<double>::iterator j = _length.begin();
 			for (auto &i : _pairedSequence)
 			{
-				std::cout << i.first->getLength() << " " << (int)i.first->_refBound->getCurveType() << std::endl;
+				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
 				*j = i.first->getLength();
 				_total_length += *j;
 				j++;
@@ -834,6 +917,14 @@ namespace CurvesPlan
 			
 			this->_ratioSequences.at(0) = _length[0] / _total_length;
 			this->_ratioSequences.at(1) = _length[1] / _total_length;
+
+			this->_ratioSegment.at(0).first = 0;
+			this->_ratioSegment.at(0).second= _length[1] / _total_length;
+
+			this->_ratioSegment.at(1).first = this->_ratioSegment.at(0).second;
+			this->_ratioSegment.at(1).second = 1.0;
+
+
 
 			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
 

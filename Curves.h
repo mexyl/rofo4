@@ -763,18 +763,32 @@ namespace CurvesPlan
 			= std::vector<std::pair<CurveBase*, BoundBase*>>(3);
 
 	};
-	class Tentative :public CurvesSequenceBase
+	class TentativeSequences :public CurvesSequenceBase
 	{
-	// Tentative: ell-str-ell-str
+	// Tentative: ell-str
+	// two TentativeSequnences combination one tentative motion
 	public:
 		virtual void reset()
 		{}
-	};
-	class TentativeStop : public CurvesSequenceBase
-	{
-	// Tentative: ell-str
-	public:
-		virtual void reset()
-		{};
+
+		EllipseBound _ellTentativeBound;
+		Ellipse _elltentative;
+		StraightBound _strDownBound;
+		Straight _strDown;
+
+		const static int sections = 2;
+
+		std::vector<double> _length = std::vector<double>(sections);// _length of each curve
+		double _overall_vel_ref = 0.0;// m/s used to estimate other sequences/s time
+
+
+		std::vector<int> _countSequences = std::vector<int>(sections);
+		std::vector<double> _ratioSequences = std::vector<double>(sections);
+
+		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(sections);
+		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sections);
+		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
+			= std::vector<std::pair<CurveBase*, BoundBase*>>(sections);
+
 	};
 }

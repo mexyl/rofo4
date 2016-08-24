@@ -913,18 +913,30 @@ namespace CurvesPlan
 			// row(2) is the origin, it should not be changed
 			// then change the parameters a,b is the same
 			// change start theta to end theta, then calculate the start theta
-			double current_theta = this->_ellTentativeBound._parameters(2)
-				+ (t / this->_ratioSequences[0])
-				*(this->_ellTentativeBound._parameters(3) - this->_ellTentativeBound._parameters(2));
-			this->_ellTentativeBound._parameters(3) = this->_ellTentativeBound._parameters(2);
-			this->_ellTentativeBound._parameters(2) = current_theta;
-			//Eigen::Vector3d currentRad = this->_ellTentativeBound._bound_mat.row(0) - this->_ellTentativeBound._bound_mat.row(2);
+			if (t < this->_ratioSequences[0])
+			{
+				double current_theta = this->_ellTentativeBound._parameters(2)
+					+ (t / this->_ratioSequences[0])
+					*(this->_ellTentativeBound._parameters(3) - this->_ellTentativeBound._parameters(2));
+				this->_ellTentativeBound._parameters(3) = this->_ellTentativeBound._parameters(2);
+				this->_ellTentativeBound._parameters(2) = current_theta;
+			}
+			else
+			{
+				std::cout << "Can not reverse" << std::endl;
+			}
+
 			
+			//Eigen::Vector3d currentRad = this->_ellTentativeBound._bound_mat.row(0) - this->_ellTentativeBound._bound_mat.row(2);
+			this->_strDownBound._bound_mat.row(0) = this->_ellTentativeBound._bound_mat.row(1);
+			this->_strDownBound._bound_mat.row(1) = this->_ellTentativeBound._bound_mat.row(1);
+			this->_strDownBound._bound_mat(1, 1) = -0.1;
+
 			for (auto &i : _pairedSequence)
 			{
 				i.first->setBound(*i.second);
 			}
-			/* */
+			/*  */
 		}
 		EllipseBound _ellTentativeBound;
 		Ellipse _elltentative;
@@ -943,6 +955,5 @@ namespace CurvesPlan
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sectionsNum);
 		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
 			= std::vector<std::pair<CurveBase*, BoundBase*>>(sectionsNum);
-
 	};
 }

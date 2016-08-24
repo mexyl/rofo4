@@ -36,6 +36,7 @@ int main()
 	//return 0;
 	int count = 0;
 	Eigen::Vector3d point;
+	ts.reverse(0.2);
 	while (count <= csb->getTotalCounts())
 	{
 		//std::cout << "running" << std::endl;

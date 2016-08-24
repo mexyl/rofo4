@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Curves.h"
 #include <fstream>
+#include "TrajectoryGenerator.h"
 
 int main()
 {	

@@ -383,7 +383,7 @@ namespace CurvesPlan
 		virtual Eigen::Vector3d getTargetPoint(double t)
 		{
 			Eigen::Vector3d point;
-			for (int i = 0;i < this->_sequencesPair.size();i++)
+			for (unsigned int i = 0;i < this->_sequencesPair.size();i++)
 			{
 				if (t > this->_ratioSegment.at(i).first && t <= this->_ratioSegment.at(i).second)
 				{
@@ -445,7 +445,7 @@ namespace CurvesPlan
 			this->_sequencesPair.push_back(std::make_pair(&this->_strLineDown,&this->_strBoundDown));
 			std::cout << "Construct Normal Sequence "
 				<< _sequencesPair.size() << std::endl;
-			for (int i = 0;i < this->_countSequences.size();i++)
+			for (unsigned int i = 0;i < this->_countSequences.size();i++)
 			{
 				this->_ratioSegment.push_back(std::make_pair(0,0));
 			}
@@ -662,7 +662,7 @@ namespace CurvesPlan
 			this->_sequencesPair.push_back(std::make_pair(&this->_ellForward, &this->_ellForwardBound));
 			this->_sequencesPair.push_back(std::make_pair(&this->_strDown, &this->_strDownBound));
 
-			for (int i = 0;i < this->_countSequences.size();i++)
+			for (unsigned int i = 0;i < this->_countSequences.size();i++)
 			{
 				this->_ratioSegment.push_back(std::make_pair(0, 0));
 			}
@@ -862,7 +862,7 @@ namespace CurvesPlan
 			this->_sequencesPair.push_back(std::make_pair(&this->_ellTentative, &this->_ellTentativeBound));
 			this->_sequencesPair.push_back(std::make_pair(&this->_strDown, &this->_strDownBound));
 
-			for (int i = 0;i < this->_countSequences.size();i++)
+			for (unsigned int i = 0;i < this->_countSequences.size();i++)
 			{
 				this->_ratioSegment.push_back(std::make_pair(0, 0));
 			}

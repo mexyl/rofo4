@@ -38,11 +38,11 @@ namespace CurvesPlan
 		virtual CurveType getCurveType() { return _curveType; };
 
 		virtual Eigen::Vector3d getStartPoint() {
-			std::cout << "StraightBound" << std::endl;
+			//std::cout << "StraightBound" << std::endl;
 			return _bound_mat.row(0);
 		};
 		virtual Eigen::Vector3d getEndPoint() {
-			std::cout << "StraightBound" << std::endl;
+			//std::cout << "StraightBound" << std::endl;
 			return _bound_mat.row(1);
 		};
 
@@ -171,7 +171,8 @@ namespace CurvesPlan
 			Eigen::Vector3d origin,point;
 			origin = bound._bound_mat.row(2);
 			point(0) = origin(0) + cos(theta)*a;
-			point(1) = origin(1) + sin(theta)*b;	
+			point(1) = origin(1) + sin(theta)*b;
+			std::cout << a << " " << b << std::endl;
 			// third axis
 			Eigen::Vector3d startPoint;
 			startPoint = bound.getStartPoint();
@@ -189,10 +190,24 @@ namespace CurvesPlan
 			//calculate full at first
 
 			double arc_length = 0;
-
-			arc_length = M_PI*(a + b)*(1 + 3 * pow(((a - b) / (a + b)) , 2 )/ (10 + sqrt(4 - 3 * pow(((a - b) / (a + b)) , 2))) + (4 / M_PI - 14 / 11)* pow( ((a - b) / (a + b)) , (14.233 + 13.981*pow(((a - b) / (a + b)) , 6.42)) ) );
+			std::cout << bound._parameters << std::endl;
+			
+			double c, d;
+			if (bound._parameters(0) < bound._parameters(1))
+			{
+				c = bound._parameters(1);
+				d = bound._parameters(0);
+			}
+			else
+			{
+				c = bound._parameters(0);
+				d = bound._parameters(1);
+			}
+			arc_length = M_PI*(c + d)*(1 + 3 * pow(((c - d) / (c + d)) , 2 )/ (10 + sqrt(4 - 3 * pow(((c - d) / (c + d)) , 2))) + (4 / M_PI - 14 / 11)* pow( ((c - d) / (c + d)) , (14.233 + 13.981*pow(((c - d) / (c + d)) , 6.42)) ) );
+			std::cout << "arc_length " <<arc_length<<"a:"<<theta0<<"b:"<<theta1<<std::endl;
 
 			double delta_theta = abs(theta1 - theta0);
+			std::cout << "delta theta " << delta_theta << std::endl;
 			if (abs(delta_theta - 2 * M_PI) < 0.1)
 			{
 				/* full */
@@ -591,9 +606,9 @@ namespace CurvesPlan
 				j_cur++;
 				j_bnd++;
 			}
-
+			
 			this->_currentCurveIndex = 0;
-
+			
 			/* init settings for bounds */
 
 			this->_ellReflexBound._bound_mat << 0, 0, 0,
@@ -602,16 +617,15 @@ namespace CurvesPlan
 			this->_ellReflexBound._parameters <<0.03,0.05,-0.5*M_PI,-1.5*M_PI;
 
 			this->_ellForwardBound._bound_mat.row(0) = this->_ellReflexBound.getEndPoint();
-			this->_ellForwardBound._bound_mat.row(1) << this->_ellForwardBound._bound_mat(0, 0) + 0.1,
-				this->_ellForwardBound._bound_mat(0, 1) - 0.03,
-				this->_ellForwardBound._bound_mat(0, 3);
-			this->_ellForwardBound._parameters << this->_ellForwardBound._bound_mat(0, 0),
-				this->_ellForwardBound._bound_mat(1, 1),
-				0.5*M_PI,0;
+			//end point
+			this->_ellForwardBound._bound_mat.row(1) << this->_ellForwardBound._bound_mat(0, 0) + 0.1,this->_ellForwardBound._bound_mat(0, 1) - 0.03,this->_ellForwardBound._bound_mat(0, 2);
+			this->_ellForwardBound._bound_mat.row(2) << this->_ellReflexBound.getEndPoint()(0), this->_ellForwardBound._bound_mat(1,1), 0;
 
+			this->_ellForwardBound._parameters << this->_ellForwardBound._bound_mat(1, 0)- this->_ellForwardBound._bound_mat(0, 0), this->_ellForwardBound._bound_mat(0, 1)-this->_ellForwardBound._bound_mat(1, 1),0.5*M_PI,0;
+			std::cout << this->_ellForwardBound._parameters << "ellForward" << std::endl;
 			this->_strDownBound._bound_mat.row(0) = this->_ellForwardBound.getEndPoint();
 			this->_strDownBound._bound_mat.row(1)= this->_ellForwardBound.getEndPoint();
-			this->_strDownBound._bound_mat(1, 1) = -1.0;// must add reference points later
+			this->_strDownBound._bound_mat(1, 1) = -0.1;// must add reference points later
 
 			this->_total_counts = 5000;
 			/* init settings finished */
@@ -638,6 +652,7 @@ namespace CurvesPlan
 				_total_length += *j;
 				j++;
 			}
+			
 			/* redistribute time counts */
 			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 			this->_countSequences.at(1) = (int)round(_length[1] / _total_length*(double)this->_total_counts);

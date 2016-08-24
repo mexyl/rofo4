@@ -18,14 +18,20 @@ int main()
 
 	/* test normal sequence */
 	CurvesPlan::NormalSequence ns;
+	CurvesPlan::ObstacleSequence os;
 	CurvesPlan::CurvesSequenceBase *csb;
 	csb = &ns;
+	csb = &os;
 	csb->init();
+	std::cout << "init ok" << std::endl;
 	csb->reset();
-
+	std::cout << "reset ok" << std::endl;
+	std::cout << csb->getTotalCounts() << "\t" << csb->getTotalLength() << std::endl;
 	std::ofstream fs("data.txt");
 	std::cout << csb->getTotalCounts() <<"\t"<<csb->getTotalLength()<< std::endl;
-
+	//fs.close();
+	//getchar();
+	//return 0;
 	int count = 0;
 	Eigen::Vector3d point;
 	while (count <= csb->getTotalCounts())

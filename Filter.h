@@ -148,4 +148,54 @@ namespace Filter {
 	};
 
 
+
+	class Threshold
+	{
+	public:
+		Threshold() {
+			this->hi_thr = 600;
+			this->lo_thr = 100;
+			is_on_ = false;
+		};
+		void set_threshold(double lo, double hi)
+		{
+			this->lo_thr = lo;
+			this->hi_thr = hi;
+		};
+		bool threshold(double val)
+		{
+			this->value = val;
+			if (is_on_)
+			{
+				if (val<lo_thr)
+				{
+					is_on_ = false;
+				}
+
+			}
+			else
+			{
+				if (val>hi_thr)
+				{
+					is_on_ = true;
+				}
+
+			}
+			return is_on_;
+		};
+		void reset()
+		{
+			is_on_ = false;
+		};
+		bool is_on() { return is_on_; };
+		double value;
+	private:
+		double hi_thr;
+		double lo_thr;
+		bool is_on_;
+
+	};
+
+
+
 }

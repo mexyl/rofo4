@@ -43,7 +43,12 @@ namespace TrajectoryGenerator
 
 		Robots::LegI *model;
 
-
+		Filter::Threshold thrYpos;
+		Filter::Threshold thrZpos;
+		Filter::Threshold thrZneg;
+		Filter::CFilterFIR_I *fyFilter;
+		Filter::CFilterFIR_I *fzFilter;
+		
 	};
 
 
@@ -87,10 +92,11 @@ namespace TrajectoryGenerator
 		/* have a function to control indirect force sensor */
 		enum ForceMode {NONE,INDIRECT,SENSOR};
 	public:
-		void indirectForceEstimation() {};
+		virtual void reset();
 		void generateRobotGait(Robots::RobotBase& rbt,const Robots::WalkParam &param);
 
 		void setTentative(bool b) { this->isTentative = b; };
+		void setForceMode(ForceMode mode);
 
 	public:
 		std::vector<HexapodSingleLeg> legTraj = std::vector<HexapodSingleLeg>(6);

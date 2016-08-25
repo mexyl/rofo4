@@ -1,6 +1,37 @@
 #include"TrajectoryGenerator.h"
 
+void TrajectoryGenerator::HexapodRofoGait::reset()
+{
 
+};
+
+void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
+{
+	this->forceMode = mode;
+	switch (forceMode)
+	{
+	case TrajectoryGenerator::HexapodRofoGait::NONE:
+		for (int i = 0;i < 6;i++)
+		{
+			legTraj[i].fyFilter = NULL;
+		}
+		break;
+	case TrajectoryGenerator::HexapodRofoGait::INDIRECT:
+		for (int i = 0;i < 6;i++)
+		{
+			legTraj[i].fyFilter = &this->fyFilterInd[i];
+		}
+		break;
+	case TrajectoryGenerator::HexapodRofoGait::SENSOR:
+		for (int i = 0;i < 6;i++)
+		{
+			legTraj[i].fyFilter = &this->fyFilter[i];
+		}
+		break;
+	default:
+		break;
+	}
+}
 
 void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& rbt, const Robots::WalkParam &param)
 {
@@ -149,7 +180,32 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				legTraj[i].prismatic_external_force, 1,
 				0, legTraj[i].foot_force_extern_ref_outside, 1);
 		}
+		if (param.count == 0)
+		{
+			for (int j=0;j < 60;j++)
+			{
+				for (int i = 0;i < 6;i++)
+				{
+					//*********************************************
+					// here may need more discussion: body or world coordinate
+					//*********************************************
+					fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[1]);
+					fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[2]);
+				}
+			}
 
+		}
+		else
+		{
+			for (int i = 0;i < 6;i++)
+			{
+				//*********************************************
+				// here may need more discussion: body or world coordinate
+				//*********************************************
+				fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[1]);
+				fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[2]);
+			}
+		}
 		
 
 		

@@ -72,16 +72,17 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 	auto &robot = static_cast<Robots::RobotTypeI &>(rbt);
 	static aris::dynamic::FloatMarker beginMak{robot.ground()};
 
-	if (param.count == 0)
-	{
-		// set postion of beginMak to the current robot postion
-		// .pm() always return coordinates of the ground frame
-		beginMak.setPrtPm(*robot.body().pm());
-		beginMak.update();
-	}
+
 
 	auto getData = [&]() 
 	{ 	
+		if (param.count == 0)
+		{
+			// set postion of beginMak to the current robot postion
+			// .pm() always return coordinates of the ground frame
+			beginMak.setPrtPm(*robot.body().pm());
+			beginMak.update();
+		}
 		// need to add mapping in this for loop
 		for (int i = 0;i < 6;i++)
 		{

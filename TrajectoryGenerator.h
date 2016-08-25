@@ -29,6 +29,21 @@ namespace TrajectoryGenerator
 		int _sequenceCounts;
 		int _currentCounts;
 
+		double foot_position_ref_body[3];
+		double foot_position_ref_outside[3];
+		
+		double force_jacobian_direct_ref_body[3][3];
+		double force_jacobian_direct_ref_outside[3][3];
+		//double prismatic_dynamic_force[3];
+		//double prismatic_actuation_force[3];
+		double prismatic_external_force[3];
+
+		double foot_force_extern_ref_body[3];
+		double foot_force_extern_ref_outside[3];
+
+		Robots::LegI *model;
+
+
 	};
 
 
@@ -81,19 +96,24 @@ namespace TrajectoryGenerator
 		std::vector<HexapodSingleLeg> legTraj = std::vector<HexapodSingleLeg>(6);
 		
 		ForceMode forceMode = SENSOR;
-		const int motNum;
+		const int motNum = 18;
 		std::vector<Filter::CFilterFIR_I>  posFilter = std::vector<Filter::CFilterFIR_I>(motNum);
 		std::vector<Filter::CFilterFIR_I>  velFilter = std::vector<Filter::CFilterFIR_I>(motNum);
 		std::vector<Filter::CFilterFIR_I>  accFilter = std::vector<Filter::CFilterFIR_I>(motNum);
-		const int fceNum;
+		std::vector<Filter::CFilterFIR_I>  torFilter = std::vector<Filter::CFilterFIR_I>(motNum);
+		const int fceNum = 6;
 		std::vector<Filter::CFilterFIR_I> fyFilter = std::vector<Filter::CFilterFIR_I>(fceNum);
 		std::vector<Filter::CFilterFIR_I> fzFilter = std::vector<Filter::CFilterFIR_I>(fceNum);
-
+		const int legNum = 6;
+		std::vector<Filter::CFilterFIR_I> fyFilterInd = std::vector<Filter::CFilterFIR_I>(legNum);
+		std::vector<Filter::CFilterFIR_I> fzFilterInd = std::vector<Filter::CFilterFIR_I>(legNum);
 
 
 		bool isTentative = true;
-	private:
+	//private:
 		double *pIn, *vIn, *aIn;
 		double fIn[18];
+		double fInExtern[18];
+		aris::dynamic::FloatMarker beginMak;
 	};
 }

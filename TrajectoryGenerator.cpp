@@ -72,6 +72,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 						this->posFilter[j].FeedData(this->position[j]);
 						this->velFilter[j].FeedData(this->velocity[j]);
 						this->accFilter[j].FeedData(this->acceleration[j]);
+						this->torFilter[j].FeedData(this->torque[j]);
 					}
 				}
 
@@ -84,6 +85,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 					this->posFilter[j].FeedData(this->position[j]);
 					this->velFilter[j].FeedData(this->velocity[j]);
 					this->accFilter[j].FeedData(this->acceleration[j]);
+					this->torFilter[j].FeedData(this->torque[j]);
 				}
 			}
 			for (int i = 0;i < 18;i++)
@@ -91,6 +93,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				this->position_filtered[i] = this->posFilter[i].GetData();
 				this->velocity_filtered[i] = this->velFilter[i].GetData();
 				this->acceleration_filtered[i] = this->accFilter[i].GetData();
+				this->torque_filtered[i] = this->torFilter[i].GetData();
 			}
 		}
 
@@ -99,6 +102,14 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 
 	auto evalModel = [&]() 
 	{
+		legTraj[0].model = robot.pLF;
+		legTraj[1].model = robot.pLM;
+		legTraj[2].model = robot.pLR;
+		legTraj[3].model = robot.pRF;
+		legTraj[4].model = robot.pRM;
+		legTraj[5].model = robot.pRR;
+
+
 		pIn = &this->position_filtered[0];
 		robot.SetPin(pIn);
 		vIn = &this->velocity_filtered[0];
@@ -109,6 +120,37 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 		robot.SetFixFeet("000000");
 		robot.FastDyn();
 		robot.GetFin(fIn);
+		/* get external force result on prismatic joint */
+		for (int i = 0;i < motNum;i++)
+		{
+			fInExtern[i] = this->torque_filtered[i] - fIn[i];
+		}
+		for (int i = 0;i < 6;i++)
+		{
+			legTraj[i].prismatic_external_force[0] = fInExtern[i * 3];
+			legTraj[i].prismatic_external_force[1] = fInExtern[i * 3 + 1];
+			legTraj[i].prismatic_external_force[2] = fInExtern[i * 3 + 2];
+			
+			legTraj[i].model->GetPee(legTraj[i].foot_position_ref_outside,beginMak);
+
+			legTraj[i].model->GetPee(legTraj[i].foot_position_ref_body,robot.body());
+			legTraj[i].model->GetJfd(*legTraj[i].force_jacobian_direct_ref_body,robot.body());
+
+			legTraj[i].model->GetPee(legTraj[i].foot_position_ref_outside, beginMak);
+			legTraj[i].model->GetJfd(*legTraj[i].force_jacobian_direct_ref_outside, beginMak);
+
+			aris::dynamic::s_dgemm(3,1,3,-1.0,
+				*legTraj[i].force_jacobian_direct_ref_body,3,
+				legTraj[i].prismatic_external_force,1,
+				0,legTraj[i].foot_force_extern_ref_body,1);
+
+			aris::dynamic::s_dgemm(3, 1, 3, -1.0,
+				*legTraj[i].force_jacobian_direct_ref_outside, 3,
+				legTraj[i].prismatic_external_force, 1,
+				0, legTraj[i].foot_force_extern_ref_outside, 1);
+		}
+
+		
 
 		
 	};

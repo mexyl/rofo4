@@ -1,7 +1,5 @@
 // TestSlpine2.cpp : Defines the entry point for the console application.
 //
-
-#include "stdafx.h"
 #include "Curves.h"
 #include <fstream>
 #include "TrajectoryGenerator.h"
@@ -32,9 +30,13 @@ int main()
 	std::cout << csb->getTotalCounts() << "\t" << csb->getTotalLength() << std::endl;
 	std::ofstream fs("data.txt");
 	std::cout << csb->getTotalCounts() <<"\t"<<csb->getTotalLength()<< std::endl;
-	//fs.close();
-	//getchar();
-	//return 0;
+	
+	std::vector<double> a[10];
+	std::cout << a->size() << std::endl;
+
+	fs.close();
+	getchar();
+	return 0;
 	int count = 0;
 	Eigen::Vector3d point;
 	//ts.reverse(0.2);

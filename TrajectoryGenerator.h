@@ -1,7 +1,10 @@
 #pragma once
+
 #include"Curves.h"
 #include <Robot_Type_I.h>
 #include <Robot_Gait.h>
+#include <functional>
+
 
 namespace TrajectoryGenerator
 {
@@ -47,7 +50,9 @@ namespace TrajectoryGenerator
 		virtual void getTargetFeetPos(Eigen::Matrix<double, 6, 3> &pee) = 0;
 		virtual void getTargetBodyPos(Eigen::Matrix<double, 2, 3>&bee) = 0;
 
-		Eigen::Matrix<double, 18, 1> torque, position;
+		Eigen::Matrix<double, 18, 1> torque,position,velocity,acceleration;
+		Eigen::Matrix<double, 18, 1> torque_filtered, position_filtered, velocity_filtered, acceleration_filtered;
+		Eigen::Matrix<double, 18, 1> position_last, velocity_last;
 		Eigen::Matrix<double, 6, 3> currentPee, targetPee; // feet
 		Eigen::Matrix<double, 2, 3> currentBee, targetBee; // body
 		Eigen::Matrix<double, 6, 6> sensorFceData;
@@ -68,9 +73,13 @@ namespace TrajectoryGenerator
 		enum ForceMode {NONE,INDIRECT,SENSOR};
 	public:
 		void indirectForceEstimation() {};
+		void generateRobotGait(Robots::RobotBase& rbt,const Robots::WalkParam &param);
 
 	public:
-		std::vector<HexapodSingleLeg> legTraj;
+		std::vector<HexapodSingleLeg> legTraj = std::vector<HexapodSingleLeg>(6);
+		
+		ForceMode forceMode = SENSOR;
+
 		
 
 

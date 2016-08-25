@@ -78,6 +78,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\Robots\include;C:\aris2\include;C:\Aris_Dependent;$(IncludePath)</IncludePath>
     <ReferencePath>C:\Robots\lib;C:\aris2\lib;$(ReferencePath)</ReferencePath>
+    <LibraryPath>C:\aris2\lib;C:\Robots\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -88,6 +89,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>C:\Robots\include;C:\aris2\include;C:\Aris_Dependent;$(IncludePath)</IncludePath>
     <ReferencePath>C:\Robots\lib;C:\aris2\lib;$(ReferencePath)</ReferencePath>
+    <LibraryPath>C:\aris2\lib;C:\Robots\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -114,6 +116,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Robot_Base.lib;Robot_Type_I.lib;aris_core.lib;aris_dynamic.lib;aris_sensor.lib;aris_server.lib;aris_control.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -149,6 +152,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Robot_Base.lib;Robot_Type_I.lib;aris_core.lib;aris_dynamic.lib;aris_sensor.lib;aris_server.lib;aris_control.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

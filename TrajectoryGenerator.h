@@ -4,7 +4,7 @@
 #include <Robot_Type_I.h>
 #include <Robot_Gait.h>
 #include <functional>
-
+#include"Filter.h"
 
 namespace TrajectoryGenerator
 {
@@ -75,13 +75,25 @@ namespace TrajectoryGenerator
 		void indirectForceEstimation() {};
 		void generateRobotGait(Robots::RobotBase& rbt,const Robots::WalkParam &param);
 
+		void setTentative(bool b) { this->isTentative = b; };
+
 	public:
 		std::vector<HexapodSingleLeg> legTraj = std::vector<HexapodSingleLeg>(6);
 		
 		ForceMode forceMode = SENSOR;
+		const int motNum;
+		std::vector<Filter::CFilterFIR_I>  posFilter = std::vector<Filter::CFilterFIR_I>(motNum);
+		std::vector<Filter::CFilterFIR_I>  velFilter = std::vector<Filter::CFilterFIR_I>(motNum);
+		std::vector<Filter::CFilterFIR_I>  accFilter = std::vector<Filter::CFilterFIR_I>(motNum);
+		const int fceNum;
+		std::vector<Filter::CFilterFIR_I> fyFilter = std::vector<Filter::CFilterFIR_I>(fceNum);
+		std::vector<Filter::CFilterFIR_I> fzFilter = std::vector<Filter::CFilterFIR_I>(fceNum);
 
-		
 
 
+		bool isTentative = true;
+	private:
+		double *pIn, *vIn, *aIn;
+		double fIn[18];
 	};
 }

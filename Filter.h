@@ -12,10 +12,10 @@ namespace Filter {
 	public:
 		CFilterFIR();
 		~CFilterFIR();
-		void Filter(double inData, double& outData);
+		double Filter(double inData);
 		void ResetReg();
 		void FeedData(double inData);
-		void GetData(double &outData);
+		double GetData();
 		void SetCoef(double coef[LEN]);
 
 	private:
@@ -23,8 +23,8 @@ namespace Filter {
 		double m_OutData;
 		int m_CurrentIndex = 0;
 		int m_FilterLength = LEN;
-		std::vector<double> m_Coef[LEN];
-		std::vector<double> m_Reg[LEN];
+		double m_Coef[LEN];
+		double m_Reg[LEN];
 
 	};
 
@@ -33,8 +33,8 @@ namespace Filter {
 	CFilterFIR<LEN>::CFilterFIR()
 	{
 		//memset(m_Reg, 0, m_FilterLength * sizeof(double));
-		//memset(m_Coef,0,m_FilterLength*sizeof(double));
-		std::fill_n(m_Reg->begin(),m_Reg->end(),0);
+		memset(m_Coef,0,m_FilterLength*sizeof(double));
+		//std::fill_n(m_Reg->begin(),m_Reg->end(),0);
 
 		m_CurrentIndex = 0;
 		m_InData = 0;
@@ -51,8 +51,8 @@ namespace Filter {
 	template<int LEN>
 	void CFilterFIR<LEN>::ResetReg()
 	{
-		//memset(this->m_Reg, 0, this->m_FilterLength * sizeof(double));
-		std::fill_n(m_Reg->begin(), m_Reg->end(), 0);
+		memset(this->m_Reg, 0, this->m_FilterLength * sizeof(double));
+		//std::fill_n(m_Reg->begin(), m_Reg->end(), 0);
 
 		this->m_CurrentIndex = 0;
 		this->m_InData = 0;
@@ -61,7 +61,7 @@ namespace Filter {
 	}
 
 	template<int LEN>
-	void CFilterFIR<LEN>::Filter(double inData, double &outData)
+	double CFilterFIR<LEN>::Filter(double inData)
 	{
 		m_InData = inData;
 		//shift data
@@ -79,13 +79,13 @@ namespace Filter {
 					m_CurrentIndex - i] * m_Coef[i];
 		}
 		m_OutData = outData;
-
+		return m_OutData;
 	}
 
 	template<int LEN>
-	void CFilterFIR<LEN>::GetData(double &outData)
+	double CFilterFIR<LEN>::GetData()
 	{
-		outData = m_OutData;
+		return m_OutData;
 	}
 
 	template<int LEN>

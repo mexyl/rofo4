@@ -31,16 +31,16 @@ namespace TrajectoryGenerator
 		int _currentCounts;
 
 		double foot_position_ref_body[3];
-		double foot_position_ref_outside[3];
+		double foot_position_ref_beginMak[3];
 		
 		double force_jacobian_direct_ref_body[3][3];
-		double force_jacobian_direct_ref_outside[3][3];
+		double force_jacobian_direct_ref_beginMak[3][3];
 		//double prismatic_dynamic_force[3];
 		//double prismatic_actuation_force[3];
 		double prismatic_external_force[3];
 
 		double foot_force_extern_ref_body[3];
-		double foot_force_extern_ref_outside[3];
+		double foot_force_extern_ref_beginMak[3];
 
 		Robots::LegI *model;
 
@@ -129,6 +129,6 @@ namespace TrajectoryGenerator
 		double *pIn, *vIn, *aIn;
 		double fIn[18];
 		double fInExtern[18];
-		aris::dynamic::FloatMarker beginMak;
+		//aris::dynamic::FloatMarker beginMak;
 	};
 }

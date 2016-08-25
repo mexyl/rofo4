@@ -2,6 +2,14 @@
 
 void TrajectoryGenerator::HexapodRofoGait::reset()
 {
+	legTraj[LF]._refPosition<<-0.3,-0.9,-065;
+	legTraj[LM]._refPosition<<-0.45,-0.9,0;
+	legTraj[LR]._refPosition<<-0.3,-0.9,0.65;
+	legTraj[RF]._refPosition<<0.3,-0.9,-0.65;
+	legTraj[RM]._refPosition<<0.45,-0.9,0;
+	legTraj[RR]._refPosition<<0.3,-0.9,0.65;
+
+	this->setForceMode(this->forceMode);
 	
 
 };
@@ -62,6 +70,15 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& rbt,MotionID motion, const Robots::WalkParam &param)
 {
 	auto &robot = static_cast<Robots::RobotTypeI &>(rbt);
+	static aris::dynamic::FloatMarker beginMak{robot.ground()};
+
+	if (param.count == 0)
+	{
+		// set postion of beginMak to the current robot postion
+		// .pm() always return coordinates of the ground frame
+		beginMak.setPrtPm(*robot.body().pm());
+		beginMak.update();
+	}
 
 	auto getData = [&]() 
 	{ 	
@@ -79,20 +96,25 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 		
 		if (param.count == 0 && forceMode == ForceMode::SENSOR)
 		{
-			for (int i = 0;i < 60;i++)
+			for (int j = 0;j < 60;j++)
 			{
-				for (int j = 0;j < 6;j++)
+				for (int i = 0;i < 6;i++)
 				{
-					/*TBD*/
+					legTraj[i].yPosForceDetector.first->FeedData(param.force_data->at(i).Fy);
+					legTraj[i].zPosForceDetector.first->FeedData(param.force_data->at(i).Fz);
+					legTraj[i].zNegForceDetector.first->FeedData(param.force_data->at(i).Fz);
 				}
 			}
 		}
 		else
 		{
-			for (int j = 0;j < 6;j++)
+			for (int i = 0;i < 6;i++)
 			{
-				/*TBD*/
+				legTraj[i].yPosForceDetector.first->FeedData(param.force_data->at(i).Fy);
+				legTraj[i].zPosForceDetector.first->FeedData(param.force_data->at(i).Fz);
+				legTraj[i].zNegForceDetector.first->FeedData(param.force_data->at(i).Fz);
 			}
+			
 		}
 
 		for (int i = 0; i < 18;i++)
@@ -151,7 +173,6 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				this->torque_filtered[i] = this->torFilter[i].GetData();
 			}
 		}
-
 	};
 	getData();
 
@@ -186,13 +207,13 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			legTraj[i].prismatic_external_force[1] = fInExtern[i * 3 + 1];
 			legTraj[i].prismatic_external_force[2] = fInExtern[i * 3 + 2];
 			
-			legTraj[i].model->GetPee(legTraj[i].foot_position_ref_outside,beginMak);
+			legTraj[i].model->GetPee(legTraj[i].foot_position_ref_beginMak,beginMak);
 
 			legTraj[i].model->GetPee(legTraj[i].foot_position_ref_body,robot.body());
 			legTraj[i].model->GetJfd(*legTraj[i].force_jacobian_direct_ref_body,robot.body());
 
-			legTraj[i].model->GetPee(legTraj[i].foot_position_ref_outside, beginMak);
-			legTraj[i].model->GetJfd(*legTraj[i].force_jacobian_direct_ref_outside, beginMak);
+			legTraj[i].model->GetPee(legTraj[i].foot_position_ref_beginMak, beginMak);
+			legTraj[i].model->GetJfd(*legTraj[i].force_jacobian_direct_ref_beginMak, beginMak);
 
 			aris::dynamic::s_dgemm(3,1,3,-1.0,
 				*legTraj[i].force_jacobian_direct_ref_body,3,
@@ -200,9 +221,9 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				0,legTraj[i].foot_force_extern_ref_body,1);
 
 			aris::dynamic::s_dgemm(3, 1, 3, -1.0,
-				*legTraj[i].force_jacobian_direct_ref_outside, 3,
+				*legTraj[i].force_jacobian_direct_ref_beginMak, 3,
 				legTraj[i].prismatic_external_force, 1,
-				0, legTraj[i].foot_force_extern_ref_outside, 1);
+				0, legTraj[i].foot_force_extern_ref_beginMak, 1);
 		}
 		//if (param.count == 0)
 		//{
@@ -213,8 +234,8 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 		//			//*********************************************
 		//			// here may need more discussion: body or world coordinate
 		//			//*********************************************
-		//			fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[1]);
-		//			fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[2]);
+		//			fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_beginMak[1]);
+		//			fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
 		//		}
 		//	}
 
@@ -226,16 +247,42 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 		//		//*********************************************
 		//		// here may need more discussion: body or world coordinate
 		//		//*********************************************
-		//		fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[1]);
-		//		fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[2]);
+		//		fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_beginMak[1]);
+		//		fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
 		//	}
 		//}
 		
-		if (this->forceMode != ForceMode::NONE)
+		if (param.count == 0 && forceMode == ForceMode::INDIRECT)
+		{
+			for (int j = 0;j < 60;j++)
+			{
+				for (int i = 0;i < 6;i++)
+				{
+					legTraj[i].yPosForceDetector.first->FeedData(legTraj[i].foot_force_extern_ref_beginMak[1]);
+					legTraj[i].zPosForceDetector.first->FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
+					legTraj[i].zNegForceDetector.first->FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
+				}
+			}
+		}
+		else
 		{
 			for (int i = 0;i < 6;i++)
 			{
-				
+				legTraj[i].yPosForceDetector.first->FeedData(legTraj[i].foot_force_extern_ref_beginMak[1]);
+				legTraj[i].zPosForceDetector.first->FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
+				legTraj[i].zNegForceDetector.first->FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
+			}
+
+		}
+
+		/* get threshold result */
+		if (forceMode == INDIRECT || forceMode == SENSOR)
+		{
+			for (auto &i : legTraj)
+			{
+				i.yPosForceDetector.second->threshold(i.yPosForceDetector.first->GetData());
+				i.zPosForceDetector.second->threshold(i.zPosForceDetector.first->GetData());
+				i.zNegForceDetector.second->threshold(i.zNegForceDetector.first->GetData());
 			}
 		}
 		
@@ -245,7 +292,20 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 
 	auto gaitGeneration = [&](MotionID mot) 
 	{
-
+		switch (mot)
+		{
+		case TrajectoryGenerator::FORWARD:
+			break;
+		case TrajectoryGenerator::BACKWARD:
+			break;
+		/********* TBD *********/
+		case TrajectoryGenerator::TURNLEFT:
+			break;
+		case TrajectoryGenerator::TURNRIGHT:
+			break;
+		default:
+			break;
+		}
 	};
 	gaitGeneration(motion);
 

@@ -33,7 +33,7 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	}
 }
 
-void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& rbt, const Robots::WalkParam &param)
+void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& rbt,MotionID motion, const Robots::WalkParam &param)
 {
 	auto &robot = static_cast<Robots::RobotTypeI &>(rbt);
 
@@ -207,9 +207,26 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			}
 		}
 		
-
+		for (int i = 0;i < 6;i++)
+		{
+			if (legTraj[i].fyFilter)
+			{
+				legTraj[i].thrYpos.threshold(legTraj[i].fyFilter->GetData());
+			}
+			if (legTraj[i].fzFilter)
+			{
+				legTraj[i].thrZpos.threshold(legTraj[i].fzFilter->GetData());
+				legTraj[i].thrZneg.threshold(legTraj[i].fzFilter->GetData());
+			}
+		}
 		
 	};
 	evalModel();
+
+	auto gaitGeneration = [&](MotionID mot) 
+	{
+
+	};
+	gaitGeneration(motion);
 
 };

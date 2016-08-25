@@ -9,6 +9,7 @@
 namespace TrajectoryGenerator
 {
 	enum LegID { LF = 0, LM, LR, RF, RM, RR };
+	enum MotionID {FORWARD=0,BACKWARD,TURNLEFT,TURNRIGHT};
 
 	class SinglePointTrajBase
 	{
@@ -93,7 +94,7 @@ namespace TrajectoryGenerator
 		enum ForceMode {NONE,INDIRECT,SENSOR};
 	public:
 		virtual void reset();
-		void generateRobotGait(Robots::RobotBase& rbt,const Robots::WalkParam &param);
+		void generateRobotGait(Robots::RobotBase& rbt,MotionID motion,const Robots::WalkParam &param);
 
 		void setTentative(bool b) { this->isTentative = b; };
 		void setForceMode(ForceMode mode);

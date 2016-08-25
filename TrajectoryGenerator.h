@@ -47,8 +47,21 @@ namespace TrajectoryGenerator
 		Filter::Threshold thrYpos;
 		Filter::Threshold thrZpos;
 		Filter::Threshold thrZneg;
-		Filter::CFilterFIR_I *fyFilter;
-		Filter::CFilterFIR_I *fzFilter;
+
+		Filter::Threshold thrYposInd;
+		Filter::Threshold thrZposInd;
+		Filter::Threshold thrZnegInd;
+
+		Filter::CFilterFIR_I fyFilter;
+		Filter::CFilterFIR_I fzFilter;
+
+		Filter::CFilterFIR_I fyFilterInd;
+		Filter::CFilterFIR_I fzFilterInd;
+
+		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> yPosForceDetector;
+		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> zPosForceDetector;
+		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> zNegForceDetector;
+
 		
 	};
 
@@ -109,12 +122,7 @@ namespace TrajectoryGenerator
 		std::vector<Filter::CFilterFIR_I>  accFilter = std::vector<Filter::CFilterFIR_I>(motNum);
 		std::vector<Filter::CFilterFIR_I>  torFilter = std::vector<Filter::CFilterFIR_I>(motNum);
 		const int fceNum = 6;
-		std::vector<Filter::CFilterFIR_I> fyFilter = std::vector<Filter::CFilterFIR_I>(fceNum);
-		std::vector<Filter::CFilterFIR_I> fzFilter = std::vector<Filter::CFilterFIR_I>(fceNum);
 		const int legNum = 6;
-		std::vector<Filter::CFilterFIR_I> fyFilterInd = std::vector<Filter::CFilterFIR_I>(legNum);
-		std::vector<Filter::CFilterFIR_I> fzFilterInd = std::vector<Filter::CFilterFIR_I>(legNum);
-
 
 		bool isTentative = true;
 	//private:

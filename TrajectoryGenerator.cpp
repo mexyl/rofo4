@@ -2,6 +2,7 @@
 
 void TrajectoryGenerator::HexapodRofoGait::reset()
 {
+	
 
 };
 
@@ -13,22 +14,47 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	case TrajectoryGenerator::HexapodRofoGait::NONE:
 		for (int i = 0;i < 6;i++)
 		{
-			legTraj[i].fyFilter = NULL;
+			legTraj[i].yPosForceDetector.first = NULL;
+			legTraj[i].zPosForceDetector.first = NULL;
+			legTraj[i].zNegForceDetector.first = NULL;
+			legTraj[i].yPosForceDetector.second = NULL;
+			legTraj[i].zPosForceDetector.second = NULL;
+			legTraj[i].zNegForceDetector.second = NULL;
 		}
 		break;
 	case TrajectoryGenerator::HexapodRofoGait::INDIRECT:
 		for (int i = 0;i < 6;i++)
 		{
-			legTraj[i].fyFilter = &this->fyFilterInd[i];
+			legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilterInd;
+			legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilterInd;
+			legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilterInd;
+			legTraj[i].yPosForceDetector.second = &legTraj[i].thrYposInd;
+			legTraj[i].zPosForceDetector.second = &legTraj[i].thrZposInd;
+			legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
 		}
 		break;
 	case TrajectoryGenerator::HexapodRofoGait::SENSOR:
 		for (int i = 0;i < 6;i++)
 		{
-			legTraj[i].fyFilter = &this->fyFilter[i];
+			legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilter;
+			legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilter;
+			legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilter;
+			legTraj[i].yPosForceDetector.second = &legTraj[i].thrYpos;
+			legTraj[i].zPosForceDetector.second = &legTraj[i].thrZpos;
+			legTraj[i].zNegForceDetector.second = &legTraj[i].thrZneg;
 		}
 		break;
 	default:
+		for (int i = 0;i < 6;i++)
+		{
+			legTraj[i].yPosForceDetector.first = NULL;
+			legTraj[i].zPosForceDetector.first = NULL;
+			legTraj[i].zNegForceDetector.first = NULL;
+			legTraj[i].yPosForceDetector.second = NULL;
+			legTraj[i].zPosForceDetector.second = NULL;
+			legTraj[i].zNegForceDetector.second = NULL;
+
+		}
 		break;
 	}
 }
@@ -50,15 +76,14 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				, param.force_data->at(i).My
 				, param.force_data->at(i).Mz;
 		}
-
-		if (param.count == 0)
+		
+		if (param.count == 0 && forceMode == ForceMode::SENSOR)
 		{
 			for (int i = 0;i < 60;i++)
 			{
 				for (int j = 0;j < 6;j++)
 				{
-					this->fzFilter[j].FeedData(sensorFceData(j, 2));
-					this->fyFilter[j].FeedData(sensorFceData(j, 1));
+					/*TBD*/
 				}
 			}
 		}
@@ -66,11 +91,10 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 		{
 			for (int j = 0;j < 6;j++)
 			{
-				this->fzFilter[j].FeedData(sensorFceData(j, 2));
-				this->fyFilter[j].FeedData(sensorFceData(j, 1));
+				/*TBD*/
 			}
 		}
-		
+
 		for (int i = 0; i < 18;i++)
 		{
 			//for VIII begin
@@ -180,45 +204,41 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				legTraj[i].prismatic_external_force, 1,
 				0, legTraj[i].foot_force_extern_ref_outside, 1);
 		}
-		if (param.count == 0)
-		{
-			for (int j=0;j < 60;j++)
-			{
-				for (int i = 0;i < 6;i++)
-				{
-					//*********************************************
-					// here may need more discussion: body or world coordinate
-					//*********************************************
-					fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[1]);
-					fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[2]);
-				}
-			}
+		//if (param.count == 0)
+		//{
+		//	for (int j=0;j < 60;j++)
+		//	{
+		//		for (int i = 0;i < 6;i++)
+		//		{
+		//			//*********************************************
+		//			// here may need more discussion: body or world coordinate
+		//			//*********************************************
+		//			fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[1]);
+		//			fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[2]);
+		//		}
+		//	}
 
-		}
-		else
+		//}
+		//else
+		//{
+		//	for (int i = 0;i < 6;i++)
+		//	{
+		//		//*********************************************
+		//		// here may need more discussion: body or world coordinate
+		//		//*********************************************
+		//		fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[1]);
+		//		fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[2]);
+		//	}
+		//}
+		
+		if (this->forceMode != ForceMode::NONE)
 		{
 			for (int i = 0;i < 6;i++)
 			{
-				//*********************************************
-				// here may need more discussion: body or world coordinate
-				//*********************************************
-				fyFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[1]);
-				fzFilterInd[i].FeedData(legTraj[i].foot_force_extern_ref_outside[2]);
+				
 			}
 		}
 		
-		for (int i = 0;i < 6;i++)
-		{
-			if (legTraj[i].fyFilter)
-			{
-				legTraj[i].thrYpos.threshold(legTraj[i].fyFilter->GetData());
-			}
-			if (legTraj[i].fzFilter)
-			{
-				legTraj[i].thrZpos.threshold(legTraj[i].fzFilter->GetData());
-				legTraj[i].thrZneg.threshold(legTraj[i].fzFilter->GetData());
-			}
-		}
 		
 	};
 	evalModel();

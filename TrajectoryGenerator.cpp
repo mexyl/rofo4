@@ -2,14 +2,33 @@
 
 void TrajectoryGenerator::HexapodRofoGait::reset()
 {
+	_rot2Bot <<
+		0, 0, 1,
+		0, 1, 0,
+		1, 0, 0;
+	//  start
+	// VIII
 	legTraj[LF]._refPosition<<-0.3,-0.9,-065;
 	legTraj[LM]._refPosition<<-0.45,-0.9,0;
 	legTraj[LR]._refPosition<<-0.3,-0.9,0.65;
 	legTraj[RF]._refPosition<<0.3,-0.9,-0.65;
 	legTraj[RM]._refPosition<<0.45,-0.9,0;
 	legTraj[RR]._refPosition<<0.3,-0.9,0.65;
-
+	
+	for (auto &i : legTraj)
+	{
+		i._refSpaceY << -1.05,-0.73;
+	}
+	// VIII
 	this->setForceMode(this->forceMode);
+
+	legTraj[LF].setID(LF);
+	legTraj[LM].setID(LM);
+	legTraj[LR].setID(LR);
+
+	legTraj[RF].setID(RF);
+	legTraj[RM].setID(RM);
+	legTraj[RR].setID(RR);
 	
 
 };
@@ -72,8 +91,6 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 	auto &robot = static_cast<Robots::RobotTypeI &>(rbt);
 	static aris::dynamic::FloatMarker beginMak{robot.ground()};
 
-
-
 	auto getData = [&]() 
 	{ 	
 		if (param.count == 0)
@@ -124,7 +141,10 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			static double input2count = 9216000;
 			this->torque[i] = ((double)param.last_motion_raw_data->at(i).feedback_cur)
 				/ 1000.0 * 18 * 38.5 / 1000 * 2 * M_PI / (32.0 / 1000)*4.5;
-			this->position[i] = (double)param.last_motion_raw_data->at(i).feedback_pos / input2count;
+
+			// for count 
+			//this->position[i] = (double)param.last_motion_raw_data->at(i).feedback_pos / input2count;
+			this->position[i] = (double)param.last_motion_raw_data->at(i).target_pos / input2count;
 			// for VIII end
 
 			if (param.count == 0)
@@ -291,15 +311,156 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 	};
 	evalModel();
 
-	auto gaitGeneration = [&](MotionID mot) 
+	if (currentMotion != motion)
+	{
+		for (auto &i : legTraj)
+		{
+			i.setStage(SequenceStage::INIT);
+		}
+	}
+	else
+	{
+		// do nothing, other condition controls zero
+	}
+	
+	/* we have a bunch of functions for init sequences  */
+	/*   */
+	auto initSequences = [&](HexapodSingleLeg & leg, MotionID mot)
+	{
+		/* set start  point*/
+		leg._trajStartPoint << 
+			leg.foot_position_ref_beginMak[0],
+			leg.foot_position_ref_beginMak[1],
+			leg.foot_position_ref_beginMak[2];
+
+		switch (leg.currentSequence->_seqType)
+		{
+		case CurvesPlan::SequenceType::NS:
+			double strH, ellH;
+			double ellL = this->stepLength/2;
+			switch (mot)
+			{
+			case TrajectoryGenerator::IDLE:
+				break;
+			case TrajectoryGenerator::STANDSTILL:
+				break;
+			case TrajectoryGenerator::FORWARD:
+				double z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
+				double stepLengthActual = stepLength - z_offset;
+				/* tricky part */
+				strH = 0.05;
+				ellH = 0.03;
+				double H = strH + ellH;
+				if (H + leg.foot_force_extern_ref_body[1] > leg._refSpaceY(1))
+				{
+					H = leg._refSpaceY(1) - leg.foot_force_extern_ref_body[1];
+					if (H < ellH)
+					{
+						ellH = H;
+						strH = 0;
+					}
+					else
+					{
+						strH = H - ellH;
+					}
+				}
+				leg.normalSequence._strBoundUp._bound_mat << 0, 0, 0,
+					0, strH, 0;
+				leg.normalSequence._strBoundDown._bound_mat << stepLengthActual, strH, 0,
+					stepLengthActual, leg._refSpaceY(0), 0;
+				leg.normalSequence._ellMidBound._bound_mat << 0, strH, 0,
+					stepLengthActual, strH, 0,
+					stepLengthActual / 2, strH, 0;
+				leg.normalSequence._ellMidBound._parameters << abs(stepLengthActual / 2.0), ellH, M_PI, 0;
+				leg.normalSequence.reset();
+
+				break;
+			case TrajectoryGenerator::BACKWARD:
+				
+				break;
+			case TrajectoryGenerator::TURNLEFT:
+				break;
+			case TrajectoryGenerator::TURNRIGHT:
+				break;
+			default:
+				break;
+			}
+
+			break;
+		case CurvesPlan::SequenceType::OS:
+			double strH, ellH1, ellH2, ellL1, ellL2;
+
+			switch (mot)
+			{
+			case TrajectoryGenerator::IDLE:
+				break;
+			case TrajectoryGenerator::STANDSTILL:
+				break;
+			case TrajectoryGenerator::FORWARD:
+				/* tricky part */
+
+				break;
+			case TrajectoryGenerator::BACKWARD:
+				break;
+			case TrajectoryGenerator::TURNLEFT:
+				break;
+			case TrajectoryGenerator::TURNRIGHT:
+				break;
+			default:
+				break;
+			}
+
+			break;
+		case CurvesPlan::SequenceType::TS:
+			// ell str
+			double strH, ellH, ellL;
+			if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::TS)
+			{
+				// move back
+				
+			}
+			else if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::OS
+				|| leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::NS)
+			{
+				// move forward
+
+			}
+			else
+			{
+				
+			}
+			break;
+		case CurvesPlan::SequenceType::SS:
+			leg.standstillSequence._stsBound._bound_mat << 0, 0, 0;
+			break;
+		default:
+			break;
+		}
+	};
+
+	// init the current sequences
+	for (auto &i : legTraj)
+	{
+		if (i.getStage() == SequenceStage::INIT)
+		{
+			initSequences(i,motion);
+		}
+	}
+
+	
+	/* this part need to set INIT state */
+	auto gaitTransition = [&](MotionID mot) 
 	{
 		switch (mot)
 		{
+		case TrajectoryGenerator::IDLE:
+			break;
+		case TrajectoryGenerator::STANDSTILL:
+			break;
 		case TrajectoryGenerator::FORWARD:
 			break;
 		case TrajectoryGenerator::BACKWARD:
 			break;
-		/********* TBD *********/
 		case TrajectoryGenerator::TURNLEFT:
 			break;
 		case TrajectoryGenerator::TURNRIGHT:
@@ -307,7 +468,25 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 		default:
 			break;
 		}
+
 	};
-	gaitGeneration(motion);
+	gaitTransition(motion);
+	for (auto &i : legTraj)
+	{
+		Eigen::Vector3d point=i._trajStartPoint + this->_rot2Bot //rotate
+			*i.currentSequence->getPoint(
+				(double)(param.count-i.currentSequence->getStartTime())
+				/i.currentSequence->getTotalCounts());
+		//assignment of target pee
+		this->targetPee(i.getID(), 0) = point(0);
+		this->targetPee(i.getID(), 1) = point(1);
+		this->targetPee(i.getID(), 2) = point(2);
+	}
+
+	// TBD
+	// clean the varibles, this should be put in the first place of this function
+	auto gaitClean = [&]()
+	{};
+	gaitClean();
 
 };

@@ -9,11 +9,20 @@
 namespace TrajectoryGenerator
 {
 	enum LegID { LF = 0, LM, LR, RF, RM, RR };
-	enum MotionID {FORWARD=0,BACKWARD,TURNLEFT,TURNRIGHT};
+	enum MotionID {IDLE,STANDSTILL,FORWARD,BACKWARD,TURNLEFT,TURNRIGHT};
+	enum SequenceStage {INIT,RUNNING};
+	
 
 	class SinglePointTrajBase
 	{
 	public:
+		virtual void setID(int id) { this->_id = id; };
+		virtual int getID() { return _id; };
+		virtual void setStage(SequenceStage stg) { _sqeStage = stg; };
+		virtual SequenceStage getStage() { return _sqeStage; };
+		int _id;
+		SequenceStage _sqeStage=INIT;// initneed
+		Eigen::Vector3d _trajStartPoint;
 	};
 	class HexapodSingleLeg :public SinglePointTrajBase
 	{
@@ -21,12 +30,15 @@ namespace TrajectoryGenerator
 		CurvesPlan::NormalSequence normalSequence;
 		CurvesPlan::ObstacleSequence obstacleSquence;
 		CurvesPlan::TentativeSequence tentativeSequence;
-		CurvesPlan::StandStill standstillSequence;
+		CurvesPlan::StandStillSequence standstillSequence;
 
-		CurvesPlan::CurvesSequenceBase *currentSequence;
-		CurvesPlan::CurvesSequenceBase *lastSequence;
+		CurvesPlan::CurvesSequenceBase *currentSequence=nullptr;
+		CurvesPlan::CurvesSequenceBase *lastSequence=nullptr;
 
 		Eigen::Vector3d _refPosition;
+		// _refSpace, x,y,z; -neg,+pos
+		Eigen::Matrix<double,1, 2> _refSpaceY;
+		 
 		int _sequenceCounts;
 		int _currentCounts;
 
@@ -130,5 +142,16 @@ namespace TrajectoryGenerator
 		double fIn[18];
 		double fInExtern[18];
 		//aris::dynamic::FloatMarker beginMak;
+		MotionID currentMotion=IDLE;
+		//MotionID nextMotion = IDLE;
+		Eigen::Matrix<double, 3, 3> _rot2Bot;
+		
+		//the use of step count TBD
+		// 1: f 0.3 s 0.3; f=1 s=1
+		// 2: f 0.3 s 0.6 f 0.3; f=2 s=1
+		// 3: f 0.3 s 0.6 f 0.6 s 0.6 f 0.3; f=3 s=2
+		int stepCount; 
+		double stepLength = 0.25;
+
 	};
 }

@@ -4,6 +4,7 @@
 #include <fstream>
 #include "TrajectoryGenerator.h"
 
+
 int main()
 {	
 	CurvesPlan::StraightBound sb;
@@ -31,8 +32,8 @@ int main()
 	std::ofstream fs("data.txt");
 	std::cout << csb->getTotalCounts() <<"\t"<<csb->getTotalLength()<< std::endl;
 	
-	std::vector<double> a[10];
-	std::cout << a->size() << std::endl;
+	std::vector<double> a=std::vector<double>(10);
+	std::cout<<"a size" << a.size() << std::endl;
 
 	fs.close();
 	getchar();

@@ -396,6 +396,9 @@ namespace CurvesPlan
 		}
 	};
 
+
+	enum SequenceType { NS, OS, TS, SS };
+
 	class CurvesSequenceBase
 	{
 	public:
@@ -409,6 +412,7 @@ namespace CurvesPlan
 
 		virtual Eigen::Vector3d getPoint(double t)=0;
 
+		// recommand 
 		virtual Eigen::Vector3d getTargetPoint(double t)
 		{
 			_currentCurveRatio = t;
@@ -451,13 +455,19 @@ namespace CurvesPlan
 		virtual double getCurrentRatio() { return this->_currentCurveRatio; };
 		virtual void setTotalCounts(int t) { this->_total_counts = t; };
 		virtual CurveType getCurrentCurveType() { return _currentCurveType; };
+		virtual void setStartTime(int t) { this->_startTime = t; };
+		virtual int getStartTime() { return this->_startTime; };
+		virtual void setCurrentSequenceCurve(SequenceType st) { _seqType = st; };
+		virtual SequenceType getCurrentSequenceType() { return _seqType; };
 
+		int _startTime;
 		int _total_counts;
 		double _total_length;
 		int _currentCurveIndex;
 		double _currentCurveRatio;
 		double _overall_vel_ref = 0.0;// m/s used to estimate other sequences/s time
 		CurveType _currentCurveType;
+		SequenceType _seqType;
 		
 		std::vector<std::pair<double, double>> _ratioSegment;
 		std::vector<std::pair<CurveBase*, BoundBase*>> _sequencesPair;
@@ -476,6 +486,7 @@ namespace CurvesPlan
 	public:
 		StandStillSequence()
 		{
+			_seqType = SS;
 			this->init();
 			this->_sequencesPair.push_back(std::make_pair(&this->_stsCurve,&this->_stsBound));
 
@@ -494,6 +505,11 @@ namespace CurvesPlan
 			return _stsCurve.getPoint(t);
 		}
 
+		virtual Eigen::Vector3d getPoint(int t)
+		{
+			return _stsCurve.getPoint(1.0);
+		}
+
 
 		StandStillBound _stsBound;
 		StandStill _stsCurve;
@@ -509,6 +525,7 @@ namespace CurvesPlan
 	public:
 		NormalSequence()
 		{
+			_seqType = NS;
 			this->init();
 			this->_sequencesPair.push_back(std::make_pair(&this->_strLineUp,&this->_strBoundUp));
 			this->_sequencesPair.push_back(std::make_pair(&this->_ellMid, &this->_ellMidBound));
@@ -727,6 +744,7 @@ namespace CurvesPlan
 	public:
 		ObstacleSequence()
 		{
+			_seqType = OS;
 			this->init();
 			this->_sequencesPair.push_back(std::make_pair(&this->_ellReflex,&this->_ellReflexBound));
 			this->_sequencesPair.push_back(std::make_pair(&this->_ellForward, &this->_ellForwardBound));
@@ -928,6 +946,7 @@ namespace CurvesPlan
 	public:
 		TentativeSequence()
 		{
+			_seqType = TS;
 			this->init();
 			this->_sequencesPair.push_back(std::make_pair(&this->_ellTentative, &this->_ellTentativeBound));
 			this->_sequencesPair.push_back(std::make_pair(&this->_strDown, &this->_strDownBound));

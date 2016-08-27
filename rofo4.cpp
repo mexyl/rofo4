@@ -65,7 +65,7 @@ auto Rofo::rofoEndGait(aris::dynamic::Model &model, const aris::dynamic::PlanPar
 
 int Rofo::RofoWalkInit()
 {
-
+    rofo.reset();
 }
 
 auto Rofo::rofoParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
@@ -95,7 +95,14 @@ auto Rofo::rofoGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamB
 
 
     TrajectoryGenerator::MotionID mot=TrajectoryGenerator::MotionID::FORWARD;
-    static int ret=rofo.generateRobotGait(robot,mot,param);
+    static int ret;
+
+    if(param.count%1000==0)
+    {
+        rt_printf("rofoGait is running\n");
+    }
+
+    ret=rofo.generateRobotGait(robot,mot,param);
 
     return ret;
 

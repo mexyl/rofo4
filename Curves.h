@@ -5,6 +5,8 @@
 #include <array>
 #include <vector>
 #include <utility>
+#include <aris.h>
+#include "rtdk.h"
 namespace CurvesPlan
 {
 	/*
@@ -73,11 +75,11 @@ namespace CurvesPlan
 		virtual CurveType getCurveType() { return _curveType; };
 
 		virtual Eigen::Vector3d getStartPoint() {
-			std::cout << "EllipseBound" << std::endl;
+//			std::cout << "EllipseBound" << std::endl;
 			return _bound_mat.row(0);
 		};
 		virtual Eigen::Vector3d getEndPoint() {
-			std::cout << "EllipseBound" << std::endl;
+//			std::cout << "EllipseBound" << std::endl;
 			return _bound_mat.row(1);
 		};
 
@@ -96,11 +98,11 @@ namespace CurvesPlan
 		virtual CurveType getCurveType() { return _curveType; };
 
 		virtual Eigen::Vector3d getStartPoint() {
-			std::cout << "CubicBound" << std::endl; 
+//			std::cout << "CubicBound" << std::endl;
 			return _bound_mat.row(0);
 		};
 		virtual Eigen::Vector3d getEndPoint() {
-			std::cout << "CubicBound" << std::endl;
+//			std::cout << "CubicBound" << std::endl;
 			return _bound_mat.row(2);
 		};
 
@@ -157,8 +159,8 @@ namespace CurvesPlan
 			_base_refBound = &bound;
 			auto tmp = static_cast<StraightBound&>(bd);
 			bound = tmp;
-			std::cout << "Curve type straight " << bd.getCurveType() << "\t"
-				<< _base_refBound->getCurveType() << "\t" << bound.getCurveType()<<std::endl;
+//			std::cout << "Curve type straight " << bd.getCurveType() << "\t"
+//				<< _base_refBound->getCurveType() << "\t" << bound.getCurveType()<<std::endl;
 		}
 
 		virtual Eigen::Vector3d getPoint(double t)
@@ -204,7 +206,7 @@ namespace CurvesPlan
 			origin = bound._bound_mat.row(2);
 			point(0) = origin(0) + cos(theta)*a;
 			point(1) = origin(1) + sin(theta)*b;
-			std::cout << a << " " << b << std::endl;
+//			std::cout << a << " " << b << std::endl;
 			// third axis
 			Eigen::Vector3d startPoint;
 			startPoint = bound.getStartPoint();
@@ -222,7 +224,7 @@ namespace CurvesPlan
 			//calculate full at first
 
 			double arc_length = 0;
-			std::cout << bound._parameters << std::endl;
+//			std::cout << bound._parameters << std::endl;
 			
 			double c, d;
 			if (bound._parameters(0) < bound._parameters(1))
@@ -236,10 +238,10 @@ namespace CurvesPlan
 				d = bound._parameters(1);
 			}
 			arc_length = M_PI*(c + d)*(1 + 3 * pow(((c - d) / (c + d)) , 2 )/ (10 + sqrt(4 - 3 * pow(((c - d) / (c + d)) , 2))) + (4 / M_PI - 14 / 11)* pow( ((c - d) / (c + d)) , (14.233 + 13.981*pow(((c - d) / (c + d)) , 6.42)) ) );
-			std::cout << "arc_length " <<arc_length<<"a:"<<theta0<<"b:"<<theta1<<std::endl;
+//			std::cout << "arc_length " <<arc_length<<"a:"<<theta0<<"b:"<<theta1<<std::endl;
 
 			double delta_theta = abs(theta1 - theta0);
-			std::cout << "delta theta " << delta_theta << std::endl;
+//			std::cout << "delta theta " << delta_theta << std::endl;
 			if (abs(delta_theta - 2 * M_PI) < 0.1)
 			{
 				/* full */
@@ -332,7 +334,7 @@ namespace CurvesPlan
 			double Pratio = 0;
 			if (Tacc + Tdec > 1.001)
 			{
-				std::cout << "invalid parameter" << std::endl;
+                std::cout << "invalid parameter" << std::endl;
 				return Pratio;
 			}
 			else
@@ -535,8 +537,7 @@ namespace CurvesPlan
 			this->_sequencesPair.push_back(std::make_pair(&this->_strLineUp,&this->_strBoundUp));
 			this->_sequencesPair.push_back(std::make_pair(&this->_ellMid, &this->_ellMidBound));
 			this->_sequencesPair.push_back(std::make_pair(&this->_strLineDown,&this->_strBoundDown));
-			std::cout << "Construct Normal Sequence "
-				<< _sequencesPair.size() << std::endl;
+
 			for (unsigned int i = 0;i < this->_countSequences.size();i++)
 			{
 				this->_ratioSegment.push_back(std::make_pair(0,0));
@@ -552,8 +553,6 @@ namespace CurvesPlan
 			this->_curveBounds.at(1) = &this->_ellMidBound;
 			this->_curveBounds.at(2) = &this->_strBoundDown;
 
-			_pairedSequence.at(0).first = this->_curveSequences.at(0);
-			_pairedSequence.at(0).first = this->_curveSequences.at(0);
 			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
 			std::vector<BoundBase*>::iterator j_bnd = this->_curveBounds.begin();
             _pairedSequence.resize(3);
@@ -610,7 +609,7 @@ namespace CurvesPlan
 			std::vector<double>::iterator j = _length.begin();
 			for (auto &i : _pairedSequence)
 			{
-				std::cout << i.first->getLength()<<" "<<(int)i.first->_base_refBound->getCurveType()<< std::endl;
+//				std::cout << i.first->getLength()<<" "<<(int)i.first->_base_refBound->getCurveType()<< std::endl;
 				*j = i.first->getLength();
 				_total_length += *j;
 				j++;
@@ -822,7 +821,7 @@ namespace CurvesPlan
 			this->_ellForwardBound._bound_mat.row(2) << this->_ellReflexBound.getEndPoint()(0), this->_ellForwardBound._bound_mat(1,1), 0;
 
 			this->_ellForwardBound._parameters << this->_ellForwardBound._bound_mat(1, 0)- this->_ellForwardBound._bound_mat(0, 0), this->_ellForwardBound._bound_mat(0, 1)-this->_ellForwardBound._bound_mat(1, 1),0.5*M_PI,0;
-			std::cout << this->_ellForwardBound._parameters << "ellForward" << std::endl;
+//			std::cout << this->_ellForwardBound._parameters << "ellForward" << std::endl;
 			this->_strDownBound._bound_mat.row(0) = this->_ellForwardBound.getEndPoint();
 			this->_strDownBound._bound_mat.row(1)= this->_ellForwardBound.getEndPoint();
 			this->_strDownBound._bound_mat(1, 1) = -0.1;// must add reference points later
@@ -848,7 +847,7 @@ namespace CurvesPlan
 
 			for (auto &i : _pairedSequence)
 			{
-				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
+//				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
 				*j = i.first->getLength();
 				_total_length += *j;
 				j++;
@@ -1068,7 +1067,7 @@ namespace CurvesPlan
 			std::vector<double>::iterator j = _length.begin();
 			for (auto &i : _pairedSequence)
 			{
-				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
+//				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
 				*j = i.first->getLength();
 				_total_length += *j;
 				j++;
@@ -1285,7 +1284,7 @@ namespace CurvesPlan
 			std::vector<double>::iterator j = _length.begin();
 			for (auto &i : _pairedSequence)
 			{
-				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
+//				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
 				*j = i.first->getLength();
 				_total_length += *j;
 				j++;

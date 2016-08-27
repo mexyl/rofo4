@@ -163,8 +163,9 @@ namespace TrajectoryGenerator
 		// 2: f 0.3 s 0.6 f 0.3; f=2 s=1  3
 		// 3: f 0.3 s 0.6 f 0.6 s 0.6 f 0.3; f=3 s=2 5
 		// 
-		int stepCount; 
+		int stepCount=1; 
 		double stepLength = 0.25;
+
 
 	};
 }

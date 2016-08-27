@@ -333,6 +333,8 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			leg.foot_position_ref_beginMak[1],
 			leg.foot_position_ref_beginMak[2];
 
+		leg.currentSequence->setStartTime(param.count);
+
 		switch (leg.currentSequence->_seqType)
 		{
 		case CurvesPlan::SequenceType::NS:
@@ -466,7 +468,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 					/* lastPoint is not important, is can be omitted */
 					Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
 					ellH = 0.03;
-					if (leg.zPosForceDetector.second->is_on())
+					if (leg.yPosForceDetector.second->is_on())
 					{
 						ellL = 0.025 / 2;
 					}
@@ -579,6 +581,92 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 		case TrajectoryGenerator::STANDSTILL:
 			break;
 		case TrajectoryGenerator::FORWARD:
+			for (auto &i:legTraj)
+			{
+				switch (i.currentSequence->getCurrentSequenceType())
+				{
+				case CurvesPlan::SequenceType::NS:
+				{
+					if (i.yPosForceDetector.second->is_on())
+					{
+						// step on something
+						// change to TS
+					}
+					else if (i.zPosForceDetector.second->is_on())
+					{
+						// obstacle
+						// change to OS
+
+					}
+					else if((param.count-i.currentSequence->getStartTime())>=i.currentSequence->getTotalCounts())
+					{
+						/*finished*/
+						//should not happen
+						
+					}
+				}
+				break;
+				case CurvesPlan::SequenceType::OS:
+				{
+					if (i.yPosForceDetector.second->is_on())
+					{
+						// step on something
+						// change to TS
+					}
+					else if (i.zPosForceDetector.second->is_on())
+					{
+						// obstacle
+						// change to OS
+
+					}
+					else if ((param.count - i.currentSequence->getStartTime()) >= i.currentSequence->getTotalCounts())
+					{
+						/*finished*/
+						//should not happen
+
+					}
+				}
+				break;
+				case CurvesPlan::SequenceType::TS:
+				{
+					if (i.yPosForceDetector.second->is_on())
+					{
+						// step on something
+						if (i.tentativeCounts == 1)
+						{
+							// TS
+						}
+						else if (i.tentativeCounts == 2)
+						{
+							//SS
+
+						}
+					}
+					else if (i.zPosForceDetector.second->is_on())
+					{
+						// reverse
+
+					}
+					else if ((param.count - i.currentSequence->getStartTime()) >= i.currentSequence->getTotalCounts())
+					{
+						if (i.tentativeCounts == 1 && !i.yPosForceDetector.second->is_on())
+						{
+							// can not reverse, but here need a new sequences
+						}
+						else
+						{
+							//should never come here
+						}
+					}
+				}
+				break;
+				case CurvesPlan::SequenceType::SS:
+				{}
+				break;
+				default:
+					break;
+				}
+			}
 			break;
 		case TrajectoryGenerator::BACKWARD:
 			break;

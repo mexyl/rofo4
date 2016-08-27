@@ -427,7 +427,7 @@ namespace CurvesPlan
 				_currentCurveType = STANDSTILL;
 				return  this->_sequencesPair.at(0).first->getPoint(t);
 			}
-
+			rt_printf("sequencesPair size %d\n",this->_sequencesPair.size());
 			for (unsigned int i = 0;i < this->_sequencesPair.size();i++)
 			{
 				if (t > this->_ratioSegment.at(i).first && t <= this->_ratioSegment.at(i).second)

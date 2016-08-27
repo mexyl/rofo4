@@ -5,6 +5,9 @@
 #include <Robot_Gait.h>
 #include <functional>
 #include"Filter.h"
+#include"log.h"
+
+extern peripherals::Log robot_log;
 
 namespace TrajectoryGenerator
 {
@@ -94,15 +97,16 @@ namespace TrajectoryGenerator
 		virtual void reset() = 0;
 		/* input/output */
 		/* WARNING, at the first cycle, you need last position data */
-		virtual void setCurrentMotorTorque(Eigen::Matrix<double, 18, 1> &tor) = 0;
-		virtual void setCurrentMotorPostion(Eigen::Matrix<double, 18, 1> &pos) = 0;
 
-		virtual void setCurrentFeetPos(Eigen::Matrix<double, 6, 3> &pee) = 0;
-		virtual void setCurrentBodyPos(Eigen::Matrix<double, 2, 3> &bee) = 0;
-		virtual void setCurrentForceSensorData(Eigen::Matrix<double, 6, 6> &fdata) = 0;
+        //virtual void setCurrentMotorTorque(Eigen::Matrix<double, 18, 1> &tor) = 0;
+        //virtual void setCurrentMotorPostion(Eigen::Matrix<double, 18, 1> &pos) = 0;
 
-		virtual void getTargetFeetPos(Eigen::Matrix<double, 6, 3> &pee) = 0;
-		virtual void getTargetBodyPos(Eigen::Matrix<double, 2, 3>&bee) = 0;
+        //virtual void setCurrentFeetPos(Eigen::Matrix<double, 6, 3> &pee) = 0;
+        //virtual void setCurrentBodyPos(Eigen::Matrix<double, 2, 3> &bee) = 0;
+        //virtual void setCurrentForceSensorData(Eigen::Matrix<double, 6, 6> &fdata) = 0;
+
+        //virtual void getTargetFeetPos(Eigen::Matrix<double, 6, 3> &pee) = 0;
+        //virtual void getTargetBodyPos(Eigen::Matrix<double, 2, 3>&bee) = 0;
 
 		Eigen::Matrix<double, 18, 1> torque,position,velocity,acceleration;
 		Eigen::Matrix<double, 18, 1> torque_filtered, position_filtered, velocity_filtered, acceleration_filtered;
@@ -113,11 +117,11 @@ namespace TrajectoryGenerator
 
 		/*model calculation*/
 		// set filters in the derived class;
-		virtual void evaluateModel() = 0;
+        //virtual void evaluateModel() = 0;
 		Eigen::Matrix<double, 6, 3> indirectFceData;
 
 		/* gaitGeneration */
-		virtual void trajectoryGeneration() = 0;
+        //virtual void trajectoryGeneration() = 0;
 	};
 
 	class HexapodRofoGait :public HexapodTrajectoriesBase

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Commands>
+    <en default="all">
+        <all abbreviation="a"/>
+        <left abbreviation="l"/>
+        <right abbreviation="r"/>
+        <motor abbreviation="m" type="intArray" default="0"/>
+    </en>
+    <ds default="all">
+        <all abbreviation="a"/>
+        <left abbreviation="l"/>
+        <right abbreviation="r"/>
+        <motor abbreviation="m" type="intArray" default="0"/>
+    </ds>
+    <hm default="all">
+        <all abbreviation="a"/>
+        <left abbreviation="l"/>
+        <right abbreviation="r"/>
+        <motor abbreviation="m" type="intArray" default="0"/>
+    </hm>
+    <ro/>
+    <ad>
+    	<left abbreviation="l"/>
+        <right abbreviation="r"/>
+    </ad>
+    <wk>
+    	<wk_param type="group">
+    		<totalCount abbreviation="t" type="int" default="3000"/>
+        	<n abbreviation="n" type="int" default="1"/>
+        	<walkDirection abbreviation="w" type="int" default="-3"/>
+        	<upDirection abbreviation="u" type="int" default="2"/>
+        	<distance abbreviation="d" type="double" default="0.5"/>
+        	<height abbreviation="h" type="double" default="0.05"/>
+        	<alpha abbreviation="a" type="double" default="0"/>
+        	<beta abbreviation="b" type="double" default="0"/>
+    	</wk_param>
+    </wk>
+    <climb>
+        <count abbreviation="c" type="int" default="1"/>
+    </climb>
+
+    <edcl>
+    </edcl>
+</Commands>

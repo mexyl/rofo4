@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<HexapodIII>
+  <Model>
+    <Variable>
+      <PI>3.14159265358979</PI>
+      <U1ipe>{ 0, 0,      0,     PI / 2, PI / 2, 0 }</U1ipe>
+      <U1jpe>{ 0, 0,      0,     PI / 2, PI / 2, 0 }</U1jpe>
+      <U2ipe>{ 0, 0.234,  0.135, PI / 2, PI / 2, 0 }</U2ipe>
+      <U2jpe>{ 0, 0,      0,     PI / 2, PI / 2, 0 }</U2jpe>
+      <U3ipe>{ 0, 0.234, -0.135, PI / 2, PI / 2, 0 }</U3ipe>
+      <U3jpe>{ 0, 0,      0,     PI / 2, PI / 2, 0 }</U3jpe>
+      <P1ipe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P1ipe>
+      <P1jpe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P1jpe>
+      <P2ipe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P2ipe>
+      <P2jpe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P2jpe>
+      <P3ipe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P3ipe>
+      <P3jpe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P3jpe>
+      <S2ipe>{ 0, 0.059,  0.034, 0, -PI / 2, 0 }</S2ipe>
+      <S2jpe>{ 0, 0,      0,     0, -PI / 2, 0 }</S2jpe>
+      <S3ipe>{ 0, 0.059, -0.034, 0, -PI / 2, 0 }</S3ipe>
+      <S3jpe>{ 0, 0,      0,     0, -PI / 2, 0 }</S3jpe>
+      <Sfipe>{ 0.1, 0, 0, 0, 0, 0 }</Sfipe>
+      <Sfjpe>{ 0,   0, 0, 0, 0, 0 }</Sfjpe>
+      <LFpe>{-0.0679295 , 0 , -0.3552145, PI/2,  PI* 5/6,   -PI/2-PI*7/18}</LFpe>
+      <LMpe>{-0.1234141 , 0 ,  0,         PI/2,  PI* 6/6,   -PI/2-PI*7/18}</LMpe>
+      <LRpe>{-0.0679295 , 0 ,  0.3532904, PI/2,  PI* 7/6,   -PI/2-PI*7/18}</LRpe>
+      <RFpe>{ 0.0679295 , 0 , -0.3552145, PI/2,  PI* 1/6,   -PI/2-PI*7/18}</RFpe>
+      <RMpe>{ 0.1234141 , 0 ,  0,         PI/2,  PI* 0/6,   -PI/2-PI*7/18}</RMpe>
+      <RRpe>{ 0.0679295 , 0 ,  0.3532904, PI/2,  PI*11/6,   -PI/2-PI*7/18}</RRpe>
+      <BodyGamma>{140,0,0,0,0,0,0,0,0,0}</BodyGamma>
+      <P1aGamma>{0,0,0,0,0,0,0,0,0,0}</P1aGamma>
+      <P2aGamma>{0,0,0,0,0,0,0,0,0,0}</P2aGamma>
+      <P3aGamma>{0,0,0,0,0,0,0,0,0,0}</P3aGamma>
+      <ThighGamma>{10 , 1.1 , 0.5 , 0 , 1 , 1 , 1 , 0 , 0 , 0}</ThighGamma>
+      <P2bGamma>{0,0,0,0,0,0,0,0,0,0}</P2bGamma>
+      <P3bGamma>{0,0,0,0,0,0,0,0,0,0}</P3bGamma>
+      <Mot_friction>{20, 30, 560}</Mot_friction>
+    </Variable>
+    <Environment>
+      <Gravity>{0 , -9.8 , 0 , 0 , 0 , 0}</Gravity>
+    </Environment>
+    <Part>
+      <Ground Active="true" Inertia="{1 , 0 , 0 , 0 , 1 , 1 , 1 , 0 , 0 , 0}" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="">
+        <ChildMarker>
+          <LF_Sfj Pos="{0 , 0 , 0 , 0 , 0 , 0}" RelativeTo=""/>
+          <LM_Sfj Pos="{0 , 0 , 0 , 0 , 0 , 0}" RelativeTo=""/>
+          <LR_Sfj Pos="{0 , 0 , 0 , 0 , 0 , 0}" RelativeTo=""/>
+          <RF_Sfj Pos="{0 , 0 , 0 , 0 , 0 , 0}" RelativeTo=""/>
+          <RM_Sfj Pos="{0 , 0 , 0 , 0 , 0 , 0}" RelativeTo=""/>
+          <RR_Sfj Pos="{0 , 0 , 0 , 0 , 0 , 0}" RelativeTo=""/>
+          <Origin Pos="{0 , 0 , 0 , 0 , 0 , 0}" RelativeTo=""/>
+        </ChildMarker>
+      </Ground>
+      <LF_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1a_left.x_t">
+        <ChildMarker>
+          <P1j Pos="P1jpe" RelativeTo=""/>
+          <U1j Pos="U1jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LF_P1a>
+      <LF_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P2j Pos="P2jpe" RelativeTo=""/>
+          <U2j Pos="U2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LF_P2a>
+      <LF_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P2i Pos="P2ipe" RelativeTo=""/>
+          <S2j Pos="S2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LF_P2b>
+      <LF_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P3j Pos="P3jpe" RelativeTo=""/>
+          <U3j Pos="U3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LF_P3a>
+      <LF_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P3i Pos="P3ipe" RelativeTo=""/>
+          <S3j Pos="S3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LF_P3b>
+      <LF_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+                Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1b.x_t">
+        <ChildMarker>
+          <P1i Pos="P1ipe" RelativeTo=""/>
+          <S2i Pos="S2ipe" RelativeTo=""/>
+          <S3i Pos="S3ipe" RelativeTo=""/>
+          <Sfi Pos="Sfipe" RelativeTo=""/>
+        </ChildMarker>
+      </LF_Thigh>
+      <LM_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1a_left.x_t">
+        <ChildMarker>
+          <P1j Pos="P1jpe" RelativeTo=""/>
+          <U1j Pos="U1jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LM_P1a>
+      <LM_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P2j Pos="P2jpe" RelativeTo=""/>
+          <U2j Pos="U2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LM_P2a>
+      <LM_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P2i Pos="P2ipe" RelativeTo=""/>
+          <S2j Pos="S2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LM_P2b>
+      <LM_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P3j Pos="P3jpe" RelativeTo=""/>
+          <U3j Pos="U3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LM_P3a>
+      <LM_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P3i Pos="P3ipe" RelativeTo=""/>
+          <S3j Pos="S3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LM_P3b>
+      <LM_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+                Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1b.x_t">
+        <ChildMarker>
+          <P1i Pos="P1ipe" RelativeTo=""/>
+          <S2i Pos="S2ipe" RelativeTo=""/>
+          <S3i Pos="S3ipe" RelativeTo=""/>
+          <Sfi Pos="Sfipe" RelativeTo=""/>
+        </ChildMarker>
+      </LM_Thigh>
+      <LR_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+               Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1a_left.x_t">
+        <ChildMarker>
+          <P1j Pos="P1jpe" RelativeTo=""/>
+          <U1j Pos="U1jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LR_P1a>
+      <LR_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P2j Pos="P2jpe" RelativeTo=""/>
+          <U2j Pos="U2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LR_P2a>
+      <LR_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P2i Pos="P2ipe" RelativeTo=""/>
+          <S2j Pos="S2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LR_P2b>
+      <LR_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P3j Pos="P3jpe" RelativeTo=""/>
+          <U3j Pos="U3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LR_P3a>
+      <LR_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P3i Pos="P3ipe" RelativeTo=""/>
+          <S3j Pos="S3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </LR_P3b>
+      <LR_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+                Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1b.x_t">
+        <ChildMarker>
+          <P1i Pos="P1ipe" RelativeTo=""/>
+          <S2i Pos="S2ipe" RelativeTo=""/>
+          <S3i Pos="S3ipe" RelativeTo=""/>
+          <Sfi Pos="Sfipe" RelativeTo=""/>
+        </ChildMarker>
+      </LR_Thigh>
+      <MainBody Active="true" Inertia="BodyGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+                Graphic_File_Path=
+                "C:\Robots\resource\HexapodIII\aligned_body_body.x_t
+                 C:\Robots\resource\HexapodIII\aligned_body_head.x_t">
+        <ChildMarker>
+          <BodyCenter Pos="{-0 , 0 , -0 , 0 , 0 , 0}" RelativeTo=""/>
+          <LF_Base Pos="LFpe" RelativeTo=""/>
+          <LF_U1i Pos="U1ipe" RelativeTo="LF_Base"/>
+          <LF_U2i Pos="U2ipe" RelativeTo="LF_Base"/>
+          <LF_U3i Pos="U3ipe" RelativeTo="LF_Base"/>
+          <LM_Base Pos="LMpe" RelativeTo=""/>
+          <LM_U1i Pos="U1ipe" RelativeTo="LM_Base"/>
+          <LM_U2i Pos="U2ipe" RelativeTo="LM_Base"/>
+          <LM_U3i Pos="U3ipe" RelativeTo="LM_Base"/>
+          <LR_Base Pos="LRpe" RelativeTo=""/>
+          <LR_U1i Pos="U1ipe" RelativeTo="LR_Base"/>
+          <LR_U2i Pos="U2ipe" RelativeTo="LR_Base"/>
+          <LR_U3i Pos="U3ipe" RelativeTo="LR_Base"/>
+          <RF_Base Pos="RFpe" RelativeTo=""/>
+          <RF_U1i Pos="U1ipe" RelativeTo="RF_Base"/>
+          <RF_U2i Pos="U2ipe" RelativeTo="RF_Base"/>
+          <RF_U3i Pos="U3ipe" RelativeTo="RF_Base"/>
+          <RM_Base Pos="RMpe" RelativeTo=""/>
+          <RM_U1i Pos="U1ipe" RelativeTo="RM_Base"/>
+          <RM_U2i Pos="U2ipe" RelativeTo="RM_Base"/>
+          <RM_U3i Pos="U3ipe" RelativeTo="RM_Base"/>
+          <RR_Base Pos="RRpe" RelativeTo=""/>
+          <RR_U1i Pos="U1ipe" RelativeTo="RR_Base"/>
+          <RR_U2i Pos="U2ipe" RelativeTo="RR_Base"/>
+          <RR_U3i Pos="U3ipe" RelativeTo="RR_Base"/>
+        </ChildMarker>
+      </MainBody>
+      <RF_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1a_left.x_t">
+        <ChildMarker>
+          <P1j Pos="P1jpe" RelativeTo=""/>
+          <U1j Pos="U1jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RF_P1a>
+      <RF_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P2j Pos="P2jpe" RelativeTo=""/>
+          <U2j Pos="U2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RF_P2a>
+      <RF_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P2i Pos="P2ipe" RelativeTo=""/>
+          <S2j Pos="S2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RF_P2b>
+      <RF_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P3j Pos="P3jpe" RelativeTo=""/>
+          <U3j Pos="U3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RF_P3a>
+      <RF_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P3i Pos="P3ipe" RelativeTo=""/>
+          <S3j Pos="S3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RF_P3b>
+      <RF_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+                Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1b.x_t">
+        <ChildMarker>
+          <P1i Pos="P1ipe" RelativeTo=""/>
+          <S2i Pos="S2ipe" RelativeTo=""/>
+          <S3i Pos="S3ipe" RelativeTo=""/>
+          <Sfi Pos="Sfipe" RelativeTo=""/>
+        </ChildMarker>
+      </RF_Thigh>
+      <RM_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1a_left.x_t">
+        <ChildMarker>
+          <P1j Pos="P1jpe" RelativeTo=""/>
+          <U1j Pos="U1jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RM_P1a>
+      <RM_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P2j Pos="P2jpe" RelativeTo=""/>
+          <U2j Pos="U2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RM_P2a>
+      <RM_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P2i Pos="P2ipe" RelativeTo=""/>
+          <S2j Pos="S2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RM_P2b>
+      <RM_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P3j Pos="P3jpe" RelativeTo=""/>
+          <U3j Pos="U3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RM_P3a>
+      <RM_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P3i Pos="P3ipe" RelativeTo=""/>
+          <S3j Pos="S3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RM_P3b>
+      <RM_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+                Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1b.x_t">
+        <ChildMarker>
+          <P1i Pos="P1ipe" RelativeTo=""/>
+          <S2i Pos="S2ipe" RelativeTo=""/>
+          <S3i Pos="S3ipe" RelativeTo=""/>
+          <Sfi Pos="Sfipe" RelativeTo=""/>
+        </ChildMarker>
+      </RM_Thigh>
+      <RR_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+                    Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1a_left.x_t">
+        <ChildMarker>
+          <P1j Pos="P1jpe" RelativeTo=""/>
+          <U1j Pos="U1jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RR_P1a>
+      <RR_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P2j Pos="P2jpe" RelativeTo=""/>
+          <U2j Pos="U2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RR_P2a>
+      <RR_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P2i Pos="P2ipe" RelativeTo=""/>
+          <S2j Pos="S2jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RR_P2b>
+      <RR_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23a.x_t">
+        <ChildMarker>
+          <P3j Pos="P3jpe" RelativeTo=""/>
+          <U3j Pos="U3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RR_P3a>
+      <RR_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+              Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p23b.x_t">
+        <ChildMarker>
+          <P3i Pos="P3ipe" RelativeTo=""/>
+          <S3j Pos="S3jpe" RelativeTo=""/>
+        </ChildMarker>
+      </RR_P3b>
+      <RR_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
+                Graphic_File_Path="C:\Robots\resource\HexapodIII\aligned_p1b.x_t">
+        <ChildMarker>
+          <P1i Pos="P1ipe" RelativeTo=""/>
+          <S2i Pos="S2ipe" RelativeTo=""/>
+          <S3i Pos="S3ipe" RelativeTo=""/>
+          <Sfi Pos="Sfipe" RelativeTo=""/>
+        </ChildMarker>
+      </RR_Thigh>
+    </Part>
+    <Joint>
+      <LF_P1 Active="true" Type="translational" PrtM="LF_Thigh" PrtN="LF_P1a" MakI="P1i" MakJ="P1j"/>
+      <LF_P2 Active="true" Type="translational" PrtM="LF_P2b" PrtN="LF_P2a" MakI="P2i" MakJ="P2j"/>
+      <LF_P3 Active="true" Type="translational" PrtM="LF_P3b" PrtN="LF_P3a" MakI="P3i" MakJ="P3j"/>
+      <LF_S2 Active="true" Type="spherical" PrtM="LF_Thigh" PrtN="LF_P2b" MakI="S2i" MakJ="S2j"/>
+      <LF_S3 Active="true" Type="spherical" PrtM="LF_Thigh" PrtN="LF_P3b" MakI="S3i" MakJ="S3j"/>
+      <LF_Sf Active="true" Type="spherical" PrtM="LF_Thigh" PrtN="Ground" MakI="Sfi" MakJ="LF_Sfj"/>
+      <LF_U1 Active="true" Type="universal" PrtM="MainBody" PrtN="LF_P1a" MakI="LF_U1i" MakJ="U1j"/>
+      <LF_U2 Active="true" Type="universal" PrtM="MainBody" PrtN="LF_P2a" MakI="LF_U2i" MakJ="U2j"/>
+      <LF_U3 Active="true" Type="universal" PrtM="MainBody" PrtN="LF_P3a" MakI="LF_U3i" MakJ="U3j"/>
+      <LM_P1 Active="true" Type="translational" PrtM="LM_Thigh" PrtN="LM_P1a" MakI="P1i" MakJ="P1j"/>
+      <LM_P2 Active="true" Type="translational" PrtM="LM_P2b" PrtN="LM_P2a" MakI="P2i" MakJ="P2j"/>
+      <LM_P3 Active="true" Type="translational" PrtM="LM_P3b" PrtN="LM_P3a" MakI="P3i" MakJ="P3j"/>
+      <LM_S2 Active="true" Type="spherical" PrtM="LM_Thigh" PrtN="LM_P2b" MakI="S2i" MakJ="S2j"/>
+      <LM_S3 Active="true" Type="spherical" PrtM="LM_Thigh" PrtN="LM_P3b" MakI="S3i" MakJ="S3j"/>
+      <LM_Sf Active="true" Type="spherical" PrtM="LM_Thigh" PrtN="Ground" MakI="Sfi" MakJ="LM_Sfj"/>
+      <LM_U1 Active="true" Type="universal" PrtM="MainBody" PrtN="LM_P1a" MakI="LM_U1i" MakJ="U1j"/>
+      <LM_U2 Active="true" Type="universal" PrtM="MainBody" PrtN="LM_P2a" MakI="LM_U2i" MakJ="U2j"/>
+      <LM_U3 Active="true" Type="universal" PrtM="MainBody" PrtN="LM_P3a" MakI="LM_U3i" MakJ="U3j"/>
+      <LR_P1 Active="true" Type="translational" PrtM="LR_Thigh" PrtN="LR_P1a" MakI="P1i" MakJ="P1j"/>
+      <LR_P2 Active="true" Type="translational" PrtM="LR_P2b" PrtN="LR_P2a" MakI="P2i" MakJ="P2j"/>
+      <LR_P3 Active="true" Type="translational" PrtM="LR_P3b" PrtN="LR_P3a" MakI="P3i" MakJ="P3j"/>
+      <LR_S2 Active="true" Type="spherical" PrtM="LR_Thigh" PrtN="LR_P2b" MakI="S2i" MakJ="S2j"/>
+      <LR_S3 Active="true" Type="spherical" PrtM="LR_Thigh" PrtN="LR_P3b" MakI="S3i" MakJ="S3j"/>
+      <LR_Sf Active="true" Type="spherical" PrtM="LR_Thigh" PrtN="Ground" MakI="Sfi" MakJ="LR_Sfj"/>
+      <LR_U1 Active="true" Type="universal" PrtM="MainBody" PrtN="LR_P1a" MakI="LR_U1i" MakJ="U1j"/>
+      <LR_U2 Active="true" Type="universal" PrtM="MainBody" PrtN="LR_P2a" MakI="LR_U2i" MakJ="U2j"/>
+      <LR_U3 Active="true" Type="universal" PrtM="MainBody" PrtN="LR_P3a" MakI="LR_U3i" MakJ="U3j"/>
+      <RF_P1 Active="true" Type="translational" PrtM="RF_Thigh" PrtN="RF_P1a" MakI="P1i" MakJ="P1j"/>
+      <RF_P2 Active="true" Type="translational" PrtM="RF_P2b" PrtN="RF_P2a" MakI="P2i" MakJ="P2j"/>
+      <RF_P3 Active="true" Type="translational" PrtM="RF_P3b" PrtN="RF_P3a" MakI="P3i" MakJ="P3j"/>
+      <RF_S2 Active="true" Type="spherical" PrtM="RF_Thigh" PrtN="RF_P2b" MakI="S2i" MakJ="S2j"/>
+      <RF_S3 Active="true" Type="spherical" PrtM="RF_Thigh" PrtN="RF_P3b" MakI="S3i" MakJ="S3j"/>
+      <RF_Sf Active="true" Type="spherical" PrtM="RF_Thigh" PrtN="Ground" MakI="Sfi" MakJ="RF_Sfj"/>
+      <RF_U1 Active="true" Type="universal" PrtM="MainBody" PrtN="RF_P1a" MakI="RF_U1i" MakJ="U1j"/>
+      <RF_U2 Active="true" Type="universal" PrtM="MainBody" PrtN="RF_P2a" MakI="RF_U2i" MakJ="U2j"/>
+      <RF_U3 Active="true" Type="universal" PrtM="MainBody" PrtN="RF_P3a" MakI="RF_U3i" MakJ="U3j"/>
+      <RM_P1 Active="true" Type="translational" PrtM="RM_Thigh" PrtN="RM_P1a" MakI="P1i" MakJ="P1j"/>
+      <RM_P2 Active="true" Type="translational" PrtM="RM_P2b" PrtN="RM_P2a" MakI="P2i" MakJ="P2j"/>
+      <RM_P3 Active="true" Type="translational" PrtM="RM_P3b" PrtN="RM_P3a" MakI="P3i" MakJ="P3j"/>
+      <RM_S2 Active="true" Type="spherical" PrtM="RM_Thigh" PrtN="RM_P2b" MakI="S2i" MakJ="S2j"/>
+      <RM_S3 Active="true" Type="spherical" PrtM="RM_Thigh" PrtN="RM_P3b" MakI="S3i" MakJ="S3j"/>
+      <RM_Sf Active="true" Type="spherical" PrtM="RM_Thigh" PrtN="Ground" MakI="Sfi" MakJ="RM_Sfj"/>
+      <RM_U1 Active="true" Type="universal" PrtM="MainBody" PrtN="RM_P1a" MakI="RM_U1i" MakJ="U1j"/>
+      <RM_U2 Active="true" Type="universal" PrtM="MainBody" PrtN="RM_P2a" MakI="RM_U2i" MakJ="U2j"/>
+      <RM_U3 Active="true" Type="universal" PrtM="MainBody" PrtN="RM_P3a" MakI="RM_U3i" MakJ="U3j"/>
+      <RR_P1 Active="true" Type="translational" PrtM="RR_Thigh" PrtN="RR_P1a" MakI="P1i" MakJ="P1j"/>
+      <RR_P2 Active="true" Type="translational" PrtM="RR_P2b" PrtN="RR_P2a" MakI="P2i" MakJ="P2j"/>
+      <RR_P3 Active="true" Type="translational" PrtM="RR_P3b" PrtN="RR_P3a" MakI="P3i" MakJ="P3j"/>
+      <RR_S2 Active="true" Type="spherical" PrtM="RR_Thigh" PrtN="RR_P2b" MakI="S2i" MakJ="S2j"/>
+      <RR_S3 Active="true" Type="spherical" PrtM="RR_Thigh" PrtN="RR_P3b" MakI="S3i" MakJ="S3j"/>
+      <RR_Sf Active="true" Type="spherical" PrtM="RR_Thigh" PrtN="Ground" MakI="Sfi" MakJ="RR_Sfj"/>
+      <RR_U1 Active="true" Type="universal" PrtM="MainBody" PrtN="RR_P1a" MakI="RR_U1i" MakJ="U1j"/>
+      <RR_U2 Active="true" Type="universal" PrtM="MainBody" PrtN="RR_P2a" MakI="RR_U2i" MakJ="U2j"/>
+      <RR_U3 Active="true" Type="universal" PrtM="MainBody" PrtN="RR_P3a" MakI="RR_U3i" MakJ="U3j"/>
+    </Joint>
+    <Motion>
+      <LF_M1 Active="true" Type="linear" PrtM="LF_Thigh" PrtN="LF_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
+      <LF_M2 Active="true" Type="linear" PrtM="LF_P2b" PrtN="LF_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
+      <LF_M3 Active="true" Type="linear" PrtM="LF_P3b" PrtN="LF_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
+      <LM_M1 Active="true" Type="linear" PrtM="LM_Thigh" PrtN="LM_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
+      <LM_M2 Active="true" Type="linear" PrtM="LM_P2b" PrtN="LM_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
+      <LM_M3 Active="true" Type="linear" PrtM="LM_P3b" PrtN="LM_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
+      <LR_M1 Active="true" Type="linear" PrtM="LR_Thigh" PrtN="LR_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
+      <LR_M2 Active="true" Type="linear" PrtM="LR_P2b" PrtN="LR_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
+      <LR_M3 Active="true" Type="linear" PrtM="LR_P3b" PrtN="LR_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
+      <RF_M1 Active="true" Type="linear" PrtM="RF_Thigh" PrtN="RF_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
+      <RF_M2 Active="true" Type="linear" PrtM="RF_P2b" PrtN="RF_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
+      <RF_M3 Active="true" Type="linear" PrtM="RF_P3b" PrtN="RF_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
+      <RM_M1 Active="true" Type="linear" PrtM="RM_Thigh" PrtN="RM_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
+      <RM_M2 Active="true" Type="linear" PrtM="RM_P2b" PrtN="RM_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
+      <RM_M3 Active="true" Type="linear" PrtM="RM_P3b" PrtN="RM_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
+      <RR_M1 Active="true" Type="linear" PrtM="RR_Thigh" PrtN="RR_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
+      <RR_M2 Active="true" Type="linear" PrtM="RR_P2b" PrtN="RR_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
+      <RR_M3 Active="true" Type="linear" PrtM="RR_P3b" PrtN="RR_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
+    </Motion>
+    <Force>
+      <LF_F1 Active="true" Type="single_component_force" PrtM="LF_Thigh" PrtN="LF_P1a" MakI="P1i" MakJ="P1j" Component="2"/>
+      <LF_F2 Active="true" Type="single_component_force" PrtM="LF_P2b" PrtN="LF_P2a" MakI="P2i" MakJ="P2j" Component="2"/>
+      <LF_F3 Active="true" Type="single_component_force" PrtM="LF_P3b" PrtN="LF_P3a" MakI="P3i" MakJ="P3j" Component="2"/>
+      <LM_F1 Active="true" Type="single_component_force" PrtM="LM_Thigh" PrtN="LM_P1a" MakI="P1i" MakJ="P1j" Component="2"/>
+      <LM_F2 Active="true" Type="single_component_force" PrtM="LM_P2b" PrtN="LM_P2a" MakI="P2i" MakJ="P2j" Component="2"/>
+      <LM_F3 Active="true" Type="single_component_force" PrtM="LM_P3b" PrtN="LM_P3a" MakI="P3i" MakJ="P3j" Component="2"/>
+      <LR_F1 Active="true" Type="single_component_force" PrtM="LR_Thigh" PrtN="LR_P1a" MakI="P1i" MakJ="P1j" Component="2"/>
+      <LR_F2 Active="true" Type="single_component_force" PrtM="LR_P2b" PrtN="LR_P2a" MakI="P2i" MakJ="P2j" Component="2"/>
+      <LR_F3 Active="true" Type="single_component_force" PrtM="LR_P3b" PrtN="LR_P3a" MakI="P3i" MakJ="P3j" Component="2"/>
+      <RF_F1 Active="true" Type="single_component_force" PrtM="RF_Thigh" PrtN="RF_P1a" MakI="P1i" MakJ="P1j" Component="2"/>
+      <RF_F2 Active="true" Type="single_component_force" PrtM="RF_P2b" PrtN="RF_P2a" MakI="P2i" MakJ="P2j" Component="2"/>
+      <RF_F3 Active="true" Type="single_component_force" PrtM="RF_P3b" PrtN="RF_P3a" MakI="P3i" MakJ="P3j" Component="2"/>
+      <RM_F1 Active="true" Type="single_component_force" PrtM="RM_Thigh" PrtN="RM_P1a" MakI="P1i" MakJ="P1j" Component="2"/>
+      <RM_F2 Active="true" Type="single_component_force" PrtM="RM_P2b" PrtN="RM_P2a" MakI="P2i" MakJ="P2j" Component="2"/>
+      <RM_F3 Active="true" Type="single_component_force" PrtM="RM_P3b" PrtN="RM_P3a" MakI="P3i" MakJ="P3j" Component="2"/>
+      <RR_F1 Active="true" Type="single_component_force" PrtM="RR_Thigh" PrtN="RR_P1a" MakI="P1i" MakJ="P1j" Component="2"/>
+      <RR_F2 Active="true" Type="single_component_force" PrtM="RR_P2b" PrtN="RR_P2a" MakI="P2i" MakJ="P2j" Component="2"/>
+      <RR_F3 Active="true" Type="single_component_force" PrtM="RR_P3b" PrtN="RR_P3a" MakI="P3i" MakJ="P3j" Component="2"/>
+    </Force>
+  </Model>
+  <Server>
+    <Commands>
+      <en default="all">
+        <all abbreviation="a"/>
+        <first abbreviation="f"/>
+        <second abbreviation="s"/>
+        <motor abbreviation="m" type="intArray" default="0"/>
+      </en>
+      <ds default="all">
+        <all abbreviation="a"/>
+        <first abbreviation="f"/>
+        <second abbreviation="s"/>
+        <motor abbreviation="m" type="intArray" default="0"/>
+      </ds>
+      <hm default="all">
+        <all abbreviation="a"/>
+        <first abbreviation="f"/>
+        <second abbreviation="s"/>
+        <motor abbreviation="m" type="intArray" default="0"/>
+      </hm>
+      <ro/>
+      <ad>
+        <first abbreviation="f"/>
+        <second abbreviation="s"/>
+      </ad>
+      <wk default="wk_param">
+        <wk_param type="group">
+          <totalCount abbreviation="t" type="int" default="3000"/>
+          <n abbreviation="n" type="int" default="1"/>
+          <walkDirection abbreviation="w" type="int" default="-3"/>
+          <upDirection abbreviation="u" type="int" default="2"/>
+          <distance abbreviation="d" type="double" default="0.5"/>
+          <height abbreviation="h" type="double" default="0.05"/>
+          <alpha abbreviation="a" type="double" default="0"/>
+          <beta abbreviation="b" type="double" default="0"/>
+        </wk_param>
+      </wk>
+	<aw default="all">
+		<all abbreviation="a"/>
+                <first abbreviation="f"/>
+                <second abbreviation="s"/>
+        </aw>
+	<climb default="count">
+                <count abbreviation="c" type="int" default="1"/>
+        </climb>
+	<wj>
+		<depth abbreviation="d" type="double" default="-0.08"/>
+	</wj>
+  <edcl>
+  </edcl>
+	<ay>
+    <param type="group">
+      <param1 type="unique" default="all">
+        <all abbreviation="a"/>
+        <first abbreviation="f"/>
+        <second abbreviation="s"/>
+      </param1>
+      <param2 type="unique" default="dy">
+        <ay abbreviation="y" type="double" default="-0.85"/>
+        <dy abbreviation="j" type="double" default="-0.05"/>
+      </param2>
+    </param>
+	</ay>
+    </Commands>
+    <Connection IP="127.0.0.1" Port="5866"/>
+    <Control homeCur="950" meter2count="1 / 0.01*3.5 * 65536">
+      <MapPhy2Abs>
+        { 15 , 17 , 16, 12 , 14 , 13 , 9 , 11 , 10 , 2 , 0, 1 , 3 , 5 , 4 , 7 , 8 , 6 }
+      </MapPhy2Abs>
+      <HomeEE>
+        {
+        -0.318791579531186,   -0.719675656557493,   -0.500049789146799;
+        -0.413084678293599,   -0.719675656557493,    0;
+        -0.318791579531187,   -0.719675656557493,    0.498125689146798;
+        0.318791579531186,   -0.719675656557493,   -0.500049789146799;
+        0.413084678293599,   -0.719675656557493,    0;
+        0.318791579531187,   -0.719675656557493,    0.498125689146798;
+        }
+      </HomeEE>
+    </Control>
+    <Sensors>
+      <IMU active="true" type="xsens_imu" portLinux="/dev/ttyUSB0" baudRate="921600" sampleRate="400" PeImuGround2BodyGound="{0,0,0,0,-PI/2,PI}" PeImu2Body="{0,0,0,0,PI/2,0}"/>
+      <Vision type="kinect2.0"/>
+    </Sensors>
+  </Server>
+</HexapodIII>

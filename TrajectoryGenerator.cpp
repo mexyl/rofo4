@@ -1,5 +1,7 @@
 #include"TrajectoryGenerator.h"
 
+peripherals::Log robot_log;
+
 void TrajectoryGenerator::HexapodRofoGait::reset()
 {
 	_rot2Bot <<

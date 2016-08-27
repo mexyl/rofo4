@@ -4,6 +4,7 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <utility>
 namespace CurvesPlan
 {
 	/*
@@ -451,16 +452,16 @@ namespace CurvesPlan
 			return point;
 		};
 
-		virtual int getTotalCounts() { return this->_total_counts; };
-		virtual double getTotalLength() { return this->_total_length; };
-		virtual int getCurrentIndex() { return this->_currentCurveIndex; };
-		virtual double getCurrentRatio() { return this->_currentCurveRatio; };
-		virtual void setTotalCounts(int t) { this->_total_counts = t; };
-		virtual CurveType getCurrentCurveType() { return _currentCurveType; };
-		virtual void setStartTime(int t) { this->_startTime = t; };
-		virtual int getStartTime() { return this->_startTime; };
-		virtual void setCurrentSequenceCurve(SequenceType st) { _seqType = st; };
-		virtual SequenceType getCurrentSequenceType() { return _seqType; };
+        virtual int getTotalCounts() { return this->_total_counts; }
+        virtual double getTotalLength() { return this->_total_length; }
+        virtual int getCurrentIndex() { return this->_currentCurveIndex; }
+        virtual double getCurrentRatio() { return this->_currentCurveRatio; }
+        virtual void setTotalCounts(int t) { this->_total_counts = t; }
+        virtual CurveType getCurrentCurveType() { return _currentCurveType; }
+        virtual void setStartTime(int t) { this->_startTime = t; }
+        virtual int getStartTime() { return this->_startTime; }
+        virtual void setCurrentSequenceCurve(SequenceType st) { _seqType = st; }
+        virtual SequenceType getCurrentSequenceType() { return _seqType; }
 
 		int _startTime;
 		int _total_counts;
@@ -502,7 +503,7 @@ namespace CurvesPlan
 			this->_sequencesPair.at(0).first->setBound(*this->_sequencesPair.at(0).second);
 		}
 
-		virtual void setTotalCounts(int t) { this->_total_counts = t; };
+        virtual void setTotalCounts(int t) { this->_total_counts = t; }
 
 		virtual Eigen::Vector3d getPoint(double t)
 		{
@@ -520,8 +521,8 @@ namespace CurvesPlan
 
 		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(3);
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(3);
-		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
-			= std::vector<std::pair<CurveBase*, BoundBase*>>(3);
+        std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence;
+        //std::vector<std::pair<int*, double*>> _pairedSequence;
 	};
 	class NormalSequence :public CurvesSequenceBase
 	{
@@ -555,7 +556,8 @@ namespace CurvesPlan
 			_pairedSequence.at(0).first = this->_curveSequences.at(0);
 			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
 			std::vector<BoundBase*>::iterator j_bnd = this->_curveBounds.begin();
-			for (auto &i : _pairedSequence)
+            _pairedSequence.resize(3);
+            for (auto &i : _pairedSequence)
 			{
 				i.first = *j_cur;
 				i.second = *j_bnd;
@@ -765,8 +767,7 @@ namespace CurvesPlan
 
 		std::vector<CurveBase*> _curveSequences= std::vector<CurveBase*>(3);
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(3);
-		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence 
-			= std::vector<std::pair<CurveBase*, BoundBase*>>(3);
+        std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence;
 	};
 
 	class ObstacleSequence :public CurvesSequenceBase
@@ -797,6 +798,7 @@ namespace CurvesPlan
 
 			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
 			std::vector<BoundBase*>::iterator j_bnd = this->_curveBounds.begin();
+            _pairedSequence.resize(3);
 			for (auto &i : _pairedSequence)
 			{
 				i.first = *j_cur;
@@ -843,6 +845,7 @@ namespace CurvesPlan
 			/* calculate curve length */
 			_total_length = 0.0;
 			std::vector<double>::iterator j = _length.begin();
+
 			for (auto &i : _pairedSequence)
 			{
 				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
@@ -994,8 +997,7 @@ namespace CurvesPlan
 
 		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(3);
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(3);
-		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
-			= std::vector<std::pair<CurveBase*, BoundBase*>>(3);
+        std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence;
 
 	};
 	class TentativeSequence :public CurvesSequenceBase
@@ -1027,6 +1029,7 @@ namespace CurvesPlan
 
 			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
 			std::vector<BoundBase*>::iterator j_bnd = this->_curveBounds.begin();
+            _pairedSequence.resize(2);
 			for (auto &i : _pairedSequence)
 			{
 				i.first = *j_cur;
@@ -1221,8 +1224,7 @@ namespace CurvesPlan
 
 		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(sectionsNum);
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sectionsNum);
-		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
-			= std::vector<std::pair<CurveBase*, BoundBase*>>(sectionsNum);
+        std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence;
 	};
 	class RetractSequence :public NormalSequence
 	{
@@ -1257,11 +1259,10 @@ namespace CurvesPlan
 
 			this->_curveBounds.at(0) = &this->_cbcBound;
 
-
-			_pairedSequence.at(0).first = this->_curveSequences.at(0);
-			_pairedSequence.at(0).first = this->_curveSequences.at(0);
 			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
 			std::vector<BoundBase*>::iterator j_bnd = this->_curveBounds.begin();
+
+            _pairedSequence.resize(1);
 			for (auto &i : _pairedSequence)
 			{
 				i.first = *j_cur;
@@ -1320,8 +1321,7 @@ namespace CurvesPlan
 
 		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(sectionsNum);
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sectionsNum);
-		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
-			= std::vector<std::pair<CurveBase*, BoundBase*>>(sectionsNum);
+        std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence;
 
 	};
 

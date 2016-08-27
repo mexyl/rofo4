@@ -70,7 +70,7 @@ namespace Filter {
 		m_CurrentIndex++;
 		if (m_CurrentIndex == LEN)
 			this->m_CurrentIndex = 0;
-		outData = 0;
+        double outData = 0;
 		for (int i = 0;i<m_FilterLength;i++)
 		{
 			outData += m_Reg[

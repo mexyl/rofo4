@@ -397,7 +397,7 @@ namespace CurvesPlan
 	};
 
 
-	enum SequenceType { NS, OS, TS, SS };
+	enum SequenceType { NS, OS, TS, SS, RS };
 
 	class CurvesSequenceBase
 	{
@@ -1225,5 +1225,12 @@ namespace CurvesPlan
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sectionsNum);
 		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
 			= std::vector<std::pair<CurveBase*, BoundBase*>>(sectionsNum);
+	};
+
+	class RetractSequence :public CurvesSequenceBase
+	{
+		//Retract: str-ell
+
+
 	};
 }

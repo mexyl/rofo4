@@ -389,7 +389,6 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			break;
 		case CurvesPlan::SequenceType::OS:
 			double strH, ellH1, ellH2, ellL1, ellL2;
-
 			switch (mot)
 			{
 			case TrajectoryGenerator::IDLE:

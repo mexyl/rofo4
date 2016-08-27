@@ -397,6 +397,18 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				break;
 			case TrajectoryGenerator::FORWARD:
 				/* tricky part */
+				double stepLengthIncrement = 0.5;//Parameters that can be tweaked
+				if (ellH1 * 2.0 + leg.foot_force_extern_ref_body[1] > leg._refSpaceY(1))
+				{
+					ellH1 = (leg._refSpaceY(1) - leg.foot_force_extern_ref_body[1]) / 2.0;
+				}
+				ellL1 = 0.03;
+				ellH2 = 0.03;
+				ellL2 = stepLengthIncrement;
+
+
+
+
 
 				break;
 			case TrajectoryGenerator::BACKWARD:
@@ -416,16 +428,53 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::TS)
 			{
 				// move back
+				switch (mot)
+				{
+				case TrajectoryGenerator::IDLE:
+					break;
+				case TrajectoryGenerator::STANDSTILL:
+					break;
+				case TrajectoryGenerator::FORWARD:
+					/* tricky part , TS->TS */
+					break;
+				case TrajectoryGenerator::BACKWARD:
+					break;
+				case TrajectoryGenerator::TURNLEFT:
+					break;
+				case TrajectoryGenerator::TURNRIGHT:
+					break;
+				default:
+					break;
+				}
 				
 			}
 			else if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::OS
 				|| leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::NS)
 			{
 				// move forward
+				switch (mot)
+				{
+				case TrajectoryGenerator::IDLE:
+					break;
+				case TrajectoryGenerator::STANDSTILL:
+					break;
+				case TrajectoryGenerator::FORWARD:
+					/*tricky part NS,OS -> TS*/
+					break;
+				case TrajectoryGenerator::BACKWARD:
+					break;
+				case TrajectoryGenerator::TURNLEFT:
+					break;
+				case TrajectoryGenerator::TURNRIGHT:
+					break;
+				default:
+					break;
+				}
 
 			}
 			else
 			{
+				//undefined state
 				
 			}
 			break;
@@ -476,6 +525,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			*i.currentSequence->getPoint(
 				(double)(param.count-i.currentSequence->getStartTime())
 				/i.currentSequence->getTotalCounts());
+
 		//assignment of target pee
 		this->targetPee(i.getID(), 0) = point(0);
 		this->targetPee(i.getID(), 1) = point(1);

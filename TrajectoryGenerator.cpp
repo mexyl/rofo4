@@ -8,16 +8,18 @@ void TrajectoryGenerator::HexapodRofoGait::reset()
 		1, 0, 0;
 	//  start
 	// VIII
-	legTraj[LF]._refPosition<<-0.3,-0.9,-065;
-	legTraj[LM]._refPosition<<-0.45,-0.9,0;
-	legTraj[LR]._refPosition<<-0.3,-0.9,0.65;
-	legTraj[RF]._refPosition<<0.3,-0.9,-0.65;
-	legTraj[RM]._refPosition<<0.45,-0.9,0;
-	legTraj[RR]._refPosition<<0.3,-0.9,0.65;
+	double y = 0.85;
+	legTraj[LF]._refPosition<<-0.3,y,-065;
+	legTraj[LM]._refPosition<<-0.45,y,0;
+	legTraj[LR]._refPosition<<-0.3,y,0.65;
+	legTraj[RF]._refPosition<<0.3,y,-0.65;
+	legTraj[RM]._refPosition<<0.45,y,0;
+	legTraj[RR]._refPosition<<0.3,y,0.65;
 	
 	for (auto &i : legTraj)
 	{
 		i._refSpaceY << -1.05,-0.73;
+		
 	}
 	// VIII
 	this->setForceMode(this->forceMode);
@@ -29,6 +31,8 @@ void TrajectoryGenerator::HexapodRofoGait::reset()
 	legTraj[RF].setID(RF);
 	legTraj[RM].setID(RM);
 	legTraj[RR].setID(RR);
+
+
 	
 
 };

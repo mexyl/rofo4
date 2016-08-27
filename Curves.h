@@ -397,7 +397,7 @@ namespace CurvesPlan
 	};
 
 
-	enum SequenceType { NS, OS, TS, SS, RS };
+	enum SequenceType { NS, OS, TS, SS, RS, CS };
 
 	class CurvesSequenceBase
 	{
@@ -769,7 +769,6 @@ namespace CurvesPlan
 			= std::vector<std::pair<CurveBase*, BoundBase*>>(3);
 	};
 
-
 	class ObstacleSequence :public CurvesSequenceBase
 	{
 	// Obstacle: ell-ell-str
@@ -1025,8 +1024,7 @@ namespace CurvesPlan
 			this->_curveBounds.at(0) = &this->_ellTentativeBound;
 			this->_curveBounds.at(1) = &this->_strDownBound;
 			
-			_pairedSequence.at(0).first = this->_curveSequences.at(0);
-			_pairedSequence.at(0).first = this->_curveSequences.at(0);
+
 			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
 			std::vector<BoundBase*>::iterator j_bnd = this->_curveBounds.begin();
 			for (auto &i : _pairedSequence)
@@ -1226,14 +1224,105 @@ namespace CurvesPlan
 		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
 			= std::vector<std::pair<CurveBase*, BoundBase*>>(sectionsNum);
 	};
-
-
 	class RetractSequence :public NormalSequence
 	{
 	public:
 		RetractSequence()
 		{
 			this->_seqType = RS;
+			this->init();
 		}
 	};
+
+	class OneSplineSequence:public CurvesSequenceBase
+	{
+	public:
+		OneSplineSequence()
+		{
+			_seqType = CS;
+			this->init();
+
+			this->_sequencesPair.push_back(std::make_pair(&this->_cbcLine, &this->_cbcBound));
+
+			for (unsigned int i = 0;i < this->_countSequences.size();i++)
+			{
+				this->_ratioSegment.push_back(std::make_pair(0, 0));
+			}
+		}
+
+		virtual void init()
+		{
+			this->_curveSequences.at(0) = &this->_cbcLine;
+
+
+			this->_curveBounds.at(0) = &this->_cbcBound;
+
+
+			_pairedSequence.at(0).first = this->_curveSequences.at(0);
+			_pairedSequence.at(0).first = this->_curveSequences.at(0);
+			std::vector<CurveBase*>::iterator j_cur = this->_curveSequences.begin();
+			std::vector<BoundBase*>::iterator j_bnd = this->_curveBounds.begin();
+			for (auto &i : _pairedSequence)
+			{
+				i.first = *j_cur;
+				i.second = *j_bnd;
+				j_cur++;
+				j_bnd++;
+			}
+
+			/* this part should be used with reset() */
+		}
+		virtual void reset()
+		{
+			for (auto &i : _pairedSequence)
+			{
+				i.first->setBound(*i.second);
+			}
+
+			/* calculate curve length */
+			_total_length = 0.0;
+			std::vector<double>::iterator j = _length.begin();
+			for (auto &i : _pairedSequence)
+			{
+				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
+				*j = i.first->getLength();
+				_total_length += *j;
+				j++;
+			}
+		}
+
+		virtual void setTotalCounts(int t)
+		{
+			/* redistribute time counts */
+			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
+
+
+			this->_ratioSequences.at(0) = 1.0;
+
+			this->_ratioSegment.at(0).first = 0;
+			this->_ratioSegment.at(0).second =1.0;
+
+
+			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
+
+		}
+
+		CubicBound _cbcBound;
+		CubicSpline _cbcLine;
+
+		const static int sectionsNum = 1;
+
+		std::vector<double> _length = std::vector<double>(sectionsNum);// _length of each curve
+		double _overall_vel_ref = 0.0;// m/s used to estimate other sequences/s time
+
+		std::vector<int> _countSequences = std::vector<int>(sectionsNum);
+		std::vector<double> _ratioSequences = std::vector<double>(sectionsNum);
+
+		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(sectionsNum);
+		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sectionsNum);
+		std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence
+			= std::vector<std::pair<CurveBase*, BoundBase*>>(sectionsNum);
+
+	};
+
 }

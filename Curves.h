@@ -1307,6 +1307,15 @@ namespace CurvesPlan
 				j++;
 			}
 		}
+		virtual Eigen::Vector3d getPoint(int t)
+		{
+			this->getTargetPoint((double)t/(double)this->getTotalCounts());
+		};
+
+		virtual Eigen::Vector3d getPoint(double t)
+		{
+			this->getTargetPoint(t);
+		};
 
 		virtual void setTotalCounts(int t)
 		{

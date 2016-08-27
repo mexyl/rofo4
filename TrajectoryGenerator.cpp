@@ -353,9 +353,9 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				strH = 0.05;
 				ellH = 0.03;
 				double H = strH + ellH;
-				if (H + leg.foot_force_extern_ref_body[1] > leg._refSpaceY(1))
+				if (H + leg.foot_position_ref_body[1] > leg._refSpaceY(1))
 				{
-					H = leg._refSpaceY(1) - leg.foot_force_extern_ref_body[1];
+					H = leg._refSpaceY(1) - leg.foot_position_ref_body[1];
 					if (H < ellH)
 					{
 						ellH = H;
@@ -369,7 +369,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				leg.normalSequence._strBoundUp._bound_mat << 0, 0, 0,
 					0, strH, 0;
 				leg.normalSequence._strBoundDown._bound_mat << stepLengthActual, strH, 0,
-					stepLengthActual, leg._refSpaceY(0), 0;
+					stepLengthActual, leg._refSpaceY(0)- leg.foot_position_ref_body[1], 0;
 				leg.normalSequence._ellMidBound._bound_mat << 0, strH, 0,
 					stepLengthActual, strH, 0,
 					stepLengthActual / 2, strH, 0;
@@ -403,12 +403,14 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			case TrajectoryGenerator::IDLE:
 				break;
 			case TrajectoryGenerator::STANDSTILL:
+
 				break;
 			case TrajectoryGenerator::FORWARD:
 			{
 				/* tricky part */
 				double stepLengthIncrement = 0.5;//Parameters that can be tweaked
-				if (ellH1 * 2.0 + leg.foot_force_extern_ref_body[1] > leg._refSpaceY(1))
+				ellH1 = 0.04;//Parameters that can be tweaked
+				if (ellH1 * 2.0 + leg.foot_position_ref_body[1] > leg._refSpaceY(1))
 				{
 					ellH1 = (leg._refSpaceY(1) - leg.foot_force_extern_ref_body[1]) / 2.0;
 				}
@@ -425,8 +427,10 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				leg.obstacleSquence._ellForwardBound._parameters << ellL2, ellH2, 0.5*M_PI, 0;
 				leg.obstacleSquence._strDownBound._bound_mat.row(0) = leg.obstacleSquence._ellForwardBound.getEndPoint();
 				leg.obstacleSquence._strDownBound._bound_mat.row(1) = leg.obstacleSquence._ellForwardBound.getEndPoint();
-				leg.obstacleSquence._strDownBound._bound_mat(0) = leg._refSpaceY(0);
+				leg.obstacleSquence._strDownBound._bound_mat(0) = leg._refSpaceY(0)- leg.foot_position_ref_body[1];
 				leg.obstacleSquence.reset();
+
+				//velocity =0.2 m/s
 				leg.obstacleSquence.setTotalCounts((int)round((leg.obstacleSquence.getTotalLength() / 0.2) * 1000));
 
 			}
@@ -457,7 +461,35 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				case TrajectoryGenerator::STANDSTILL:
 					break;
 				case TrajectoryGenerator::FORWARD:
-					/* tricky part , TS->TS */
+				{
+					/*tricky part TS -> TS*/
+					/* lastPoint is not important, is can be omitted */
+					Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
+					ellH = 0.03;
+					if (leg.zPosForceDetector.second->is_on())
+					{
+						ellL = 0.025 / 2;
+					}
+					else
+					{
+						ellL = 0.025 * 2;
+					}
+
+					leg.tentativeSequence._ellTentativeBound._bound_mat << 0, 0, 0,
+						ellL * 2, 0, 0,
+						ellL, 0, 0;
+					leg.tentativeSequence._ellTentativeBound._parameters << ellL, ellH, M_PI, 0;
+					leg.tentativeSequence._strDownBound._bound_mat << ellL * 2, 0, 0,
+						ellL * 2, leg._refSpaceY(0) - leg.foot_force_extern_ref_body[1], 0;
+
+					leg.tentativeSequence.reset();
+					// velocity is 0.2
+					leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
+
+				}
+				break;
+					
+
 					break;
 				case TrajectoryGenerator::BACKWARD:
 					break;
@@ -481,7 +513,24 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				case TrajectoryGenerator::STANDSTILL:
 					break;
 				case TrajectoryGenerator::FORWARD:
+				{
 					/*tricky part NS,OS -> TS*/
+					/* lastPoint is not important, is can be omitted */
+					Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
+					ellH = 0.03;
+					ellL = 0.025;
+					leg.tentativeSequence._ellTentativeBound._bound_mat << 0, 0, 0,
+						ellL * 2, 0, 0,
+						ellL, 0, 0;
+					leg.tentativeSequence._ellTentativeBound._parameters << ellL, ellH, M_PI, 0;
+					leg.tentativeSequence._strDownBound._bound_mat << ellL * 2, 0, 0,
+						ellL * 2, leg._refSpaceY(0) - leg.foot_force_extern_ref_body[1], 0;
+
+					leg.tentativeSequence.reset();
+					// velocity is 0.2
+					leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
+
+				}
 					break;
 				case TrajectoryGenerator::BACKWARD:
 					break;

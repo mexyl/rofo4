@@ -30,6 +30,13 @@ namespace TrajectoryGenerator
 		CurvesPlan::NormalSequence normalSequence;
 		CurvesPlan::ObstacleSequence obstacleSquence;
 		CurvesPlan::TentativeSequence tentativeSequence;
+
+		/* in first tentative, */
+		/* when change to standstill ,tentativeCounts reset to 0 
+			when setStage, tentativeCounts+1
+		*/
+		int tentativeCounts = 0;
+
 		CurvesPlan::StandStillSequence standstillSequence;
 
 		CurvesPlan::CurvesSequenceBase *currentSequence=nullptr;

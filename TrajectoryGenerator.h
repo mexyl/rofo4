@@ -148,7 +148,7 @@ namespace TrajectoryGenerator
 		const int fceNum = 6;
 		const int legNum = 6;
 
-		bool isTentative = true;
+        bool isTentative = true;
 	//private:
 		double *pIn, *vIn, *aIn;
 		double fIn[18];

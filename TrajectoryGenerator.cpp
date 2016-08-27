@@ -11,7 +11,7 @@ void TrajectoryGenerator::HexapodRofoGait::reset()
 	//  start
 	// VIII
 	double y = 0.85;
-	legTraj[LF]._refPosition<<-0.3,y,-065;
+    legTraj[LF]._refPosition<<-0.3,y,-0.65;
 	legTraj[LM]._refPosition<<-0.45,y,0;
 	legTraj[LR]._refPosition<<-0.3,y,0.65;
 	legTraj[RF]._refPosition<<0.3,y,-0.65;
@@ -349,6 +349,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			leg.foot_position_ref_beginMak[1],
 			leg.foot_position_ref_beginMak[2];
 
+        rt_printf("%d %d\n",param.count,leg.getID());
+
         leg.setStage(SequenceStage::RUNNING);
 
 		leg.currentSequence->setStartTime(param.count);
@@ -368,6 +370,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			case TrajectoryGenerator::FORWARD:
 			{
 				double z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
+//                std::cout<<"leg.ref pos"<<leg.foot_position_ref_body[2]<<"\t"<<leg._refPosition(2);
 				double stepLengthActual = stepLength - z_offset;
 				/* tricky part */
 				strH = 0.05;
@@ -433,7 +436,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				ellH1 = 0.04;//Parameters that can be tweaked
 				if (ellH1 * 2.0 + leg.foot_position_ref_body[1] > leg._refSpaceY(1))
 				{
-					ellH1 = (leg._refSpaceY(1) - leg.foot_force_extern_ref_body[1]) / 2.0;
+                    ellH1 = (leg._refSpaceY(1) - leg.foot_position_ref_body[1]) / 2.0;
 				}
 				ellL1 = 0.03;
 				ellH2 = 0.03;
@@ -501,7 +504,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 						ellL, 0, 0;
 					leg.tentativeSequence._ellTentativeBound._parameters << ellL, ellH, M_PI, 0;
 					leg.tentativeSequence._strDownBound._bound_mat << ellL * 2, 0, 0,
-						ellL * 2, leg._refSpaceY(0) - leg.foot_force_extern_ref_body[1], 0;
+                        ellL * 2, leg._refSpaceY(0) - leg.foot_position_ref_body[1], 0;
 
 					leg.tentativeSequence.reset();
 					// velocity is 0.2
@@ -546,7 +549,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 						ellL, 0, 0;
 					leg.tentativeSequence._ellTentativeBound._parameters << ellL, ellH, M_PI, 0;
 					leg.tentativeSequence._strDownBound._bound_mat << ellL * 2, 0, 0,
-						ellL * 2, leg._refSpaceY(0) - leg.foot_force_extern_ref_body[1], 0;
+                        ellL * 2, leg._refSpaceY(0) - leg.foot_position_ref_body[1], 0;
 
 					leg.tentativeSequence.reset();
 					// velocity is 0.2
@@ -576,6 +579,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			break;
 		case CurvesPlan::SequenceType::SS:
 			leg.standstillSequence._stsBound._bound_mat << 0, 0, 0;
+            leg.standstillSequence.reset();
+            rt_printf("ss init %d\n",leg.getID());
 			break;
 		case CurvesPlan::SequenceType::RS:
 		{
@@ -585,6 +590,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				&& !leg.yPosForceDetector.second->is_on()
 				&& leg.lastSequence->getCurrentSequenceType()== CurvesPlan::SequenceType::TS)
 			{
+//                std::cout<<"TS\n"<<leg.tentativeSequence._strDownBound._bound_mat<<std::endl;
 				double strHup = leg.tentativeSequence._strDownBound._bound_mat(0, 1) 
 					- leg.tentativeSequence._strDownBound._bound_mat(1, 1);
 				double ellL = leg.tentativeSequence._strDownBound._bound_mat(0, 0);
@@ -606,8 +612,11 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				leg.retractSequence.reset();
 				// velocity is 0.2
 				leg.retractSequence.setTotalCounts((int)round((leg.retractSequence.getTotalLength() / 0.2) * 1000));
+//                std::cout<<"UP\n"<<leg.retractSequence._strBoundUp._bound_mat<<"\nMid\n"
+//                           <<leg.retractSequence._ellMidBound._bound_mat
+//                             <<"\nDown\n"<<leg.retractSequence._strBoundDown._bound_mat;
 
-                rt_printf("ss init %d\n",leg.getID());
+                rt_printf("rs init %d\n",leg.getID());
 			}
 			else
 			{
@@ -649,8 +658,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				{
 					if (i.yPosForceDetector.second->is_on())
 					{
-						// step on something
-						// change to TS
+
 						if (this->isTentative)
 						{
 							i.lastSequence = &i.normalSequence;
@@ -660,6 +668,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 						}
 						else
 						{
+                            i.lastSequence = &i.normalSequence;
 							i.currentSequence = &i.standstillSequence;
 							i.setStage(SequenceStage::INIT);
 						}
@@ -679,7 +688,29 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					else if((param.count-i.currentSequence->getStartTime())>=i.currentSequence->getTotalCounts())
 					{
 						/* finished */
-						// should not happen
+                        // should not happen in reality
+                        // however it could happen in simulation
+                        if (this->isTentative)
+                        {
+                            i.lastSequence = &i.normalSequence;
+                            i.currentSequence = &i.tentativeSequence;
+                            i.setStage(SequenceStage::INIT);
+                            i.tentativeCounts = 1;
+
+                        }
+                        else
+                        {
+                            i.lastSequence = &i.normalSequence;
+                            i.currentSequence = &i.standstillSequence;
+                            i.setStage(SequenceStage::INIT);
+
+                        }
+
+
+
+//                        i.lastSequence = &i.normalSequence;
+//                        i.currentSequence = &i.standstillSequence;
+//                        i.setStage(SequenceStage::INIT);
 						
 					}
 				}
@@ -719,6 +750,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					{
 						/*finished*/
 						//should not happen
+
 
 					}
 				}
@@ -770,6 +802,35 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					}
 				}
 				break;
+                case CurvesPlan::SequenceType::RS:
+                {
+
+                    if (i.yPosForceDetector.second->is_on())
+                    {
+                        // step on something
+                        // ss
+                            i.lastSequence = &i.retractSequence;
+                            i.currentSequence = &i.standstillSequence;
+                            i.setStage(SequenceStage::INIT);
+                            i.tentativeCounts = 0;
+
+
+                    }
+                    else if((param.count - i.currentSequence->getStartTime()) >= i.currentSequence->getTotalCounts())
+                    {
+                        i.lastSequence = &i.retractSequence;
+                        i.currentSequence = &i.standstillSequence;
+                        i.setStage(SequenceStage::INIT);
+                        i.tentativeCounts = 0;
+
+                    }
+//                    rt_printf("%d %d \n",i.currentSequence->getTotalCounts()
+//                              ,param.count - i.currentSequence->getStartTime());
+
+
+                }
+                    break;
+
 				case CurvesPlan::SequenceType::SS:
 				{}
 				break;
@@ -790,38 +851,52 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 	};
 	gaitTransition(motion);
-	for (auto &i : legTraj)
-	{
-		Eigen::Vector3d point=i._trajStartPoint + this->_rot2Bot //rotate
-			*i.currentSequence->getTargetPoint(
-				(double)(param.count-i.currentSequence->getStartTime())
-				/i.currentSequence->getTotalCounts());
 
-		//assignment of target pee
-		this->targetPee(i.getID(), 0) = point(0);
-		this->targetPee(i.getID(), 1) = point(1);
-		this->targetPee(i.getID(), 2) = point(2);
-
-        if(i.getID()==LF && param.count%2000==0)
-        {
-            std::cout<<point<<std::endl;
-            std::cout<<i.currentSequence->getTargetPoint(
-                           (double)(param.count-i.currentSequence->getStartTime())
-                           /i.currentSequence->getTotalCounts())<<std::endl;
-			//std::cout << i.currentSequence->_currentCurveType <<"\t"<< i.currentSequence-><< std::endl;
-
-        }
-	}
-
-
-    if(param.count%2000==0)
+    // init the current sequences
+    for (auto &i : legTraj)
     {
-        for(int i=0;i<6;i++)
+        if (i.getStage() == SequenceStage::INIT)
         {
-          rt_printf("%f\t%f\t%f\n",targetPee(i,0),targetPee(i,1),targetPee(i,2));
+            initSequences(i,motion);
         }
-        rt_printf("\n");
     }
+
+
+    for (auto &i : legTraj)
+    {
+        Eigen::Vector3d point=i._trajStartPoint + this->_rot2Bot //rotate
+            *i.currentSequence->getTargetPoint(
+                (double)(param.count-i.currentSequence->getStartTime())
+                /i.currentSequence->getTotalCounts());
+
+        //assignment of target pee
+        this->targetPee(i.getID(), 0) = point(0);
+        this->targetPee(i.getID(), 1) = point(1);
+        this->targetPee(i.getID(), 2) = point(2);
+
+    }
+
+//    int leg=1;
+//    Eigen::Vector3d point=legTraj[leg]._trajStartPoint + this->_rot2Bot //rotate
+//        *legTraj[leg].currentSequence->getTargetPoint(
+//            (double)(param.count-legTraj[leg].currentSequence->getStartTime())
+//            /legTraj[leg].currentSequence->getTotalCounts());
+
+    //if(param.count%2000==0)
+
+//    if(param.count%500==0)
+//    {
+//        for(int i=0;i<6;i++)
+//        {
+
+
+//            rt_printf("%f\t%f\t%f\t%d\t%f\n"
+//                      ,targetPee(i,0),targetPee(i,1),targetPee(i,2)
+//                      ,legTraj[i].currentSequence->getCurrentSequenceType());
+//                      //legTraj[i].foot_position_ref_beginMak[2]);
+//        }
+//        rt_printf("\n");
+//    }
 
 	// TBD
 	// clean the varibles, this should be put in the first place of this function

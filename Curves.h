@@ -422,12 +422,28 @@ namespace CurvesPlan
 		{
 			_currentCurveRatio = t;
 			Eigen::Vector3d point;
+//            rt_printf("getTargetPoint %d  %ull\n",this->_sequencesPair.size(),&this->_sequencesPair);
+//                      //,this->_sequencesPair.front().first->_base_refBound->getCurveType());
+
+//            point<<0,0,0;
+//            return point;
+
+//            if(this->_sequencesPair.size()>0)
+//            {
+//                rt_printf("sequencesPair size %d\n",this->_sequencesPair.size());
+//            }
+//            else
+//            {
+//                rt_printf("sequencesPair size %d\n",this->_sequencesPair.size());
+//                point<<0,0,0;
+//                return point;
+//            }
 			if (this->_sequencesPair.at(0).first->_base_refBound->getCurveType() == STANDSTILL)
 			{
 				_currentCurveType = STANDSTILL;
 				return  this->_sequencesPair.at(0).first->getPoint(t);
 			}
-			rt_printf("sequencesPair size %d\n",this->_sequencesPair.size());
+
 			for (unsigned int i = 0;i < this->_sequencesPair.size();i++)
 			{
 				if (t > this->_ratioSegment.at(i).first && t <= this->_ratioSegment.at(i).second)
@@ -503,6 +519,7 @@ namespace CurvesPlan
 		virtual void reset()
 		{
 			this->_sequencesPair.at(0).first->setBound(*this->_sequencesPair.at(0).second);
+            this->_stsBound._bound_mat<<0,0,0;
 		}
 
         virtual void setTotalCounts(int t) { this->_total_counts = t; }
@@ -538,7 +555,7 @@ namespace CurvesPlan
 			this->_sequencesPair.push_back(std::make_pair(&this->_ellMid, &this->_ellMidBound));
 			this->_sequencesPair.push_back(std::make_pair(&this->_strLineDown,&this->_strBoundDown));
 
-			for (unsigned int i = 0;i < this->_countSequences.size();i++)
+            for (unsigned int i = 0;i < this->_countSequences.size();i++)
 			{
 				this->_ratioSegment.push_back(std::make_pair(0,0));
 			}

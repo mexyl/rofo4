@@ -318,15 +318,30 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	evalModel();
 
 	// this happened at first time
-	if (currentMotion != motion)
+	if (currentMotion != motion )
 	{
 		/*set start Sequnence*/
-		legTraj.at(LF).currentSequence = &legTraj.at(LF).normalSequence;
-		legTraj.at(RM).currentSequence = &legTraj.at(RM).normalSequence;
-		legTraj.at(LR).currentSequence = &legTraj.at(LR).normalSequence;
-		legTraj.at(RF).currentSequence = &legTraj.at(RF).standstillSequence;
-		legTraj.at(LM).currentSequence = &legTraj.at(LM).standstillSequence;
-		legTraj.at(RR).currentSequence = &legTraj.at(RR).standstillSequence;
+		if (stepCount % 2 == 1)
+		{
+			/* first group */
+			legTraj.at(LF).currentSequence = &legTraj.at(LF).normalSequence;
+			legTraj.at(RM).currentSequence = &legTraj.at(RM).normalSequence;
+			legTraj.at(LR).currentSequence = &legTraj.at(LR).normalSequence;
+			legTraj.at(RF).currentSequence = &legTraj.at(RF).standstillSequence;
+			legTraj.at(LM).currentSequence = &legTraj.at(LM).standstillSequence;
+			legTraj.at(RR).currentSequence = &legTraj.at(RR).standstillSequence;
+		}
+		else
+		{
+			/* second group */
+			legTraj.at(LF).currentSequence = &legTraj.at(LF).standstillSequence;
+			legTraj.at(RM).currentSequence = &legTraj.at(RM).standstillSequence;
+			legTraj.at(LR).currentSequence = &legTraj.at(LR).standstillSequence;
+			legTraj.at(RF).currentSequence = &legTraj.at(RF).normalSequence;
+			legTraj.at(LM).currentSequence = &legTraj.at(LM).normalSequence;
+			legTraj.at(RR).currentSequence = &legTraj.at(RR).normalSequence;
+		}
+		
 
 		for (auto &i : legTraj)
 		{
@@ -920,7 +935,15 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	if (isAllStandStill() == 6)
 	{
         currentMotion=IDLE;
-		return 0;
+		if (stepCount == 1)
+		{
+			return 0;
+		}
+		else
+		{
+			return 1000;
+		}
+		
 	}
 	else
 	{

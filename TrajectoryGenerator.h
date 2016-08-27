@@ -30,6 +30,7 @@ namespace TrajectoryGenerator
 		CurvesPlan::NormalSequence normalSequence;
 		CurvesPlan::ObstacleSequence obstacleSquence;
 		CurvesPlan::TentativeSequence tentativeSequence;
+		CurvesPlan::RetractSequence retractSequence;
 
 		/* in first tentative, */
 		/* when change to standstill ,tentativeCounts reset to 0 
@@ -126,7 +127,7 @@ namespace TrajectoryGenerator
 		enum ForceMode {NONE,INDIRECT,SENSOR};
 	public:
 		virtual void reset();
-		void generateRobotGait(Robots::RobotBase& rbt,MotionID motion,const Robots::WalkParam &param);
+		int generateRobotGait(Robots::RobotBase& rbt,MotionID motion,const Robots::WalkParam &param);
 
 		void setTentative(bool b) { this->isTentative = b; };
 		void setForceMode(ForceMode mode);
@@ -134,7 +135,7 @@ namespace TrajectoryGenerator
 	public:
 		std::vector<HexapodSingleLeg> legTraj = std::vector<HexapodSingleLeg>(6);
 		
-		ForceMode forceMode = SENSOR;
+		ForceMode forceMode = INDIRECT;
 		const int motNum = 18;
 		std::vector<Filter::CFilterFIR_I>  posFilter = std::vector<Filter::CFilterFIR_I>(motNum);
 		std::vector<Filter::CFilterFIR_I>  velFilter = std::vector<Filter::CFilterFIR_I>(motNum);
@@ -154,9 +155,10 @@ namespace TrajectoryGenerator
 		Eigen::Matrix<double, 3, 3> _rot2Bot;
 		
 		//the use of step count TBD
-		// 1: f 0.3 s 0.3; f=1 s=1
-		// 2: f 0.3 s 0.6 f 0.3; f=2 s=1
-		// 3: f 0.3 s 0.6 f 0.6 s 0.6 f 0.3; f=3 s=2
+		// 1: f 0.3 s 0.3; f=1 s=1  2
+		// 2: f 0.3 s 0.6 f 0.3; f=2 s=1  3
+		// 3: f 0.3 s 0.6 f 0.6 s 0.6 f 0.3; f=3 s=2 5
+		// 
 		int stepCount; 
 		double stepLength = 0.25;
 

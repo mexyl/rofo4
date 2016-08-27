@@ -86,7 +86,7 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	}
 }
 
-void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& rbt,MotionID motion, const Robots::WalkParam &param)
+int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& rbt,MotionID motion, const Robots::WalkParam &param)
 {
 	auto &robot = static_cast<Robots::RobotTypeI &>(rbt);
 	static aris::dynamic::FloatMarker beginMak{robot.ground()};
@@ -311,8 +311,17 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 	};
 	evalModel();
 
+	// this happened at first time
 	if (currentMotion != motion)
 	{
+		/*set start Sequnence*/
+		legTraj.at(LF).currentSequence = &legTraj.at(LF).normalSequence;
+		legTraj.at(RM).currentSequence = &legTraj.at(RM).normalSequence;
+		legTraj.at(LR).currentSequence = &legTraj.at(LR).normalSequence;
+		legTraj.at(RF).currentSequence = &legTraj.at(RF).standstillSequence;
+		legTraj.at(LM).currentSequence = &legTraj.at(LM).standstillSequence;
+		legTraj.at(RR).currentSequence = &legTraj.at(RR).standstillSequence;
+
 		for (auto &i : legTraj)
 		{
 			i.setStage(SequenceStage::INIT);
@@ -466,7 +475,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				{
 					/*tricky part TS -> TS*/
 					/* lastPoint is not important, is can be omitted */
-					Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
+					//Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
 					ellH = 0.03;
 					if (leg.yPosForceDetector.second->is_on())
 					{
@@ -556,6 +565,44 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 		case CurvesPlan::SequenceType::SS:
 			leg.standstillSequence._stsBound._bound_mat << 0, 0, 0;
 			break;
+		case CurvesPlan::SequenceType::RS:
+		{
+			/* retract sequence */
+			/* only one condition we need this */
+			if (leg.tentativeCounts == 1 
+				&& !leg.yPosForceDetector.second->is_on()
+				&& leg.lastSequence->getCurrentSequenceType()== CurvesPlan::SequenceType::TS)
+			{
+				double strHup = leg.tentativeSequence._strDownBound._bound_mat(0, 1) 
+					- leg.tentativeSequence._strDownBound._bound_mat(1, 1);
+				double ellL = leg.tentativeSequence._strDownBound._bound_mat(0, 0);
+				ellL = (ellL + 0.05) / 2.0;
+				double ellH = leg.tentativeSequence._ellTentativeBound._parameters(1);
+				double strHdn = strHup;
+
+				/* after get corrent value, set bounds */
+				leg.retractSequence._strBoundUp._bound_mat << 0, 0, 0,
+					0, strHup, 0;
+				leg.retractSequence._strBoundDown._bound_mat << -2 * ellL, strHdn, 0,
+					-2 * ellL, 0, 0;
+
+				leg.retractSequence._ellMidBound._bound_mat << 0, strHup, 0,
+					-2 * ellL, strHdn, 0,
+					-ellL, ellH, 0;
+				leg.retractSequence._ellMidBound._parameters << ellL, ellH, 0, M_PI;
+
+				leg.retractSequence.reset();
+				// velocity is 0.2
+				leg.retractSequence.setTotalCounts((int)round((leg.retractSequence.getTotalLength() / 0.2) * 1000));
+
+			}
+			else
+			{
+				std::cout << "Insufficient condition fot RetractSequence initialization. legID:"<<leg.getID()<< std::endl;
+			}
+
+		}
+			break;
 		default:
 			break;
 		}
@@ -591,17 +638,35 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 					{
 						// step on something
 						// change to TS
+						if (this->isTentative)
+						{
+							i.lastSequence = &i.normalSequence;
+							i.currentSequence = &i.tentativeSequence;
+							i.setStage(SequenceStage::INIT);
+							i.tentativeCounts = 1;
+						}
+						else
+						{
+							i.currentSequence = &i.standstillSequence;
+							i.setStage(SequenceStage::INIT);
+						}
+						
+
 					}
 					else if (i.zPosForceDetector.second->is_on())
 					{
 						// obstacle
 						// change to OS
+						i.lastSequence = &i.normalSequence;
+						i.currentSequence =&i.obstacleSquence;
+						i.setStage(SequenceStage::INIT);
 
 					}
+					/* here should add an retract */
 					else if((param.count-i.currentSequence->getStartTime())>=i.currentSequence->getTotalCounts())
 					{
-						/*finished*/
-						//should not happen
+						/* finished */
+						// should not happen
 						
 					}
 				}
@@ -612,11 +677,29 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 					{
 						// step on something
 						// change to TS
+						
+						if (this->isTentative)
+						{
+							i.lastSequence = &i.obstacleSquence;
+							i.currentSequence = &i.tentativeSequence;
+							i.setStage(SequenceStage::INIT);
+							i.tentativeCounts = 1;
+						}
+						else
+						{
+							i.lastSequence = &i.obstacleSquence;
+							i.currentSequence = &i.standstillSequence;
+							i.setStage(SequenceStage::INIT);
+						}
+
 					}
 					else if (i.zPosForceDetector.second->is_on())
 					{
 						// obstacle
 						// change to OS
+						i.lastSequence = &i.obstacleSquence;
+						i.currentSequence = &i.obstacleSquence;
+						i.setStage(SequenceStage::INIT);
 
 					}
 					else if ((param.count - i.currentSequence->getStartTime()) >= i.currentSequence->getTotalCounts())
@@ -627,7 +710,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 					}
 				}
 				break;
-				case CurvesPlan::SequenceType::TS:
+				case CurvesPlan::SequenceType::TS: // gait transistion is isTentative is off, then the program will never come here
 				{
 					if (i.yPosForceDetector.second->is_on())
 					{
@@ -635,16 +718,27 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 						if (i.tentativeCounts == 1)
 						{
 							// TS
+							i.lastSequence = &i.tentativeSequence;
+							i.currentSequence = &i.tentativeSequence;
+							i.setStage(SequenceStage::INIT);
+							i.tentativeCounts = 2;
 						}
 						else if (i.tentativeCounts == 2)
 						{
 							//SS
+							i.lastSequence = &i.tentativeSequence;
+							i.currentSequence = &i.standstillSequence;
+							i.setStage(SequenceStage::INIT);
+							i.tentativeCounts = 0;
 
 						}
 					}
 					else if (i.zPosForceDetector.second->is_on())
 					{
 						// reverse
+						// add time protect TBD 
+						i.tentativeSequence.reverse(i.currentSequence->getCurrentRatio());
+						i.tentativeSequence.setStartTime(param.count);
 
 					}
 					else if ((param.count - i.currentSequence->getStartTime()) >= i.currentSequence->getTotalCounts())
@@ -652,6 +746,9 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 						if (i.tentativeCounts == 1 && !i.yPosForceDetector.second->is_on())
 						{
 							// can not reverse, but here need a new sequences
+							i.lastSequence = &i.tentativeSequence;
+							i.currentSequence = &i.retractSequence;
+							i.setStage(SequenceStage::INIT);
 						}
 						else
 						{
@@ -699,4 +796,26 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 	{};
 	gaitClean();
 
+	auto isAllStandStill = [&]() 
+	{
+		int allss = 0;
+		for (auto &i : legTraj)
+		{
+			if (i.currentSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::SS)
+			{
+				allss++;
+			}
+		}
+		return allss;
+	};
+
+	if (isAllStandStill() == 6)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1000;
+	}
+	
 };

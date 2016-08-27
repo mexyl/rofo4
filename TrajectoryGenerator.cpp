@@ -336,8 +336,9 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 		switch (leg.currentSequence->_seqType)
 		{
 		case CurvesPlan::SequenceType::NS:
+		{
 			double strH, ellH;
-			double ellL = this->stepLength/2;
+			double ellL = this->stepLength / 2;
 			switch (mot)
 			{
 			case TrajectoryGenerator::IDLE:
@@ -345,6 +346,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			case TrajectoryGenerator::STANDSTILL:
 				break;
 			case TrajectoryGenerator::FORWARD:
+			{
 				double z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
 				double stepLengthActual = stepLength - z_offset;
 				/* tricky part */
@@ -372,11 +374,17 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 					stepLengthActual, strH, 0,
 					stepLengthActual / 2, strH, 0;
 				leg.normalSequence._ellMidBound._parameters << abs(stepLengthActual / 2.0), ellH, M_PI, 0;
+
 				leg.normalSequence.reset();
+
+				// velocity =0.2 m/s
+				leg.normalSequence.setTotalCounts((int)round((leg.normalSequence.getTotalLength() / 0.2) * 1000));
+
+			}
 
 				break;
 			case TrajectoryGenerator::BACKWARD:
-				
+
 				break;
 			case TrajectoryGenerator::TURNLEFT:
 				break;
@@ -385,10 +393,11 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			default:
 				break;
 			}
-
+		}
 			break;
 		case CurvesPlan::SequenceType::OS:
-			double strH, ellH1, ellH2, ellL1, ellL2;
+		{
+			double ellH1, ellH2, ellL1, ellL2;
 			switch (mot)
 			{
 			case TrajectoryGenerator::IDLE:
@@ -396,6 +405,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			case TrajectoryGenerator::STANDSTILL:
 				break;
 			case TrajectoryGenerator::FORWARD:
+			{
 				/* tricky part */
 				double stepLengthIncrement = 0.5;//Parameters that can be tweaked
 				if (ellH1 * 2.0 + leg.foot_force_extern_ref_body[1] > leg._refSpaceY(1))
@@ -405,11 +415,21 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				ellL1 = 0.03;
 				ellH2 = 0.03;
 				ellL2 = stepLengthIncrement;
+				leg.obstacleSquence._ellReflexBound._bound_mat << 0, 0, 0,
+					0, 2 * ellH1, 0,
+					0, ellH1, 0;
+				leg.obstacleSquence._ellReflexBound._parameters << ellL1, ellH1, -0.5*M_PI, -1.5*M_PI;
+				leg.obstacleSquence._ellForwardBound._bound_mat.row(0) << 0, 2 * ellH1, 0;
+				leg.obstacleSquence._ellForwardBound._bound_mat.row(1) << ellL2, 2 * ellH1 - ellH2, 0;
+				leg.obstacleSquence._ellForwardBound._bound_mat.row(2) << 0, 2 * ellH1 - ellH2, 0;
+				leg.obstacleSquence._ellForwardBound._parameters << ellL2, ellH2, 0.5*M_PI, 0;
+				leg.obstacleSquence._strDownBound._bound_mat.row(0) = leg.obstacleSquence._ellForwardBound.getEndPoint();
+				leg.obstacleSquence._strDownBound._bound_mat.row(1) = leg.obstacleSquence._ellForwardBound.getEndPoint();
+				leg.obstacleSquence._strDownBound._bound_mat(0) = leg._refSpaceY(0);
+				leg.obstacleSquence.reset();
+				leg.obstacleSquence.setTotalCounts((int)round((leg.obstacleSquence.getTotalLength() / 0.2) * 1000));
 
-
-
-
-
+			}
 				break;
 			case TrajectoryGenerator::BACKWARD:
 				break;
@@ -421,10 +441,12 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				break;
 			}
 
+		}
 			break;
 		case CurvesPlan::SequenceType::TS:
+		{
 			// ell str
-			double strH, ellH, ellL;
+			double ellH, ellL;
 			if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::TS)
 			{
 				// move back
@@ -446,7 +468,7 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 				default:
 					break;
 				}
-				
+
 			}
 			else if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::OS
 				|| leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::NS)
@@ -475,8 +497,10 @@ void TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& 
 			else
 			{
 				//undefined state
-				
+
 			}
+
+		}
 			break;
 		case CurvesPlan::SequenceType::SS:
 			leg.standstillSequence._stsBound._bound_mat << 0, 0, 0;

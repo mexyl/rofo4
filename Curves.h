@@ -412,6 +412,8 @@ namespace CurvesPlan
 
 		virtual Eigen::Vector3d getPoint(double t)=0;
 
+		
+
 		// recommand 
 		virtual Eigen::Vector3d getTargetPoint(double t)
 		{
@@ -499,6 +501,8 @@ namespace CurvesPlan
 		{
 			this->_sequencesPair.at(0).first->setBound(*this->_sequencesPair.at(0).second);
 		}
+
+		virtual void setTotalCounts(int t) { this->_total_counts = t; };
 
 		virtual Eigen::Vector3d getPoint(double t)
 		{
@@ -609,6 +613,35 @@ namespace CurvesPlan
 				_total_length += *j;
 				j++;
 			}
+			///* redistribute time counts */
+			//this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
+			//this->_countSequences.at(1) = (int)round(_length[1] / _total_length*(double)this->_total_counts);
+			//this->_countSequences.at(2) = this->_total_counts
+			//	- this->_countSequences.at(0)
+			//	- this->_countSequences.at(1);
+			//this->_ratioSequences.at(0) = _length[0] / _total_length;
+			//this->_ratioSequences.at(1) = _length[1] / _total_length;
+			//this->_ratioSequences.at(2) = _length[2] / _total_length;
+
+			//this->_ratioSegment.at(0).first = 0;
+			//this->_ratioSegment.at(0).second = this->_ratioSequences.at(0);
+
+			//this->_ratioSegment.at(1).first = this->_ratioSequences.at(0);
+			//this->_ratioSegment.at(1).second = this->_ratioSequences.at(0)+ this->_ratioSequences.at(1);
+
+			//this->_ratioSegment.at(2).first = this->_ratioSegment.at(1).second;
+			//this->_ratioSegment.at(2).second = 1;
+
+
+			//_overall_vel_ref = _total_length / (double)_total_counts*1000; // m/s
+
+			
+
+		}
+		virtual void setTotalCounts(int t) 
+		{ 
+			this->_total_counts = t;
+
 			/* redistribute time counts */
 			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 			this->_countSequences.at(1) = (int)round(_length[1] / _total_length*(double)this->_total_counts);
@@ -623,17 +656,16 @@ namespace CurvesPlan
 			this->_ratioSegment.at(0).second = this->_ratioSequences.at(0);
 
 			this->_ratioSegment.at(1).first = this->_ratioSequences.at(0);
-			this->_ratioSegment.at(1).second = this->_ratioSequences.at(0)+ this->_ratioSequences.at(1);
+			this->_ratioSegment.at(1).second = this->_ratioSequences.at(0) + this->_ratioSequences.at(1);
 
 			this->_ratioSegment.at(2).first = this->_ratioSegment.at(1).second;
 			this->_ratioSegment.at(2).second = 1;
 
 
-			_overall_vel_ref = _total_length / (double)_total_counts*1000; // m/s
+			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
 
-			
+		};
 
-		}
 		virtual Eigen::Vector3d getPoint(int t)
 		{
 			Eigen::Vector3d point;
@@ -820,6 +852,32 @@ namespace CurvesPlan
 				j++;
 			}
 			
+			///* redistribute time counts */
+			//this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
+			//this->_countSequences.at(1) = (int)round(_length[1] / _total_length*(double)this->_total_counts);
+			//this->_countSequences.at(2) = this->_total_counts
+			//	- this->_countSequences.at(0)
+			//	- this->_countSequences.at(1);
+			//this->_ratioSequences.at(0) = _length[0] / _total_length;
+			//this->_ratioSequences.at(1) = _length[1] / _total_length;
+			//this->_ratioSequences.at(2) = _length[2] / _total_length;
+
+			//this->_ratioSegment.at(0).first = 0;
+			//this->_ratioSegment.at(0).second = this->_ratioSequences.at(0);
+
+			//this->_ratioSegment.at(1).first = this->_ratioSequences.at(0);
+			//this->_ratioSegment.at(1).second = this->_ratioSequences.at(0) + this->_ratioSequences.at(1);
+
+			//this->_ratioSegment.at(2).first = this->_ratioSegment.at(1).second;
+			//this->_ratioSegment.at(2).second = 1;
+
+			//_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
+		
+		}
+		virtual void setTotalCounts(int t)
+		{
+			this->_total_counts = t;
+
 			/* redistribute time counts */
 			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 			this->_countSequences.at(1) = (int)round(_length[1] / _total_length*(double)this->_total_counts);
@@ -839,9 +897,11 @@ namespace CurvesPlan
 			this->_ratioSegment.at(2).first = this->_ratioSegment.at(1).second;
 			this->_ratioSegment.at(2).second = 1;
 
+
 			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
-		
-		}
+
+		};
+
 		virtual Eigen::Vector3d getPoint(int t)
 		{
 			Eigen::Vector3d point;
@@ -1012,20 +1072,38 @@ namespace CurvesPlan
 				_total_length += *j;
 				j++;
 			}
+			///* redistribute time counts */
+			//this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
+			//this->_countSequences.at(1) = this->_total_counts - this->_countSequences.at(0);
+			//
+			//this->_ratioSequences.at(0) = _length[0] / _total_length;
+			//this->_ratioSequences.at(1) = _length[1] / _total_length;
+
+			//this->_ratioSegment.at(0).first = 0;
+			//this->_ratioSegment.at(0).second= _length[1] / _total_length;
+
+			//this->_ratioSegment.at(1).first = this->_ratioSegment.at(0).second;
+			//this->_ratioSegment.at(1).second = 1.0;
+
+
+
+			//_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
+
+		}
+		virtual void setTotalCounts(int t)
+		{
 			/* redistribute time counts */
 			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 			this->_countSequences.at(1) = this->_total_counts - this->_countSequences.at(0);
-			
+
 			this->_ratioSequences.at(0) = _length[0] / _total_length;
 			this->_ratioSequences.at(1) = _length[1] / _total_length;
 
 			this->_ratioSegment.at(0).first = 0;
-			this->_ratioSegment.at(0).second= _length[1] / _total_length;
+			this->_ratioSegment.at(0).second = _length[1] / _total_length;
 
 			this->_ratioSegment.at(1).first = this->_ratioSegment.at(0).second;
 			this->_ratioSegment.at(1).second = 1.0;
-
-
 
 			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
 

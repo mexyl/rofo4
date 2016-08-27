@@ -97,6 +97,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	auto &robot = static_cast<Robots::RobotTypeI &>(rbt);
 	static aris::dynamic::FloatMarker beginMak{robot.ground()};
 
+
+
 	auto getData = [&]() 
 	{ 	
 		if (param.count == 0)
@@ -105,6 +107,9 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			// .pm() always return coordinates of the ground frame
 			beginMak.setPrtPm(*robot.body().pm());
 			beginMak.update();
+
+            this->stepCount=param.n;
+
 		}
 		// need to add mapping in this for loop
 		for (int i = 0;i < 6;i++)
@@ -556,6 +561,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				{
 					/*tricky part NS,OS -> TS*/
 					/* lastPoint is not important, is can be omitted */
+//                    std::cout<<"before\n"<<this->targetPee<<std::endl;
+//                    isPrint=true;
 					Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
 					ellH = 0.03;
 					ellL = 0.025;
@@ -568,9 +575,15 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 					leg.tentativeSequence.reset();
 					// velocity is 0.2
-					leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
+                    //leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
+                    leg.tentativeSequence.setTotalCounts(3000);
+                    rt_printf("ts init %d  %f\n",(int)round((leg.currentSequence->getTotalLength() / 0.2) * 1000),leg.tentativeSequence.getTotalLength() );
+                    std::cout<<leg.tentativeSequence._ellTentativeBound._bound_mat<<std::endl
+                               <<std::endl<<leg.tentativeSequence._strDownBound._bound_mat<<std::endl;
 
-                    rt_printf("ts init %d\n",leg.getID());
+
+
+
 				}
 					break;
 				case TrajectoryGenerator::BACKWARD:
@@ -621,7 +634,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 				leg.retractSequence._ellMidBound._bound_mat << 0, strHup, 0,
 					-2 * ellL, strHdn, 0,
-					-ellL, ellH, 0;
+                    -ellL, strHdn, 0;
 				leg.retractSequence._ellMidBound._parameters << ellL, ellH, 0, M_PI;
 
 				leg.retractSequence.reset();
@@ -876,7 +889,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
         }
     }
 
-
+    double pEE[18];
+    double pEB[6]={0,0,0,0,0,0};
     for (auto &i : legTraj)
     {
         Eigen::Vector3d point=i._trajStartPoint + this->_rot2Bot //rotate
@@ -888,29 +902,34 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
         this->targetPee(i.getID(), 0) = point(0);
         this->targetPee(i.getID(), 1) = point(1);
         this->targetPee(i.getID(), 2) = point(2);
+        pEE[i.getID()*3+0]=point(0);
+        pEE[i.getID()*3+1]=point(1);
+        pEE[i.getID()*3+2]=point(2);
 
     }
 
-//    int leg=1;
-//    Eigen::Vector3d point=legTraj[leg]._trajStartPoint + this->_rot2Bot //rotate
-//        *legTraj[leg].currentSequence->getTargetPoint(
-//            (double)(param.count-legTraj[leg].currentSequence->getStartTime())
-//            /legTraj[leg].currentSequence->getTotalCounts());
+    robot.SetPeb(pEB);
+    robot.SetPee(pEE);
 
-    //if(param.count%2000==0)
 
-//    if(param.count%500==0)
+//    if(isPrint)
 //    {
-//        for(int i=0;i<6;i++)
+//        for (auto &i : legTraj)
 //        {
+//            Eigen::Vector3d point=i._trajStartPoint + this->_rot2Bot //rotate
+//                *i.currentSequence->getTargetPoint(
+//                    (double)(param.count+1-i.currentSequence->getStartTime())
+//                    /i.currentSequence->getTotalCounts());
 
+//            //assignment of target pee
+//            this->targetPee(i.getID(), 0) = point(0);
+//            this->targetPee(i.getID(), 1) = point(1);
+//            this->targetPee(i.getID(), 2) = point(2);
 
-//            rt_printf("%f\t%f\t%f\t%d\t%f\n"
-//                      ,targetPee(i,0),targetPee(i,1),targetPee(i,2)
-//                      ,legTraj[i].currentSequence->getCurrentSequenceType());
-//                      //legTraj[i].foot_position_ref_beginMak[2]);
 //        }
-//        rt_printf("\n");
+
+//        std::cout<<param.count+1<<" after\n"<<this->targetPee<<std::endl;
+//        isPrint=false;
 //    }
 
 	// TBD
@@ -932,11 +951,22 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		return allss;
 	};
 
+
 	if (isAllStandStill() == 6)
 	{
         currentMotion=IDLE;
 		if (stepCount == 1)
 		{
+            for(int i=0;i<6;i++)
+            {
+
+
+                rt_printf("%f\t%f\t%f\t%d\t%f\n"
+                          ,targetPee(i,0),targetPee(i,1),targetPee(i,2)
+                          ,legTraj[i].currentSequence->getCurrentSequenceType()
+                          ,legTraj[i].foot_position_ref_beginMak[2]);
+            }
+            rt_printf("\n");
 			return 0;
 		}
 		else

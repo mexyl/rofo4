@@ -166,6 +166,6 @@ namespace TrajectoryGenerator
 		int stepCount=1; 
 		double stepLength = 0.25;
 
-
+        bool isPrint=false;
 	};
 }

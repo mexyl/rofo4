@@ -535,8 +535,8 @@
 		</wk_param>
 	    </wk>
 	    <ro/>
-	    <climb default="count">
-		<count abbreviation="c" type="int" default="1"/>
+	    <climb default="n">
+		<n abbreviation="n" type="int" default="1"/>
 	    </climb>
 	    <edcl/>
 	    <ay>
@@ -596,6 +596,7 @@
 			<homeOffset index="0x607C" subindex="0" type="int32" config="0"/>
 		    </SDO>
 		</ElmoSoloWhistle>
+		
 		<AtiForceSensor product_code="0x26483052" vender_id="0x00000732" alias="0">
 		    <PDO>
 			<index_1a00 index="0x1a00" is_tx="true">

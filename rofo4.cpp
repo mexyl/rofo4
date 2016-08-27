@@ -70,13 +70,13 @@ int Rofo::RofoWalkInit()
 
 auto Rofo::rofoParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
 {
-    CLIMB_PARAM  param;
+    Robots::WalkParam  param;
 
     for(auto &i:params)
     {
-        if(i.first=="count")
+        if(i.first=="n")
         {
-            param.step=std::stoi(i.second);
+            param.n=std::stoi(i.second);
 
         }
     }

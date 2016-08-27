@@ -1109,6 +1109,7 @@ namespace CurvesPlan
 		}
 		virtual void setTotalCounts(int t)
 		{
+            this->_total_counts=t;
 			/* redistribute time counts */
 			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 			this->_countSequences.at(1) = this->_total_counts - this->_countSequences.at(0);
@@ -1117,7 +1118,7 @@ namespace CurvesPlan
 			this->_ratioSequences.at(1) = _length[1] / _total_length;
 
 			this->_ratioSegment.at(0).first = 0;
-			this->_ratioSegment.at(0).second = _length[1] / _total_length;
+            this->_ratioSegment.at(0).second = _length[0] / _total_length;
 
 			this->_ratioSegment.at(1).first = this->_ratioSegment.at(0).second;
 			this->_ratioSegment.at(1).second = 1.0;

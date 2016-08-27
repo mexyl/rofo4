@@ -108,7 +108,20 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			beginMak.setPrtPm(*robot.body().pm());
 			beginMak.update();
 
-            this->stepCount=param.n;
+			
+			if (param.n == 1)
+			{
+				this->stepCount = 2;
+			}
+			else if(param.n>1)
+			{
+				this->stepCount = param.n * 2 - 1;
+			}
+			else
+			{
+				this->stepCount = 2;
+			}
+			this->totalStepCounts = this->stepCount;
 
 		}
 		// need to add mapping in this for loop
@@ -321,6 +334,39 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		
 	};
 	evalModel();
+
+	auto isFullStep = [&](int legID)
+	{
+		if (legID % 2 == 0)
+		{
+			/* LF RM LR 0 2 4  first */
+			// first points and last one
+			if (param.count == 0 
+				|| (this->stepCount == 1 && this->totalStepCounts!=2))
+			{
+				return false;
+			}
+			else if (this->stepCount%2==1)
+			{
+				return true;
+			}
+			
+		}
+		else
+		{
+			/* LM RF RR 1 3 5  second */
+			if (stepCount % 2 == 0)
+			{
+				return true;
+			}
+			else if(stepCount==1)
+			{
+				return false;
+			}
+
+		}
+
+	};
 
 	// this happened at first time
 	if (currentMotion != motion )
@@ -954,8 +1000,15 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 	if (isAllStandStill() == 6)
 	{
-        currentMotion=IDLE;
-		if (stepCount == 1)
+
+		if (this->stepCount > 1)
+		{
+			currentMotion = IDLE;
+			this->stepCount--;
+			return 1000;
+
+		}
+		else
 		{
             for(int i=0;i<6;i++)
             {
@@ -969,11 +1022,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
             rt_printf("\n");
 			return 0;
 		}
-		else
-		{
-			return 1000;
-		}
-		
+        
 	}
 	else
 	{

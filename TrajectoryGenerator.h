@@ -27,6 +27,21 @@ namespace TrajectoryGenerator
 		SequenceStage _sqeStage=INIT;// initneed
 		Eigen::Vector3d _trajStartPoint;
 	};
+	class HexapodBody :public SinglePointTrajBase
+	{
+	public:
+
+		/* everything about body*/
+		CurvesPlan::OneSplineSequence bodyFirstSequence;
+		CurvesPlan::OneSplineSequence bodySecondSequence;
+
+		CurvesPlan::CurvesSequenceBase *currentSequence = nullptr;
+		CurvesPlan::CurvesSequenceBase *lastSequence = nullptr;
+
+		double body_position_ref_beginMak[3];
+	};
+
+
 	class HexapodSingleLeg :public SinglePointTrajBase
 	{
 	public:
@@ -50,8 +65,6 @@ namespace TrajectoryGenerator
 		// _refSpace, x,y,z; -neg,+pos
 		Eigen::Matrix<double,1, 2> _refSpaceY;
 		 
-		int _sequenceCounts;
-		int _currentCounts;
 
 		double foot_position_ref_body[3];
 		double foot_position_ref_beginMak[3];
@@ -163,9 +176,11 @@ namespace TrajectoryGenerator
 		// 2: f 0.3 s 0.6 f 0.3; f=2 s=1  3
 		// 3: f 0.3 s 0.6 f 0.6 s 0.6 f 0.3; f=3 s=2 5
 		// 
-		int stepCount=1; 
+
+		int stepCount; // used for 
+		int totalStepCounts;
 		double stepLength = 0.25;
 
-        bool isPrint=false;
+		
 	};
 }

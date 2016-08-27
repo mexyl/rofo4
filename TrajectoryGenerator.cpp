@@ -793,7 +793,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	for (auto &i : legTraj)
 	{
 		Eigen::Vector3d point=i._trajStartPoint + this->_rot2Bot //rotate
-			*i.currentSequence->getPoint(
+			*i.currentSequence->getTargetPoint(
 				(double)(param.count-i.currentSequence->getStartTime())
 				/i.currentSequence->getTotalCounts());
 
@@ -805,9 +805,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
         if(i.getID()==LF && param.count%2000==0)
         {
             std::cout<<point<<std::endl;
-            std::cout<<i.currentSequence->getPoint(
+            std::cout<<i.currentSequence->getTargetPoint(
                            (double)(param.count-i.currentSequence->getStartTime())
                            /i.currentSequence->getTotalCounts())<<std::endl;
+			//std::cout << i.currentSequence->_currentCurveType <<"\t"<< i.currentSequence-><< std::endl;
 
         }
 	}

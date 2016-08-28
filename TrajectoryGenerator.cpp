@@ -1137,6 +1137,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
     if(param.count%1000==0)
     {
         rt_printf("Body: %f %f %f\n",bodyPosVec(0),bodyPosVec(1),bodyPosVec(2));
+        rt_printf("Body: %f %f %f\n"
+                  ,bodyPos.body_position_ref_beginMak(0)
+                  ,bodyPos.body_position_ref_beginMak(1)
+                  ,bodyPos.body_position_ref_beginMak(2));
     }
 
 

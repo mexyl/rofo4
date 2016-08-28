@@ -1224,7 +1224,7 @@ namespace CurvesPlan
 		{
 			/* set new bounds */
 			this->_ellTentativeBound._bound_mat.row(1) = this->_ellTentativeBound._bound_mat.row(0);
-			this->_ellTentativeBound._bound_mat.row(0) = this->getPoint(t);
+            this->_ellTentativeBound._bound_mat.row(0) = this->getTargetPoint(t);
 			// row(2) is the origin, it should not be changed
 			// then change the parameters a,b is the same
 			// change start theta to end theta, then calculate the start theta

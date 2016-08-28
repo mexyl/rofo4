@@ -300,10 +300,11 @@ namespace CurvesPlan
 			double length = 0.0;
 			Eigen::Vector3d last_point,current_point,delta;
 			last_point = this->getPoint(u);
-			while (abs(u - 1.0) > increment)
+			while (abs(u - 1.0) < increment)
 			{
 				u += increment;
 				current_point = this->getPoint(u);
+				
 				delta = current_point - last_point;
 				last_point = current_point;
 				sectionLength = sqrt(delta.squaredNorm());

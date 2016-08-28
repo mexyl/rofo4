@@ -1292,6 +1292,7 @@ namespace CurvesPlan
 		}
 		virtual void reset()
 		{
+			rt_printf("body pos reset: %d",_pairedSequence.size());
 			for (auto &i : _pairedSequence)
 			{
 				i.first->setBound(*i.second);
@@ -1305,8 +1306,10 @@ namespace CurvesPlan
 //				std::cout << i.first->getLength() << " " << (int)i.first->_base_refBound->getCurveType() << std::endl;
 				*j = i.first->getLength();
 				_total_length += *j;
+				rt_printf("%f\n", _total_length);
 				j++;
 			}
+			rt_printf("%f\n", _total_length);
 		}
 		virtual Eigen::Vector3d getPoint(int t)
 		{

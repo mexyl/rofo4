@@ -745,8 +745,9 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		this->bodyPos.bodyFirstSequence.setStartTime(param.count);
 
 		//use ratioSegement to detect
-		this->bodyPos.bodyFirstSequence.setTotalCounts(time);//this should be the ns first two stage's count
 		this->bodyPos.bodyFirstSequence.reset();
+		this->bodyPos.bodyFirstSequence.setTotalCounts(time);//this should be the ns first two stage's count
+		
 
 		this->bodyPos.setStage(RUNNING);
 		

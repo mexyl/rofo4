@@ -341,8 +341,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				i.zNegForceDetector.second->threshold(i.zNegForceDetector.first->GetData());
                 if(param.count%500==0)
                 {
-                rt_printf("yPos %f\t",i.yPosForceDetector.first->GetData());
-                rt_printf("zPos %f\t",i.zPosForceDetector.first->GetData());
+                rt_printf("yPos %f\t",i.foot_force_extern_ref_beginMak[1]);
+                rt_printf("zPos %f\t",i.foot_force_extern_ref_beginMak[2]);
 
                 }
 

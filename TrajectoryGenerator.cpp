@@ -341,12 +341,13 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		{
 			/* LF RM LR 0 2 4  first */
 			// first points and last one
-			if (param.count == 0 
-				|| (this->stepCount == 1 && this->totalStepCounts!=2))
+			if (param.count == 0 // first step
+				|| (this->stepCount == 1 && this->totalStepCounts!=2) // last count while steps>2
+				|| (this->totalStepCounts==2 && this->stepCount==2)) // first step of steps2
 			{
 				return false;
 			}
-			else if (this->stepCount%2==1)
+			else if (this->stepCount%2==1&&this->totalStepCounts!=2) // middle steps
 			{
 				return true;
 			}
@@ -355,11 +356,11 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		else
 		{
 			/* LM RF RR 1 3 5  second */
-			if (stepCount % 2 == 0)
+			if (stepCount % 2 == 0 && stepCount!=2) // other steps
 			{
 				return true;
 			}
-			else if(stepCount==1)
+			else if(stepCount==1)// last step while step==2
 			{
 				return false;
 			}
@@ -368,12 +369,29 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 	};
 
+	auto isFirstGroupMove = [&]()
+	{
+		if (param.count == 0
+			|| (this->stepCount == 1 && this->totalStepCounts != 2)
+			|| (this->stepCount % 2 == 1 && this->stepCount == 2))
+		{
+			return true;
+		}
+		else if((stepCount % 2 == 0 && stepCount != 2)
+			|| stepCount == 1)
+		{
+			return false;
+		}
+	};
+
 	// this happened at first time
 	if (currentMotion != motion )
 	{
+		rt_printf("Judge Group %d\n", param.count);
 		/*set start Sequnence*/
-		if (stepCount % 2 == 1)
+		if (isFirstGroupMove())
 		{
+			rt_printf("First Group %d\n",param.count);
 			/* first group */
 			legTraj.at(LF).currentSequence = &legTraj.at(LF).normalSequence;
 			legTraj.at(RM).currentSequence = &legTraj.at(RM).normalSequence;
@@ -382,8 +400,9 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			legTraj.at(LM).currentSequence = &legTraj.at(LM).standstillSequence;
 			legTraj.at(RR).currentSequence = &legTraj.at(RR).standstillSequence;
 		}
-		else
+		else if(!isFirstGroupMove())
 		{
+			rt_printf("Second Group %d\n", param.count);
 			/* second group */
 			legTraj.at(LF).currentSequence = &legTraj.at(LF).standstillSequence;
 			legTraj.at(RM).currentSequence = &legTraj.at(RM).standstillSequence;

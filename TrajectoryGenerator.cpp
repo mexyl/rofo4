@@ -401,6 +401,327 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		}
 	};
 
+	/* a bunch of functions for init sequences  */
+	auto initSequences = [&](HexapodSingleLeg & leg, MotionID mot)
+	{
+		/* set start  point*/
+		leg._trajStartPoint <<
+			leg.foot_position_ref_beginMak[0],
+			leg.foot_position_ref_beginMak[1],
+			leg.foot_position_ref_beginMak[2];
+
+		rt_printf("Into initSequences: count: %d leg: %d\n", param.count, leg.getID());
+
+		leg.setStage(SequenceStage::RUNNING);
+
+		leg.currentSequence->setStartTime(param.count);
+
+		switch (leg.currentSequence->_seqType)
+		{
+		case CurvesPlan::SequenceType::NS:
+		{
+			double strH, ellH;
+			double ellL = this->stepLength / 2;
+			switch (mot)
+			{
+			case TrajectoryGenerator::IDLE:
+				break;
+			case TrajectoryGenerator::STANDSTILL:
+				break;
+			case TrajectoryGenerator::FORWARD:
+			{
+				// this line 
+				double z_offset = 0;
+				double stepLengthActual = 0.0;
+				//                std::cout<<"leg.ref pos"<<leg.foot_position_ref_body[2]<<"\t"<<leg._refPosition(2);
+
+				/* must think it carefully */
+				if (isFullStep(leg.getID()))
+				{
+					rt_printf("full ");
+					z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
+					stepLengthActual = stepLength - z_offset;
+				}
+				else
+				{
+
+					if (stepCount == 1)
+					{
+						rt_printf("half 1");
+						z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
+						stepLengthActual = 0.0 - z_offset;
+					}
+					else// first step;
+					{
+						rt_printf("half 2");
+						stepLengthActual = 0.5*stepLength;
+
+					}
+				}
+
+				/* tricky part */
+				strH = 0.05;
+				ellH = 0.03;
+				double H = strH + ellH;
+				if (H + leg.foot_position_ref_body[1] > leg._refSpaceY(1))
+				{
+					H = leg._refSpaceY(1) - leg.foot_position_ref_body[1];
+					if (H < ellH)
+					{
+						ellH = H;
+						strH = 0;
+					}
+					else
+					{
+						strH = H - ellH;
+					}
+				}
+				leg.normalSequence._strBoundUp._bound_mat << 0, 0, 0,
+					0, strH, 0;
+				leg.normalSequence._strBoundDown._bound_mat << stepLengthActual, strH, 0,
+					stepLengthActual, leg._refSpaceY(0) - leg.foot_position_ref_body[1], 0;
+				leg.normalSequence._ellMidBound._bound_mat << 0, strH, 0,
+					stepLengthActual, strH, 0,
+					stepLengthActual / 2, strH, 0;
+				leg.normalSequence._ellMidBound._parameters << abs(stepLengthActual / 2.0), ellH, M_PI, 0;
+
+				leg.normalSequence.reset();
+
+				// velocity =0.2 m/s
+				leg.normalSequence.setTotalCounts((int)round((leg.normalSequence.getTotalLength() / 0.2) * 1000));
+
+				rt_printf("ns init leg: %d %f \n", leg.getID(), stepLengthActual);
+			}
+
+			break;
+			case TrajectoryGenerator::BACKWARD:
+
+				break;
+			case TrajectoryGenerator::TURNLEFT:
+				break;
+			case TrajectoryGenerator::TURNRIGHT:
+				break;
+			default:
+				break;
+			}
+		}
+		break;
+		case CurvesPlan::SequenceType::OS:
+		{
+			double ellH1, ellH2, ellL1, ellL2;
+			switch (mot)
+			{
+			case TrajectoryGenerator::IDLE:
+				break;
+			case TrajectoryGenerator::STANDSTILL:
+
+				break;
+			case TrajectoryGenerator::FORWARD:
+			{
+				/* tricky part */
+				double stepLengthIncrement = 0.5;//Parameters that can be tweaked
+				ellH1 = 0.04;//Parameters that can be tweaked
+				if (ellH1 * 2.0 + leg.foot_position_ref_body[1] > leg._refSpaceY(1))
+				{
+					ellH1 = (leg._refSpaceY(1) - leg.foot_position_ref_body[1]) / 2.0;
+				}
+				ellL1 = 0.03;
+				ellH2 = 0.03;
+				ellL2 = stepLengthIncrement;
+				leg.obstacleSquence._ellReflexBound._bound_mat << 0, 0, 0,
+					0, 2 * ellH1, 0,
+					0, ellH1, 0;
+				leg.obstacleSquence._ellReflexBound._parameters << ellL1, ellH1, -0.5*M_PI, -1.5*M_PI;
+				leg.obstacleSquence._ellForwardBound._bound_mat.row(0) << 0, 2 * ellH1, 0;
+				leg.obstacleSquence._ellForwardBound._bound_mat.row(1) << ellL2, 2 * ellH1 - ellH2, 0;
+				leg.obstacleSquence._ellForwardBound._bound_mat.row(2) << 0, 2 * ellH1 - ellH2, 0;
+				leg.obstacleSquence._ellForwardBound._parameters << ellL2, ellH2, 0.5*M_PI, 0;
+				leg.obstacleSquence._strDownBound._bound_mat.row(0) = leg.obstacleSquence._ellForwardBound.getEndPoint();
+				leg.obstacleSquence._strDownBound._bound_mat.row(1) = leg.obstacleSquence._ellForwardBound.getEndPoint();
+				leg.obstacleSquence._strDownBound._bound_mat(0) = leg._refSpaceY(0) - leg.foot_position_ref_body[1];
+				leg.obstacleSquence.reset();
+
+				//velocity =0.2 m/s
+				leg.obstacleSquence.setTotalCounts((int)round((leg.obstacleSquence.getTotalLength() / 0.2) * 1000));
+				rt_printf("os init leg: %d\n", leg.getID());
+			}
+			break;
+			case TrajectoryGenerator::BACKWARD:
+				break;
+			case TrajectoryGenerator::TURNLEFT:
+				break;
+			case TrajectoryGenerator::TURNRIGHT:
+				break;
+			default:
+				break;
+			}
+
+		}
+		break;
+		case CurvesPlan::SequenceType::TS:
+		{
+			// ell str
+			double ellH, ellL;
+			if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::TS)
+			{
+				// move back
+				switch (mot)
+				{
+				case TrajectoryGenerator::IDLE:
+					break;
+				case TrajectoryGenerator::STANDSTILL:
+					break;
+				case TrajectoryGenerator::FORWARD:
+				{
+					/*tricky part TS -> TS*/
+					/* lastPoint is not important, is can be omitted */
+					//Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
+					ellH = 0.03;
+					if (leg.yPosForceDetector.second->is_on())
+					{
+						ellL = 0.025 / 2;
+					}
+					else
+					{
+						ellL = 0.025 * 2;
+					}
+
+					leg.tentativeSequence._ellTentativeBound._bound_mat << 0, 0, 0,
+						ellL * 2, 0, 0,
+						ellL, 0, 0;
+					leg.tentativeSequence._ellTentativeBound._parameters << ellL, ellH, M_PI, 0;
+					leg.tentativeSequence._strDownBound._bound_mat << ellL * 2, 0, 0,
+						ellL * 2, leg._refSpaceY(0) - leg.foot_position_ref_body[1], 0;
+
+					leg.tentativeSequence.reset();
+					// velocity is 0.2
+					leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
+
+					rt_printf("ts init leg: %d\n", leg.getID());
+				}
+				break;
+
+
+				break;
+				case TrajectoryGenerator::BACKWARD:
+					break;
+				case TrajectoryGenerator::TURNLEFT:
+					break;
+				case TrajectoryGenerator::TURNRIGHT:
+					break;
+				default:
+					break;
+				}
+
+			}
+			else if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::OS
+				|| leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::NS)
+			{
+				// move forward
+				switch (mot)
+				{
+				case TrajectoryGenerator::IDLE:
+					break;
+				case TrajectoryGenerator::STANDSTILL:
+					break;
+				case TrajectoryGenerator::FORWARD:
+				{
+					/*tricky part NS,OS -> TS*/
+					/* lastPoint is not important, is can be omitted */
+					//                    std::cout<<"before\n"<<this->targetPee<<std::endl;
+					//                    isPrint=true;
+					Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
+					ellH = 0.03;
+					ellL = 0.025;
+					leg.tentativeSequence._ellTentativeBound._bound_mat << 0, 0, 0,
+						ellL * 2, 0, 0,
+						ellL, 0, 0;
+					leg.tentativeSequence._ellTentativeBound._parameters << ellL, ellH, M_PI, 0;
+					leg.tentativeSequence._strDownBound._bound_mat << ellL * 2, 0, 0,
+						ellL * 2, leg._refSpaceY(0) - leg.foot_position_ref_body[1], 0;
+
+					leg.tentativeSequence.reset();
+					// velocity is 0.2
+					//leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
+					leg.tentativeSequence.setTotalCounts(3000);
+					rt_printf("ts init leg: %d \n", leg.getID());
+
+
+
+
+				}
+				break;
+				case TrajectoryGenerator::BACKWARD:
+					break;
+				case TrajectoryGenerator::TURNLEFT:
+					break;
+				case TrajectoryGenerator::TURNRIGHT:
+					break;
+				default:
+					break;
+				}
+
+			}
+			else
+			{
+				//undefined state
+
+			}
+
+		}
+		break;
+		case CurvesPlan::SequenceType::SS:
+			leg.standstillSequence._stsBound._bound_mat << 0, 0, 0;
+			leg.standstillSequence.reset();
+			rt_printf("ss init %d\n", leg.getID());
+			break;
+		case CurvesPlan::SequenceType::RS:
+		{
+			/* retract sequence */
+			/* only one condition we need this */
+			if (leg.tentativeCounts == 1
+				&& !leg.yPosForceDetector.second->is_on()
+				&& leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::TS)
+			{
+				//                std::cout<<"TS\n"<<leg.tentativeSequence._strDownBound._bound_mat<<std::endl;
+				double strHup = leg.tentativeSequence._strDownBound._bound_mat(0, 1)
+					- leg.tentativeSequence._strDownBound._bound_mat(1, 1);
+				double ellL = leg.tentativeSequence._strDownBound._bound_mat(0, 0);
+				ellL = (ellL + 0.05) / 2.0;
+				double ellH = leg.tentativeSequence._ellTentativeBound._parameters(1);
+				double strHdn = strHup;
+
+				/* after get corrent value, set bounds */
+				leg.retractSequence._strBoundUp._bound_mat << 0, 0, 0,
+					0, strHup, 0;
+				leg.retractSequence._strBoundDown._bound_mat << -2 * ellL, strHdn, 0,
+					-2 * ellL, 0, 0;
+
+				leg.retractSequence._ellMidBound._bound_mat << 0, strHup, 0,
+					-2 * ellL, strHdn, 0,
+					-ellL, strHdn, 0;
+				leg.retractSequence._ellMidBound._parameters << ellL, ellH, 0, M_PI;
+
+				leg.retractSequence.reset();
+				// velocity is 0.2
+				leg.retractSequence.setTotalCounts((int)round((leg.retractSequence.getTotalLength() / 0.2) * 1000));
+				//                std::cout<<"UP\n"<<leg.retractSequence._strBoundUp._bound_mat<<"\nMid\n"
+				//                           <<leg.retractSequence._ellMidBound._bound_mat
+				//                             <<"\nDown\n"<<leg.retractSequence._strBoundDown._bound_mat;
+
+				rt_printf("rs init leg: %d\n", leg.getID());
+			}
+			else
+			{
+				std::cout << "Insufficient condition fot RetractSequence initialization. legID:" << leg.getID() << std::endl;
+			}
+
+		}
+		break;
+		default:
+			break;
+		}
+	};
 
     auto initBodyMotion=[&](int time)
     {
@@ -461,15 +782,43 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			legTraj.at(LM).currentSequence = &legTraj.at(LM).normalSequence;
 			legTraj.at(RR).currentSequence = &legTraj.at(RR).normalSequence;
 		}
-        this->stepCount--;
+
+
+		
 
 
 		for (auto &i : legTraj)
 		{
 			i.setStage(SequenceStage::INIT);
 		}
+		for (auto &i : legTraj)
+		{
+			if (i.getStage() == SequenceStage::INIT)
+			{
+				initSequences(i, motion);
+			}
+		}
+
         currentMotion=motion;
 		bodyPos.setStage(INIT);
+
+		if (bodyPos.getStage() == INIT)
+		{
+			if (isFirstGroupMove())
+			{
+				initBodyMotion((int)round(legTraj[0].normalSequence._ratioSegment.at(1).second
+					*(double)legTraj[0].normalSequence.getTotalCounts()));
+			}
+			else
+			{
+				initBodyMotion((int)round(legTraj[1].normalSequence._ratioSegment.at(1).second
+					*(double)legTraj[1].normalSequence.getTotalCounts()));
+			}
+			//bodyPos.setStage(RUNNING);
+		}
+
+
+		this->stepCount--;
 	}
 	else
 	{
@@ -478,327 +827,6 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 
 
-	/* a bunch of functions for init sequences  */
-	auto initSequences = [&](HexapodSingleLeg & leg, MotionID mot)
-	{
-		/* set start  point*/
-		leg._trajStartPoint << 
-			leg.foot_position_ref_beginMak[0],
-			leg.foot_position_ref_beginMak[1],
-			leg.foot_position_ref_beginMak[2];
-
-        rt_printf("Into initSequences: count: %d leg: %d\n",param.count,leg.getID());
-
-        leg.setStage(SequenceStage::RUNNING);
-
-		leg.currentSequence->setStartTime(param.count);
-
-		switch (leg.currentSequence->_seqType)
-		{
-		case CurvesPlan::SequenceType::NS:
-		{
-			double strH, ellH;
-			double ellL = this->stepLength / 2;
-			switch (mot)
-			{
-			case TrajectoryGenerator::IDLE:
-				break;
-			case TrajectoryGenerator::STANDSTILL:
-				break;
-			case TrajectoryGenerator::FORWARD:
-			{
-				// this line 
-				double z_offset = 0;
-				double stepLengthActual = 0.0;
-//                std::cout<<"leg.ref pos"<<leg.foot_position_ref_body[2]<<"\t"<<leg._refPosition(2);
-				
-				/* must think it carefully */
-				if (isFullStep(leg.getID()))
-				{
-					rt_printf("full ");
-					z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
-					stepLengthActual = stepLength - z_offset;
-				}
-				else
-				{
-					
-					if (stepCount == 1)
-					{
-						rt_printf("half 1");
-						z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
-						stepLengthActual = 0.0 - z_offset;
-					}
-					else// first step;
-					{
-						rt_printf("half 2");
-						stepLengthActual = 0.5*stepLength;
-						
-					}
-				}
-				
-				/* tricky part */
-				strH = 0.05;
-				ellH = 0.03;
-				double H = strH + ellH;
-				if (H + leg.foot_position_ref_body[1] > leg._refSpaceY(1))
-				{
-					H = leg._refSpaceY(1) - leg.foot_position_ref_body[1];
-					if (H < ellH)
-					{
-						ellH = H;
-						strH = 0;
-					}
-					else
-					{
-						strH = H - ellH;
-					}
-				}
-				leg.normalSequence._strBoundUp._bound_mat << 0, 0, 0,
-					0, strH, 0;
-				leg.normalSequence._strBoundDown._bound_mat << stepLengthActual, strH, 0,
-					stepLengthActual, leg._refSpaceY(0)- leg.foot_position_ref_body[1], 0;
-				leg.normalSequence._ellMidBound._bound_mat << 0, strH, 0,
-					stepLengthActual, strH, 0,
-					stepLengthActual / 2, strH, 0;
-				leg.normalSequence._ellMidBound._parameters << abs(stepLengthActual / 2.0), ellH, M_PI, 0;
-
-				leg.normalSequence.reset();
-
-				// velocity =0.2 m/s
-				leg.normalSequence.setTotalCounts((int)round((leg.normalSequence.getTotalLength() / 0.2) * 1000));
-
-                rt_printf("ns init leg: %d %f \n",leg.getID(),stepLengthActual);
-			}
-
-				break;
-			case TrajectoryGenerator::BACKWARD:
-
-				break;
-			case TrajectoryGenerator::TURNLEFT:
-				break;
-			case TrajectoryGenerator::TURNRIGHT:
-				break;
-			default:
-				break;
-			}
-		}
-			break;
-		case CurvesPlan::SequenceType::OS:
-		{
-			double ellH1, ellH2, ellL1, ellL2;
-			switch (mot)
-			{
-			case TrajectoryGenerator::IDLE:
-				break;
-			case TrajectoryGenerator::STANDSTILL:
-
-				break;
-			case TrajectoryGenerator::FORWARD:
-			{
-				/* tricky part */
-				double stepLengthIncrement = 0.5;//Parameters that can be tweaked
-				ellH1 = 0.04;//Parameters that can be tweaked
-				if (ellH1 * 2.0 + leg.foot_position_ref_body[1] > leg._refSpaceY(1))
-				{
-                    ellH1 = (leg._refSpaceY(1) - leg.foot_position_ref_body[1]) / 2.0;
-				}
-				ellL1 = 0.03;
-				ellH2 = 0.03;
-				ellL2 = stepLengthIncrement;
-				leg.obstacleSquence._ellReflexBound._bound_mat << 0, 0, 0,
-					0, 2 * ellH1, 0,
-					0, ellH1, 0;
-				leg.obstacleSquence._ellReflexBound._parameters << ellL1, ellH1, -0.5*M_PI, -1.5*M_PI;
-				leg.obstacleSquence._ellForwardBound._bound_mat.row(0) << 0, 2 * ellH1, 0;
-				leg.obstacleSquence._ellForwardBound._bound_mat.row(1) << ellL2, 2 * ellH1 - ellH2, 0;
-				leg.obstacleSquence._ellForwardBound._bound_mat.row(2) << 0, 2 * ellH1 - ellH2, 0;
-				leg.obstacleSquence._ellForwardBound._parameters << ellL2, ellH2, 0.5*M_PI, 0;
-				leg.obstacleSquence._strDownBound._bound_mat.row(0) = leg.obstacleSquence._ellForwardBound.getEndPoint();
-				leg.obstacleSquence._strDownBound._bound_mat.row(1) = leg.obstacleSquence._ellForwardBound.getEndPoint();
-				leg.obstacleSquence._strDownBound._bound_mat(0) = leg._refSpaceY(0)- leg.foot_position_ref_body[1];
-				leg.obstacleSquence.reset();
-
-				//velocity =0.2 m/s
-				leg.obstacleSquence.setTotalCounts((int)round((leg.obstacleSquence.getTotalLength() / 0.2) * 1000));
-                rt_printf("os init leg: %d\n",leg.getID());
-			}
-				break;
-			case TrajectoryGenerator::BACKWARD:
-				break;
-			case TrajectoryGenerator::TURNLEFT:
-				break;
-			case TrajectoryGenerator::TURNRIGHT:
-				break;
-			default:
-				break;
-			}
-
-		}
-			break;
-		case CurvesPlan::SequenceType::TS:
-		{
-			// ell str
-			double ellH, ellL;
-			if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::TS)
-			{
-				// move back
-				switch (mot)
-				{
-				case TrajectoryGenerator::IDLE:
-					break;
-				case TrajectoryGenerator::STANDSTILL:
-					break;
-				case TrajectoryGenerator::FORWARD:
-				{
-					/*tricky part TS -> TS*/
-					/* lastPoint is not important, is can be omitted */
-					//Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
-					ellH = 0.03;
-					if (leg.yPosForceDetector.second->is_on())
-					{
-						ellL = 0.025 / 2;
-					}
-					else
-					{
-						ellL = 0.025 * 2;
-					}
-
-					leg.tentativeSequence._ellTentativeBound._bound_mat << 0, 0, 0,
-						ellL * 2, 0, 0,
-						ellL, 0, 0;
-					leg.tentativeSequence._ellTentativeBound._parameters << ellL, ellH, M_PI, 0;
-					leg.tentativeSequence._strDownBound._bound_mat << ellL * 2, 0, 0,
-                        ellL * 2, leg._refSpaceY(0) - leg.foot_position_ref_body[1], 0;
-
-					leg.tentativeSequence.reset();
-					// velocity is 0.2
-					leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
-
-                    rt_printf("ts init leg: %d\n",leg.getID());
-				}
-				break;
-					
-
-					break;
-				case TrajectoryGenerator::BACKWARD:
-					break;
-				case TrajectoryGenerator::TURNLEFT:
-					break;
-				case TrajectoryGenerator::TURNRIGHT:
-					break;
-				default:
-					break;
-				}
-
-			}
-			else if (leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::OS
-				|| leg.lastSequence->getCurrentSequenceType() == CurvesPlan::SequenceType::NS)
-			{
-				// move forward
-				switch (mot)
-				{
-				case TrajectoryGenerator::IDLE:
-					break;
-				case TrajectoryGenerator::STANDSTILL:
-					break;
-				case TrajectoryGenerator::FORWARD:
-				{
-					/*tricky part NS,OS -> TS*/
-					/* lastPoint is not important, is can be omitted */
-//                    std::cout<<"before\n"<<this->targetPee<<std::endl;
-//                    isPrint=true;
-					Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
-					ellH = 0.03;
-					ellL = 0.025;
-					leg.tentativeSequence._ellTentativeBound._bound_mat << 0, 0, 0,
-						ellL * 2, 0, 0,
-						ellL, 0, 0;
-					leg.tentativeSequence._ellTentativeBound._parameters << ellL, ellH, M_PI, 0;
-					leg.tentativeSequence._strDownBound._bound_mat << ellL * 2, 0, 0,
-                        ellL * 2, leg._refSpaceY(0) - leg.foot_position_ref_body[1], 0;
-
-					leg.tentativeSequence.reset();
-					// velocity is 0.2
-                    //leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
-                    leg.tentativeSequence.setTotalCounts(3000);
-                    rt_printf("ts init leg: %d \n",leg.getID());
-
-
-
-
-				}
-					break;
-				case TrajectoryGenerator::BACKWARD:
-					break;
-				case TrajectoryGenerator::TURNLEFT:
-					break;
-				case TrajectoryGenerator::TURNRIGHT:
-					break;
-				default:
-					break;
-				}
-
-			}
-			else
-			{
-				//undefined state
-
-			}
-
-		}
-			break;
-		case CurvesPlan::SequenceType::SS:
-			leg.standstillSequence._stsBound._bound_mat << 0, 0, 0;
-            leg.standstillSequence.reset();
-            rt_printf("ss init %d\n",leg.getID());
-			break;
-		case CurvesPlan::SequenceType::RS:
-		{
-			/* retract sequence */
-			/* only one condition we need this */
-			if (leg.tentativeCounts == 1 
-				&& !leg.yPosForceDetector.second->is_on()
-				&& leg.lastSequence->getCurrentSequenceType()== CurvesPlan::SequenceType::TS)
-			{
-//                std::cout<<"TS\n"<<leg.tentativeSequence._strDownBound._bound_mat<<std::endl;
-				double strHup = leg.tentativeSequence._strDownBound._bound_mat(0, 1) 
-					- leg.tentativeSequence._strDownBound._bound_mat(1, 1);
-				double ellL = leg.tentativeSequence._strDownBound._bound_mat(0, 0);
-				ellL = (ellL + 0.05) / 2.0;
-				double ellH = leg.tentativeSequence._ellTentativeBound._parameters(1);
-				double strHdn = strHup;
-
-				/* after get corrent value, set bounds */
-				leg.retractSequence._strBoundUp._bound_mat << 0, 0, 0,
-					0, strHup, 0;
-				leg.retractSequence._strBoundDown._bound_mat << -2 * ellL, strHdn, 0,
-					-2 * ellL, 0, 0;
-
-				leg.retractSequence._ellMidBound._bound_mat << 0, strHup, 0,
-					-2 * ellL, strHdn, 0,
-                    -ellL, strHdn, 0;
-				leg.retractSequence._ellMidBound._parameters << ellL, ellH, 0, M_PI;
-
-				leg.retractSequence.reset();
-				// velocity is 0.2
-				leg.retractSequence.setTotalCounts((int)round((leg.retractSequence.getTotalLength() / 0.2) * 1000));
-//                std::cout<<"UP\n"<<leg.retractSequence._strBoundUp._bound_mat<<"\nMid\n"
-//                           <<leg.retractSequence._ellMidBound._bound_mat
-//                             <<"\nDown\n"<<leg.retractSequence._strBoundDown._bound_mat;
-
-                rt_printf("rs init leg: %d\n",leg.getID());
-			}
-			else
-			{
-				std::cout << "Insufficient condition fot RetractSequence initialization. legID:"<<leg.getID()<< std::endl;
-			}
-
-		}
-			break;
-		default:
-			break;
-		}
-	};
 
 	// init the current sequences
 	for (auto &i : legTraj)

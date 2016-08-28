@@ -1329,6 +1329,8 @@ namespace CurvesPlan
 			this->_ratioSegment.at(0).first = 0;
 			this->_ratioSegment.at(0).second =1.0;
 
+			rt_printf("body set total counts:\n%f %f",
+				_length[0], _total_length);
 
 			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
 

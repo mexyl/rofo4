@@ -14,6 +14,7 @@ namespace TrajectoryGenerator
 	enum LegID { LF = 0, LM, LR, RF, RM, RR };
 	enum MotionID {IDLE,STANDSTILL,FORWARD,BACKWARD,TURNLEFT,TURNRIGHT};
 	enum SequenceStage {INIT,RUNNING};
+	enum ForceMode { NONE, INDIRECT, SENSOR };
 	
 
 	class SinglePointTrajBase
@@ -142,7 +143,7 @@ namespace TrajectoryGenerator
 	{
 		/* have a function to control force sensor */
 		/* have a function to control indirect force sensor */
-		enum ForceMode {NONE,INDIRECT,SENSOR};
+		
 	public:
 		virtual void reset();
 		int generateRobotGait(Robots::RobotBase& rbt,MotionID motion,const Robots::WalkParam &param);

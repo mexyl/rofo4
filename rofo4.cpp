@@ -65,7 +65,9 @@ auto Rofo::rofoEndGait(aris::dynamic::Model &model, const aris::dynamic::PlanPar
 
 int Rofo::RofoWalkInit()
 {
+
     rofo.reset();
+	rofo.setForceMode(TrajectoryGenerator::ForceMode::INDIRECT);
 }
 
 auto Rofo::rofoParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void

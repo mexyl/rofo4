@@ -738,8 +738,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		}
 		/* may add body posture adjustment here */
 		this->bodyPos.bodyFirstSequence._cbcBound._bound_mat << 0, 0, 0,
-			0, 0, 0,
 			bodyStepLength, 0, 0,
+			0, 0, 0,
 			0, 0, 0;
 		this->bodyPos.bodyFirstSequence._cbcLine.setBound(bodyPos.bodyFirstSequence._cbcBound);
 		this->bodyPos.bodyFirstSequence.setStartTime(param.count);

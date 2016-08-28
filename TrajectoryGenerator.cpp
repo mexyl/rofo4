@@ -1206,8 +1206,9 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			, bodyPosVec(0)
 			, bodyPosVec(1)
 			, bodyPosVec(2)
-			, bodyPosVec(3)
-			, bodyPosVec(4));
+			, bodyAngVec(0)
+			, bodyAngVec(1)
+			, bodyAngVec(2));
 
 	}
 
@@ -1232,9 +1233,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			rt_printf("%f\t%f\t%f\t%f\t%f%tf\n"
 				, bodyPosVec(0)
 				, bodyPosVec(1)
-				, bodyPosVec(2)
-				, bodyPosVec(3)
-				, bodyPosVec(4));
+				,bodyPosVec(2)
+				, bodyAngVec(0)
+				, bodyAngVec(1)
+				, bodyAngVec(2));
 
 
 			return 1000;
@@ -1252,11 +1254,12 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
                           ,legTraj[i].foot_position_ref_beginMak[2]);
             }
 			rt_printf("%f\t%f\t%f\t%f\t%f%tf\n"
-				,bodyPosVec(0)
+				, bodyPosVec(0)
 				, bodyPosVec(1)
 				, bodyPosVec(2)
-				, bodyPosVec(3)
-				, bodyPosVec(4));
+				, bodyAngVec(0)
+				, bodyAngVec(1)
+				, bodyAngVec(2));
 			currentMotion = IDLE;
 
 			gaitClean();

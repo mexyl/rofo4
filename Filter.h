@@ -32,7 +32,7 @@ namespace Filter {
 	template<int LEN>
 	CFilterFIR<LEN>::CFilterFIR()
 	{
-		//memset(m_Reg, 0, m_FilterLength * sizeof(double));
+        memset(m_Reg, 0, m_FilterLength * sizeof(double));
 		memset(m_Coef,0,m_FilterLength*sizeof(double));
 		//std::fill_n(m_Reg->begin(),m_Reg->end(),0);
 

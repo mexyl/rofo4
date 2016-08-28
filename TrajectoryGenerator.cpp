@@ -359,12 +359,12 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			/* LF RM LR 0 2 4  first */
 			// first points and last one
 			if (stepCount == totalStepCounts // first step
-				|| (this->stepCount == 1 && this->totalStepCounts!=2) // last count while steps>2
-				|| (this->totalStepCounts==2 && this->stepCount==2)) // first step of steps2
+                || (this->stepCount == 1) // last count while steps>2
+                || (this->totalStepCounts==2 && this->stepCount==2)) // first step of steps2
 			{
 				return false;
 			}
-			else if (this->stepCount%2==1&&this->totalStepCounts!=2) // middle steps
+            else //if (this->stepCount%2==1&&this->totalStepCounts!=2) // middle steps
 			{
 				return true;
 			}
@@ -389,16 +389,17 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
     auto isFirstGroupMove = [&]()
 	{
         if (stepCount ==totalStepCounts
-			|| (this->stepCount == 1 && this->totalStepCounts != 2)
-			|| (this->stepCount % 2 == 1 && this->stepCount == 2))
-		{
-			return true;
-		}
-		else if((stepCount % 2 == 0 && stepCount != 2)
-			|| stepCount == 1)
-		{
-			return false;
-		}
+                   || (this->stepCount%2 == 1 && this->totalStepCounts != 2)
+                   || (this->stepCount == 2))
+               {
+                   return true;
+               }
+               //else if((stepCount % 2 == 0 && stepCount != 2)
+               //	|| stepCount == 1)
+               else
+               {
+                   return false;
+               }
 	};
 
 	/* a bunch of functions for init sequences  */

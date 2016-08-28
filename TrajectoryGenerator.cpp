@@ -873,6 +873,11 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				{
 					if (i.yPosForceDetector.second->is_on())
 					{
+						if (i.currentSequence->getCurrentRatio()<i.currentSequence->_ratioSegment.at(0).second)
+						{
+							continue;
+						}
+						
 
 						if (this->isTentative)
 						{
@@ -942,6 +947,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					{
 						// step on something
 						// change to TS
+						if (i.currentSequence->getCurrentRatio()<i.currentSequence->_ratioSegment.at(0).second)
+						{
+							continue;
+						}
 						
 						if (this->isTentative)
 						{
@@ -998,8 +1007,13 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				break;
 				case CurvesPlan::SequenceType::TS: // gait transistion is isTentative is off, then the program will never come here
 				{
+
 					if (i.yPosForceDetector.second->is_on())
 					{
+						if (i.currentSequence->getCurrentRatio()<i.currentSequence->_ratioSegment.at(0).second*0.5)
+						{
+							continue;
+						}
 						// step on something
 						if (i.tentativeCounts == 1)
 						{
@@ -1055,6 +1069,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
                     {
                         // step on something
                         // ss
+						if (i.currentSequence->getCurrentRatio()<i.currentSequence->_ratioSegment.at(0).second)
+						{
+							continue;
+						}
                             i.lastSequence = &i.retractSequence;
                             i.currentSequence = &i.standstillSequence;
                             i.setStage(SequenceStage::INIT);

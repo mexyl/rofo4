@@ -1303,7 +1303,7 @@ namespace CurvesPlan
 		}
 		virtual void reset()
 		{
-			rt_printf("body pos reset: %d",_pairedSequence.size());
+			rt_printf("body pos reset: %d\t",_pairedSequence.size());
 			for (auto &i : _pairedSequence)
 			{
 				i.first->setBound(*i.second);

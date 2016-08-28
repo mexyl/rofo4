@@ -185,5 +185,7 @@ namespace TrajectoryGenerator
 		/* everything for robot body */
 		HexapodBody bodyPos;
 		HexapodBody bodyAng;
+		Eigen::Vector3d bodyPosVec;
+		Eigen::Vector3d bodyAngVec;
 	};
 }

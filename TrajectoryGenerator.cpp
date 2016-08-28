@@ -402,8 +402,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	};
 
 
-    auto initBodyMotion=[&]()
+    auto initBodyMotion=[&](int time)
     {
+		//this function is called when the leg init funtion set this sequence's stage as INIT
+		bodyPos.body_position_ref_beginMak = this->bodyPosVec;
 		double bodyStepLength = 0.0;
 		if (stepCount == totalStepCounts || stepCount == 1)
 		{
@@ -418,6 +420,14 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			0, 0, 0,
 			bodyStepLength, 0, 0,
 			0, 0, 0;
+		this->bodyPos.bodyFirstSequence._cbcLine.setBound(bodyPos.bodyFirstSequence._cbcBound);
+		this->bodyPos.bodyFirstSequence.setStartTime(param.count);
+
+		//use ratioSegement to detect
+		this->bodyPos.bodyFirstSequence.setTotalCounts(time);//this should be the ns first two stage's count
+		this->bodyPos.bodyFirstSequence.reset();
+
+		this->bodyPos.setStage(RUNNING);
 		
     };
 
@@ -459,10 +469,24 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			i.setStage(SequenceStage::INIT);
 		}
         currentMotion=motion;
+		bodyPos.setStage(INIT);
 	}
 	else
 	{
 		// do nothing, other condition controls zero
+	}
+	if (bodyPos.getStage() == INIT)
+	{
+		if (isFirstGroupMove())
+		{
+			initBodyMotion((int)round(legTraj[0].normalSequence._ratioSegment.at(1).second
+				*(double)legTraj[0].normalSequence.getTotalCounts));
+		}
+		else
+		{
+			initBodyMotion((int)round(legTraj[1].normalSequence._ratioSegment.at(1).second
+				*(double)legTraj[1].normalSequence.getTotalCounts));
+		}
 	}
 	
 	/* a bunch of functions for init sequences  */
@@ -1048,7 +1072,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
     }
 
     double pEE[18];
-    double pEB[6]={0,0,0,0,0,0};
+    
     for (auto &i : legTraj)
     {
         Eigen::Vector3d point=i._trajStartPoint + this->_rot2Bot //rotate
@@ -1065,6 +1089,17 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
         pEE[i.getID()*3+2]=point(2);
 
     }
+
+	if (bodyPos.getStage() == RUNNING)
+	{
+		/* running stage */
+		
+		bodyPosVec = bodyPos.body_position_ref_beginMak+ this->_rot2Bot*this->bodyPos.bodyFirstSequence.getTargetPoint(
+			(param.count - bodyPos.bodyFirstSequence.getStartTime())
+			/ bodyPos.bodyFirstSequence.getTotalCounts());
+		 
+	}
+	double pEB[6] = { bodyPosVec(0),bodyPosVec(1),bodyPosVec(3),0,0,0 };
 
     robot.SetPeb(pEB);
     robot.SetPee(pEE);

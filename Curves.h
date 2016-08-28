@@ -309,6 +309,7 @@ namespace CurvesPlan
 				sectionLength = sqrt(delta.squaredNorm());
 				length += sectionLength;
 			}
+			rt_printf("Spline getLength() %f\n",length);
 			return length;
 		};
 
@@ -1262,7 +1263,7 @@ namespace CurvesPlan
 			this->init();
 
 			this->_sequencesPair.push_back(std::make_pair(&this->_cbcLine, &this->_cbcBound));
-
+			std::cout << "OneSplineConstructor" << _sequencesPair.size();
 			for (unsigned int i = 0;i < this->_countSequences.size();i++)
 			{
 				this->_ratioSegment.push_back(std::make_pair(0, 0));

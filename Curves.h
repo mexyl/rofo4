@@ -312,14 +312,14 @@ namespace CurvesPlan
 				last_point = current_point;
 				sectionLength = sqrt(delta.squaredNorm());
 				length += sectionLength;
-				rt_printf("Spline getLength() %f\t%f\t%f\t%f\t%f\n"
-					,u
-					, length
-				,this->bound._bound_mat(1,0)
-				, this->bound._bound_mat(1, 1)
-				, this->bound._bound_mat(1, 2));
+				//rt_printf("Spline getLength() %f\t%f\t%f\t%f\t%f\n"
+				//	,u
+				//	, length
+				//,this->bound._bound_mat(1,0)
+				//, this->bound._bound_mat(1, 1)
+				//, this->bound._bound_mat(1, 2));
 			}
-			rt_printf("Spline getLength() %f\n",length);
+			//rt_printf("Spline getLength() %f\n",length);
 			return length;
 		};
 
@@ -1335,6 +1335,7 @@ namespace CurvesPlan
 		virtual void setTotalCounts(int t)
 		{
 			/* redistribute time counts */
+			this->_total_counts = t;
 			this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 
 
@@ -1343,7 +1344,7 @@ namespace CurvesPlan
 			this->_ratioSegment.at(0).first = 0;
 			this->_ratioSegment.at(0).second =1.0;
 
-			rt_printf("body set total counts:\n%f %f",
+			rt_printf("body set total counts:\n%f %f\n",
 				_length[0], _total_length);
 
 			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s

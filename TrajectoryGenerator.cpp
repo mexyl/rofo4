@@ -439,7 +439,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				/* must think it carefully */
 				if (isFullStep(leg.getID()))
 				{
-					rt_printf("full ");
+                    rt_printf("full\n");
 					z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
 					stepLengthActual = stepLength - z_offset;
 				}
@@ -448,13 +448,13 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 					if (stepCount == 1)
 					{
-						rt_printf("half 1");
+                        rt_printf("half 1\n");
 						z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
 						stepLengthActual = 0.0 - z_offset;
 					}
 					else// first step;
 					{
-						rt_printf("half 2");
+                        rt_printf("half 2\n");
 						stepLengthActual = 0.5*stepLength;
 
 					}

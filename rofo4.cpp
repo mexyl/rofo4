@@ -67,7 +67,7 @@ int Rofo::RofoWalkInit()
 {
 
     rofo.reset();
-	//rofo.setForceMode(TrajectoryGenerator::ForceMode::INDIRECT);
+    rofo.setForceMode(TrajectoryGenerator::ForceMode::INDIRECT);
 }
 
 auto Rofo::rofoParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void

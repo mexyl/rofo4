@@ -390,7 +390,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	{
         if (stepCount ==totalStepCounts
                    || (this->stepCount%2 == 1 && this->totalStepCounts != 2)
-                   || (this->stepCount == 2))
+                   || (this->stepCount == 2&& totalStepCounts == 2))
                {
                    return true;
                }

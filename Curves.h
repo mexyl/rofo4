@@ -290,8 +290,9 @@ namespace CurvesPlan
 			param_vector << t*t*t, t*t, t, 1;
 			Eigen::Vector3d point;
 			point = control_mat.transpose()*_basis.transpose()*param_vector;
-			std::cout << control_mat << std::endl << std::endl<< _basis<<std::endl
-				 << std::endl<<param_vector<<std::endl;
+			//std::cout << control_mat << std::endl << std::endl<< _basis<<std::endl
+			//	 << std::endl<<param_vector<<std::endl;
+			return point;
 		};
 
 		virtual double getLength()

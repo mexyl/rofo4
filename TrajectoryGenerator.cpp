@@ -1166,8 +1166,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
     double pEB[6] = { bodyPosVec(0),bodyPosVec(1),bodyPosVec(2),0,0,0 };
 
     //double pEB[6]={0,0,0,0,0,0};
-    robot.SetPeb(pEB);
-    robot.SetPee(pEE);
+    robot.SetPeb(pEB,beginMak);
+    robot.SetPee(pEE,beginMak);
 
 	// TBD
 	// clean the varibles, this should be put in the first place of this function

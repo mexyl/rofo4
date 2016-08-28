@@ -631,7 +631,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					/* lastPoint is not important, is can be omitted */
 					//                    std::cout<<"before\n"<<this->targetPee<<std::endl;
 					//                    isPrint=true;
-					Eigen::Vector3d lastPoint = leg.lastSequence->getPoint(leg.lastSequence->getCurrentRatio());
+					Eigen::Vector3d lastPoint = leg.lastSequence->getTargetPoint(leg.lastSequence->getCurrentRatio());
 					ellH = 0.03;
 					ellL = 0.025;
 					leg.tentativeSequence._ellTentativeBound._bound_mat << 0, 0, 0,

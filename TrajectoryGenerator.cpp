@@ -480,12 +480,12 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		if (isFirstGroupMove())
 		{
 			initBodyMotion((int)round(legTraj[0].normalSequence._ratioSegment.at(1).second
-				*(double)legTraj[0].normalSequence.getTotalCounts));
+                *(double)legTraj[0].normalSequence.getTotalCounts()));
 		}
 		else
 		{
 			initBodyMotion((int)round(legTraj[1].normalSequence._ratioSegment.at(1).second
-				*(double)legTraj[1].normalSequence.getTotalCounts));
+                *(double)legTraj[1].normalSequence.getTotalCounts()));
 		}
 	}
 	

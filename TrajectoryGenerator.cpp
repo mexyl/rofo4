@@ -1187,6 +1187,26 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		}
 		return allss;
 	};
+	if (param.count == 0)
+	{
+		rt_printf("first cycle\n");
+		for (int i = 0;i<6;i++)
+		{
+
+
+			rt_printf("%f\t%f\t%f\t%d\t%f\n"
+				, targetPee(i, 0), targetPee(i, 1), targetPee(i, 2)
+				, legTraj[i].currentSequence->getCurrentSequenceType()
+				, legTraj[i].foot_position_ref_beginMak[2]);
+		}
+		rt_printf("%f\t%f\t%f\t%f\t%f%tf\n"
+			, bodyPosVec(0)
+			, bodyPosVec(1)
+			, bodyPosVec(2)
+			, bodyPosVec(3)
+			, bodyPosVec(4));
+
+	}
 
 
 	if (isAllStandStill() == 6)

@@ -1234,7 +1234,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				, bodyPosVec(2)
 				, bodyPosVec(3)
 				, bodyPosVec(4));
-
+			currentMotion = IDLE;
 			return 0;
 		}
 

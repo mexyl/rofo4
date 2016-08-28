@@ -132,6 +132,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				this->stepCount = 2;
 			}
 			this->totalStepCounts = this->stepCount;
+            this->stepLength=param.d;
 
 		}
 		// need to add mapping in this for loop

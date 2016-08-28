@@ -536,6 +536,7 @@
 	    </wk>
 	    <ro/>
 	    <climb default="n">
+		<distance abbreviation="d" type="double" default="0.25"/>
 		<n abbreviation="n" type="int" default="1"/>
 	    </climb>
 	    <edcl/>

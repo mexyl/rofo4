@@ -81,6 +81,11 @@ auto Rofo::rofoParse(const std::string &cmd, const std::map<std::string, std::st
             param.n=std::stoi(i.second);
 
         }
+        else if(i.first=="distance")
+        {
+            param.d==std::stoi(i.second);
+        }
+
     }
 
 

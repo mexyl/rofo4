@@ -38,7 +38,8 @@ namespace TrajectoryGenerator
 		CurvesPlan::CurvesSequenceBase *currentSequence = nullptr;
 		CurvesPlan::CurvesSequenceBase *lastSequence = nullptr;
 
-		double body_position_ref_beginMak[3];
+		Eigen::Vector3d body_position_ref_beginMak;// loop update
+		Eigen::Vector3d body_position_origin;// not change at all
 	};
 
 
@@ -181,6 +182,8 @@ namespace TrajectoryGenerator
 		int totalStepCounts;
 		double stepLength = 0.25;
 
-		
+		/* everything for robot body */
+		HexapodBody bodyPos;
+		HexapodBody bodyAng;
 	};
 }

@@ -116,6 +116,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			beginMak.setPrtPm(*robot.body().pm());
 			beginMak.update();
 
+			bodyPos.body_position_ref_beginMak << 0, 0, 0;//this one update every loop
+			bodyAng.body_position_origin << 0, 0, 0;//this one will not change
 			
 			if (param.n == 1)
 			{
@@ -356,7 +358,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		{
 			/* LF RM LR 0 2 4  first */
 			// first points and last one
-			if (param.count == 0 // first step
+			if (stepCount == totalStepCounts // first step
 				|| (this->stepCount == 1 && this->totalStepCounts!=2) // last count while steps>2
 				|| (this->totalStepCounts==2 && this->stepCount==2)) // first step of steps2
 			{
@@ -402,7 +404,21 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
     auto initBodyMotion=[&]()
     {
-
+		double bodyStepLength = 0.0;
+		if (stepCount == totalStepCounts || stepCount == 1)
+		{
+			bodyStepLength = 0.5*this->stepLength;
+		}
+		else
+		{
+			bodyStepLength = this->stepLength;
+		}
+		/* may add body posture adjustment here */
+		this->bodyPos.bodyFirstSequence._cbcBound._bound_mat << 0, 0, 0,
+			0, 0, 0,
+			bodyStepLength, 0, 0,
+			0, 0, 0;
+		
     };
 
 	// this happened at first time
@@ -449,8 +465,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		// do nothing, other condition controls zero
 	}
 	
-	/* we have a bunch of functions for init sequences  */
-	/*   */
+	/* a bunch of functions for init sequences  */
 	auto initSequences = [&](HexapodSingleLeg & leg, MotionID mot)
 	{
 		/* set start  point*/
@@ -479,9 +494,33 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				break;
 			case TrajectoryGenerator::FORWARD:
 			{
-				double z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
+				// this line 
+				double z_offset = 0;
+				double stepLengthActual = 0.0;
 //                std::cout<<"leg.ref pos"<<leg.foot_position_ref_body[2]<<"\t"<<leg._refPosition(2);
-				double stepLengthActual = stepLength - z_offset;
+				
+				/* must think it carefully */
+				if (isFullStep(leg.getID()))
+				{
+					z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
+					stepLengthActual = stepLength - z_offset;
+				}
+				else
+				{
+					if (stepCount == 1)
+					{
+						z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
+						stepLengthActual = 0.0 - z_offset;
+					}
+					else// first step;
+					{
+						stepLengthActual = 0.5*stepLength;
+						
+					}
+
+					
+				}
+				
 				/* tricky part */
 				strH = 0.05;
 				ellH = 0.03;
@@ -1029,27 +1068,6 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
     robot.SetPeb(pEB);
     robot.SetPee(pEE);
-
-
-//    if(isPrint)
-//    {
-//        for (auto &i : legTraj)
-//        {
-//            Eigen::Vector3d point=i._trajStartPoint + this->_rot2Bot //rotate
-//                *i.currentSequence->getTargetPoint(
-//                    (double)(param.count+1-i.currentSequence->getStartTime())
-//                    /i.currentSequence->getTotalCounts());
-
-//            //assignment of target pee
-//            this->targetPee(i.getID(), 0) = point(0);
-//            this->targetPee(i.getID(), 1) = point(1);
-//            this->targetPee(i.getID(), 2) = point(2);
-
-//        }
-
-//        std::cout<<param.count+1<<" after\n"<<this->targetPee<<std::endl;
-//        isPrint=false;
-//    }
 
 	// TBD
 	// clean the varibles, this should be put in the first place of this function

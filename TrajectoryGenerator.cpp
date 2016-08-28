@@ -66,6 +66,7 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
     case TrajectoryGenerator::INDIRECT:
 		for (int i = 0;i < 6;i++)
 		{
+            rt_printf("INDIRECT\n");
 			legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilterInd;
 			legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilterInd;
 			legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilterInd;
@@ -77,6 +78,7 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
     case TrajectoryGenerator::SENSOR:
 		for (int i = 0;i < 6;i++)
 		{
+            rt_printf("SENSOR\n");
 			legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilter;
 			legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilter;
 			legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilter;

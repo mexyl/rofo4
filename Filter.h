@@ -107,6 +107,7 @@ namespace Filter {
 					m_FilterLength + m_CurrentIndex - i :
 					m_CurrentIndex - i] * m_Coef[i];
 		}
+        rt_printf("FeedData %f\n",m_OutData);
 
 	}
 

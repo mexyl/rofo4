@@ -309,7 +309,12 @@ namespace CurvesPlan
 				last_point = current_point;
 				sectionLength = sqrt(delta.squaredNorm());
 				length += sectionLength;
-				rt_printf("Spline getLength() %f\t%f\n",u, length);
+				rt_printf("Spline getLength() %f\t%f\t%f\t%f\t%f\n"
+					,u
+					, length
+				,this->bound._bound_mat(2,0)
+				, this->bound._bound_mat(2, 1)
+				, this->bound._bound_mat(2, 2));
 			}
 			rt_printf("Spline getLength() %f\n",length);
 			return length;

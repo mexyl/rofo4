@@ -24,6 +24,8 @@ void TrajectoryGenerator::HexapodRofoGait::reset()
 		
 	}
 	// VIII
+    this->forceMode=ForceMode::NONE;
+    //this->forceMode=ForceMode::INDIRECT;
 	this->setForceMode(this->forceMode);
 
 	legTraj[LF].setID(LF);
@@ -47,12 +49,18 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	case TrajectoryGenerator::HexapodRofoGait::NONE:
 		for (int i = 0;i < 6;i++)
 		{
-			legTraj[i].yPosForceDetector.first = NULL;
-			legTraj[i].zPosForceDetector.first = NULL;
-			legTraj[i].zNegForceDetector.first = NULL;
-			legTraj[i].yPosForceDetector.second = NULL;
-			legTraj[i].zPosForceDetector.second = NULL;
-			legTraj[i].zNegForceDetector.second = NULL;
+//			legTraj[i].yPosForceDetector.first = NULL;
+//			legTraj[i].zPosForceDetector.first = NULL;
+//			legTraj[i].zNegForceDetector.first = NULL;
+//			legTraj[i].yPosForceDetector.second = NULL;
+//			legTraj[i].zPosForceDetector.second = NULL;
+//			legTraj[i].zNegForceDetector.second = NULL;
+            legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilterInd;
+            legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilterInd;
+            legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilterInd;
+            legTraj[i].yPosForceDetector.second = &legTraj[i].thrYposInd;
+            legTraj[i].zPosForceDetector.second = &legTraj[i].thrZposInd;
+            legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
 		}
 		break;
 	case TrajectoryGenerator::HexapodRofoGait::INDIRECT:
@@ -330,6 +338,13 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				i.zNegForceDetector.second->threshold(i.zNegForceDetector.first->GetData());
 			}
 		}
+        else
+        {
+            for (auto &i : legTraj)
+            {
+                i.yPosForceDetector.second->reset();
+            }
+        }
 		
 		
 	};
@@ -903,7 +918,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 							i.currentSequence = &i.standstillSequence;
 							i.setStage(SequenceStage::INIT);
 							i.tentativeCounts = 0;
-							rt_printf("yPosFroce on ts -> ss (t off) leg: %d\n", i.getID());
+                            rt_printf("yPosFroce on ts -> ss (t on) leg: %d\n", i.getID());
 
 						}
 					}

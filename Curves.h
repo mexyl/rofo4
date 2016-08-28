@@ -9,9 +9,95 @@
 #include "rtdk.h"
 namespace CurvesPlan
 {
-	/*
-	 
-	*/
+	
+	/* Time span */
+	class TimeSpanBase
+	{
+	public:
+		virtual double getRatio(double Tratio, double Tacc, double Tdec) = 0;
+	};
+
+	class TriangleAcc :public TimeSpanBase
+	{
+	public:
+		virtual double getRatio(double Tratio, double Tacc, double Tdec)
+		{
+			double Pratio = 0;
+			if (Tratio > 1.0)
+			{
+				Tratio = 1.0;
+			}
+			if (Tacc + Tdec > 1.001)
+			{
+				std::cout << "invalid parameter" << std::endl;
+				return Pratio;
+			}
+			else
+			{
+				double Tcon = 1.0 - Tacc - Tdec;
+				double Racc = pow(Tacc, 2) / pow(Tdec, 2);
+				double Ka = 1.0 / (1 / 3 * Tacc * Tacc * Tacc +
+					1 / 2 * Tacc *Tacc * (1 - Tacc - Tdec) +
+					1 / 3 * Tacc *Tacc * Tdec
+					);
+				double Kd = Ka*Racc;
+				if (Tratio <= Tacc)
+				{
+					Pratio = 1 / 2 * Ka*Tacc*pow(Tratio, 2) - 1 / 6 * Ka*pow(Tratio, 3);
+				}
+				else if (Tratio>Tacc + Tcon)
+				{
+					Pratio = 1 / 3 * pow(Tacc, 3) * Ka
+						+ 1 / 2 * pow(Tacc, 2) * (1 - Tacc - Tdec)*Ka
+						- (Ka*pow(Tacc, 2) * (-1 + Tratio + Tdec)*(1 + pow(Tratio, 2) + 2 * Tratio*(-1 + Tdec) - 2 * Tdec*(1 + Tdec))) / (6 * pow(Tdec, 2));
+				}
+				else
+				{
+					Pratio = 1 / 2 * Ka*Tacc*pow(Tacc, 2) - 1 / 6 * Ka*pow(Tacc, 3)
+						+ 1 / 2 * Ka*pow(Tacc, 2) * (Tratio - Tacc);
+				}
+				return Pratio;
+			}
+		}
+
+	};
+
+	class TrapezoidalVel :public TimeSpanBase
+	{
+	public:
+		virtual double getRatio(double Tratio, double Tacc, double Tdec)
+		{
+			double Pratio = 0;
+			if (Tratio > 1.0)
+			{
+				Tratio = 1.0;
+			}
+			if (Tacc + Tdec > 1.001)
+			{
+				std::cout << "invalid parameter" << std::endl;
+				return Pratio;
+			}
+			else
+			{
+				double Tcon = 1.0 - Tacc - Tdec;
+				double Vel = 1.0 / (1.0 - 0.5*(Tacc + Tdec));
+				double Acc = Vel / Tacc;
+				double Dec = Vel / Tdec;
+				if (Tratio <= Tacc)
+				{
+					Pratio = 0.5*Acc*Tratio*Tratio;
+				}
+				else if (Tratio > Tacc + Tcon)
+				{
+					Pratio = 1.0 - 0.5*Vel / Tdec*pow((1.0 - Tratio), 2);
+				}
+				else
+				{
+					Pratio = 0.5*Acc*Tacc*Tacc + (Tratio - Tacc)*Vel;
+				}
+			}
+		}
+	};
 	
 	enum CurveType {STRAIGHT=1,ELLIPSE,CUBICSPLINE,STANDSTILL};
 
@@ -330,85 +416,7 @@ namespace CurvesPlan
 
 	};
 
-	/* Time span */
-	class TimeSpanBase
-	{
-	public:
-		virtual double getRatio(double Tratio, double Tacc, double Tdec)=0;
-	};
 
-	class TriangleAcc :public TimeSpanBase
-	{
-	public:
-		virtual double getRatio(double Tratio, double Tacc, double Tdec)
-		{
-			double Pratio = 0;
-			if (Tacc + Tdec > 1.001)
-			{
-                std::cout << "invalid parameter" << std::endl;
-				return Pratio;
-			}
-			else
-			{
-				double Tcon = 1.0 - Tacc - Tdec;
-				double Racc = pow(Tacc, 2) / pow(Tdec, 2);
-				double Ka = 1.0 / (1 / 3 * Tacc * Tacc * Tacc +
-					1 / 2 * Tacc *Tacc * (1 - Tacc - Tdec) +
-					1 / 3 * Tacc *Tacc * Tdec
-					);
-				double Kd = Ka*Racc;
-				if (Tratio <= Tacc)
-				{
-					Pratio = 1 / 2 * Ka*Tacc*pow(Tratio, 2) - 1 / 6 * Ka*pow(Tratio, 3);
-				}
-				else if (Tratio>Tacc + Tcon)
-				{
-					Pratio = 1 / 3 * pow(Tacc, 3) * Ka
-						+ 1 / 2 * pow(Tacc, 2) * (1 - Tacc - Tdec)*Ka
-						- (Ka*pow(Tacc, 2) * (-1 + Tratio + Tdec)*(1 + pow(Tratio, 2) + 2 * Tratio*(-1 + Tdec) - 2 * Tdec*(1 + Tdec))) / (6 * pow(Tdec, 2));
-				}
-				else
-				{
-					Pratio = 1 / 2 * Ka*Tacc*pow(Tacc, 2) - 1 / 6 * Ka*pow(Tacc, 3)
-						+ 1 / 2 * Ka*pow(Tacc, 2) * (Tratio - Tacc);
-				}
-				return Pratio;
-			}
-		}
-
-	};
-
-	class TrapezoidalVel :public TimeSpanBase
-	{
-		virtual double getRatio(double Tratio, double Tacc, double Tdec)
-		{
-			double Pratio = 0;
-			if (Tacc + Tdec > 1.001)
-			{
-				std::cout << "invalid parameter" << std::endl;
-				return Pratio;
-			}
-			else
-			{
-				double Tcon = 1.0 - Tacc - Tdec;
-				double Vel = 1.0 / (1.0 - 0.5*(Tacc + Tdec));
-				double Acc = Vel / Tacc;
-				double Dec = Vel / Tdec;
-				if (Tratio <= Tacc)
-				{
-					Pratio = 0.5*Acc*Tratio*Tratio;
-				}
-				else if (Tratio > Tacc + Tcon)
-				{
-					Pratio = 1.0 - 0.5*Vel / Tdec*pow((1.0 - Tratio),2);
-				}
-				else
-				{
-					Pratio = 0.5*Acc*Tacc*Tacc + (Tratio - Tacc)*Vel;
-				}
-			}
-		}
-	};
 
 
 	enum SequenceType { NS, OS, TS, SS, RS, CS };
@@ -422,16 +430,19 @@ namespace CurvesPlan
 		/* Every time  start the gait */
 		virtual void reset() = 0;
 		
-		virtual Eigen::Vector3d getPoint(int t) = 0;
+		//virtual Eigen::Vector3d getPoint(int t) = 0;
 
-		virtual Eigen::Vector3d getPoint(double t)=0;
+		//virtual Eigen::Vector3d getPoint(double t)=0;
 
 		
 
 		// recommand 
-		virtual Eigen::Vector3d getTargetPoint(double t)
+		virtual Eigen::Vector3d getTargetPoint(double time)
 		{
-			_currentCurveRatio = t;
+			
+			_currentCurveRatio = time;
+			// here we do the mapping 
+			double t = this->timeTrapezoidalVel.getRatio(time,0.5,0.5);
 			Eigen::Vector3d point;
 //            rt_printf("getTargetPoint %d  %ull\n",this->_sequencesPair.size(),&this->_sequencesPair);
 //                      //,this->_sequencesPair.front().first->_base_refBound->getCurveType());
@@ -481,6 +492,8 @@ namespace CurvesPlan
 			return point;
 		};
 
+
+
         virtual int getTotalCounts() { return this->_total_counts; }
         virtual double getTotalLength() { return this->_total_length; }
         virtual int getCurrentIndex() { return this->_currentCurveIndex; }
@@ -503,6 +516,10 @@ namespace CurvesPlan
 		
 		std::vector<std::pair<double, double>> _ratioSegment;
 		std::vector<std::pair<CurveBase*, BoundBase*>> _sequencesPair;
+
+		/*time span*/
+		TriangleAcc timeTriangleAcc;
+		TrapezoidalVel timeTrapezoidalVel;
 
 	};
 	/* 
@@ -695,85 +712,85 @@ namespace CurvesPlan
 
 		};
 
-		virtual Eigen::Vector3d getPoint(int t)
-		{
-			Eigen::Vector3d point;
-			_currentCurveIndex = t;
-			//std::cout <<"getPoint"<< point << std::endl;
-			if (t <= _countSequences.at(0))
-			{
-				/*first*/
-				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_countSequences.at(0));
-				//std::cout << point << std::endl;
-			}
-			else if (t> _countSequences.at(0) 
-				&& t<=(_countSequences.at(0)+_countSequences.at(1)))
-			{
-				/* second */
-				point = _pairedSequence.at(1).first->getPoint(
-					(double)(t - _countSequences.at(0)) / (double)_countSequences.at(1));
-			}
-			else if (t>(_countSequences.at(0) + _countSequences.at(1)) 
-				&& t<=(_countSequences.at(0)+ _countSequences.at(1)+ _countSequences.at(2)))
-			{
-				/* third */
-				point = _pairedSequence.at(2).first->getPoint(
-					(double)(t - _countSequences.at(0)-_countSequences.at(1)) / (double)_countSequences.at(2));
-			}
-			else if(t>(_countSequences.at(0) + _countSequences.at(1) + _countSequences.at(2)))
-			{
-				/* just return last point */
-				point = _pairedSequence.at(2).first->getPoint(1.0);
-			}
-			else
-			{
-				/* error  return the origin points */
-				std::cout << "negetive counts " << t << std::endl;
-				point = _pairedSequence.at(0).first->getPoint(0.0);
-			}
-			return point;
-		}
+		//virtual Eigen::Vector3d getPoint(int t)
+		//{
+		//	Eigen::Vector3d point;
+		//	_currentCurveIndex = t;
+		//	//std::cout <<"getPoint"<< point << std::endl;
+		//	if (t <= _countSequences.at(0))
+		//	{
+		//		/*first*/
+		//		point = _pairedSequence.at(0).first->getPoint((double)t / (double)_countSequences.at(0));
+		//		//std::cout << point << std::endl;
+		//	}
+		//	else if (t> _countSequences.at(0) 
+		//		&& t<=(_countSequences.at(0)+_countSequences.at(1)))
+		//	{
+		//		/* second */
+		//		point = _pairedSequence.at(1).first->getPoint(
+		//			(double)(t - _countSequences.at(0)) / (double)_countSequences.at(1));
+		//	}
+		//	else if (t>(_countSequences.at(0) + _countSequences.at(1)) 
+		//		&& t<=(_countSequences.at(0)+ _countSequences.at(1)+ _countSequences.at(2)))
+		//	{
+		//		/* third */
+		//		point = _pairedSequence.at(2).first->getPoint(
+		//			(double)(t - _countSequences.at(0)-_countSequences.at(1)) / (double)_countSequences.at(2));
+		//	}
+		//	else if(t>(_countSequences.at(0) + _countSequences.at(1) + _countSequences.at(2)))
+		//	{
+		//		/* just return last point */
+		//		point = _pairedSequence.at(2).first->getPoint(1.0);
+		//	}
+		//	else
+		//	{
+		//		/* error  return the origin points */
+		//		std::cout << "negetive counts " << t << std::endl;
+		//		point = _pairedSequence.at(0).first->getPoint(0.0);
+		//	}
+		//	return point;
+		//}
 
-		/* TBD */
-		virtual Eigen::Vector3d getPoint(double t)
-		{
-			Eigen::Vector3d point;
-			_currentCurveRatio = t;
-			//std::cout <<"getPoint"<< point << std::endl;
-			if (t <= _ratioSequences.at(0))
-			{
-				/*first*/
-				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_ratioSequences.at(0));
-				//std::cout << point << std::endl;
-			}
-			else if (t> _ratioSequences.at(0)
-				&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1)))
-			{
-				/* second */
-				point = _pairedSequence.at(1).first->getPoint(
-					(double)(t - _ratioSequences.at(0)) / (double)_ratioSequences.at(1));
-			}
-			else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1))
-				&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
-			{
-				/* third */
-				point = _pairedSequence.at(2).first->getPoint(
-					(double)(t - _ratioSequences.at(0) - _ratioSequences.at(1)) / (double)_ratioSequences.at(2));
-			}
-			else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
-			{
-				/* just return last point */
-				point = _pairedSequence.at(2).first->getPoint(1.0);
-			}
-			else
-			{
-				/* error  return the origin points */
-				std::cout << "negetive ratio " << t << std::endl;
-				point = _pairedSequence.at(0).first->getPoint(0.0);
-			}
-			return point;
-		}
-		
+		///* TBD */
+		//virtual Eigen::Vector3d getPoint(double t)
+		//{
+		//	Eigen::Vector3d point;
+		//	_currentCurveRatio = t;
+		//	//std::cout <<"getPoint"<< point << std::endl;
+		//	if (t <= _ratioSequences.at(0))
+		//	{
+		//		/*first*/
+		//		point = _pairedSequence.at(0).first->getPoint((double)t / (double)_ratioSequences.at(0));
+		//		//std::cout << point << std::endl;
+		//	}
+		//	else if (t> _ratioSequences.at(0)
+		//		&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1)))
+		//	{
+		//		/* second */
+		//		point = _pairedSequence.at(1).first->getPoint(
+		//			(double)(t - _ratioSequences.at(0)) / (double)_ratioSequences.at(1));
+		//	}
+		//	else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1))
+		//		&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
+		//	{
+		//		/* third */
+		//		point = _pairedSequence.at(2).first->getPoint(
+		//			(double)(t - _ratioSequences.at(0) - _ratioSequences.at(1)) / (double)_ratioSequences.at(2));
+		//	}
+		//	else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
+		//	{
+		//		/* just return last point */
+		//		point = _pairedSequence.at(2).first->getPoint(1.0);
+		//	}
+		//	else
+		//	{
+		//		/* error  return the origin points */
+		//		std::cout << "negetive ratio " << t << std::endl;
+		//		point = _pairedSequence.at(0).first->getPoint(0.0);
+		//	}
+		//	return point;
+		//}
+		//
 		/* these bound are set in trajectory generator
 		   then, reset will calculate the time span
 		*/
@@ -931,82 +948,82 @@ namespace CurvesPlan
 
 		};
 
-		virtual Eigen::Vector3d getPoint(int t)
-		{
-			Eigen::Vector3d point;
-			_currentCurveIndex = t;
-			//std::cout <<"getPoint"<< point << std::endl;
-			if (t <= _countSequences.at(0))
-			{
-				/*first*/
-				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_countSequences.at(0));
-				//std::cout << point << std::endl;
-			}
-			else if (t> _countSequences.at(0)
-				&& t <= (_countSequences.at(0) + _countSequences.at(1)))
-			{
-				/* second */
-				point = _pairedSequence.at(1).first->getPoint(
-					(double)(t - _countSequences.at(0)) / (double)_countSequences.at(1));
-			}
-			else if (t>(_countSequences.at(0) + _countSequences.at(1))
-				&& t <= (_countSequences.at(0) + _countSequences.at(1) + _countSequences.at(2)))
-			{
-				/* third */
-				point = _pairedSequence.at(2).first->getPoint(
-					(double)(t - _countSequences.at(0) - _countSequences.at(1)) / (double)_countSequences.at(2));
-			}
-			else if (t>(_countSequences.at(0) + _countSequences.at(1) + _countSequences.at(2)))
-			{
-				/* just return last point */
-				point = _pairedSequence.at(2).first->getPoint(1.0);
-			}
-			else
-			{
-				/* error  return the origin points */
-				std::cout << "negetive counts " << t << std::endl;
-				point = _pairedSequence.at(0).first->getPoint(0.0);
-			}
-			return point;
-		}
-		virtual Eigen::Vector3d getPoint(double t)
-		{
-			Eigen::Vector3d point;
-			_currentCurveRatio = t;
-			//std::cout <<"getPoint"<< point << std::endl;
-			if (t <= _ratioSequences.at(0))
-			{
-				/*first*/
-				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_ratioSequences.at(0));
-				//std::cout << point << std::endl;
-			}
-			else if (t> _ratioSequences.at(0)
-				&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1)))
-			{
-				/* second */
-				point = _pairedSequence.at(1).first->getPoint(
-					(double)(t - _ratioSequences.at(0)) / (double)_ratioSequences.at(1));
-			}
-			else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1))
-				&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
-			{
-				/* third */
-				point = _pairedSequence.at(2).first->getPoint(
-					(double)(t - _ratioSequences.at(0) - _ratioSequences.at(1)) / (double)_ratioSequences.at(2));
-			}
-			else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
-			{
-				/* just return last point */
-				point = _pairedSequence.at(2).first->getPoint(1.0);
-			}
-			else
-			{
-				/* error  return the origin points */
-				std::cout << "negetive ratio " << t << std::endl;
-				point = _pairedSequence.at(0).first->getPoint(0.0);
-			}
-			return point;
-		}
+		//virtual Eigen::Vector3d getPoint(int t)
+		//{
+		//	Eigen::Vector3d point;
+		//	_currentCurveIndex = t;
+		//	//std::cout <<"getPoint"<< point << std::endl;
+		//	if (t <= _countSequences.at(0))
+		//	{
+		//		/*first*/
+		//		point = _pairedSequence.at(0).first->getPoint((double)t / (double)_countSequences.at(0));
+		//		//std::cout << point << std::endl;
+		//	}
+		//	else if (t> _countSequences.at(0)
+		//		&& t <= (_countSequences.at(0) + _countSequences.at(1)))
+		//	{
+		//		/* second */
+		//		point = _pairedSequence.at(1).first->getPoint(
+		//			(double)(t - _countSequences.at(0)) / (double)_countSequences.at(1));
+		//	}
+		//	else if (t>(_countSequences.at(0) + _countSequences.at(1))
+		//		&& t <= (_countSequences.at(0) + _countSequences.at(1) + _countSequences.at(2)))
+		//	{
+		//		/* third */
+		//		point = _pairedSequence.at(2).first->getPoint(
+		//			(double)(t - _countSequences.at(0) - _countSequences.at(1)) / (double)_countSequences.at(2));
+		//	}
+		//	else if (t>(_countSequences.at(0) + _countSequences.at(1) + _countSequences.at(2)))
+		//	{
+		//		/* just return last point */
+		//		point = _pairedSequence.at(2).first->getPoint(1.0);
+		//	}
+		//	else
+		//	{
+		//		/* error  return the origin points */
+		//		std::cout << "negetive counts " << t << std::endl;
+		//		point = _pairedSequence.at(0).first->getPoint(0.0);
+		//	}
+		//	return point;
+		//}
+		//virtual Eigen::Vector3d getPoint(double t)
+		//{
+		//	Eigen::Vector3d point;
+		//	_currentCurveRatio = t;
+		//	//std::cout <<"getPoint"<< point << std::endl;
+		//	if (t <= _ratioSequences.at(0))
+		//	{
+		//		/*first*/
+		//		point = _pairedSequence.at(0).first->getPoint((double)t / (double)_ratioSequences.at(0));
+		//		//std::cout << point << std::endl;
+		//	}
+		//	else if (t> _ratioSequences.at(0)
+		//		&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1)))
+		//	{
+		//		/* second */
+		//		point = _pairedSequence.at(1).first->getPoint(
+		//			(double)(t - _ratioSequences.at(0)) / (double)_ratioSequences.at(1));
+		//	}
+		//	else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1))
+		//		&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
+		//	{
+		//		/* third */
+		//		point = _pairedSequence.at(2).first->getPoint(
+		//			(double)(t - _ratioSequences.at(0) - _ratioSequences.at(1)) / (double)_ratioSequences.at(2));
+		//	}
+		//	else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1) + _ratioSequences.at(2)))
+		//	{
+		//		/* just return last point */
+		//		point = _pairedSequence.at(2).first->getPoint(1.0);
+		//	}
+		//	else
+		//	{
+		//		/* error  return the origin points */
+		//		std::cout << "negetive ratio " << t << std::endl;
+		//		point = _pairedSequence.at(0).first->getPoint(0.0);
+		//	}
+		//	return point;
+		//}
 
 		EllipseBound _ellReflexBound;
 		Ellipse _ellReflex;
@@ -1138,69 +1155,68 @@ namespace CurvesPlan
 
 		}
 
-		virtual Eigen::Vector3d getPoint(int t)
-		{
-			Eigen::Vector3d point;
-			_currentCurveIndex = t;
-			//std::cout <<"getPoint"<< point << std::endl;
-			if (t <= _countSequences.at(0))
-			{
-				/*first*/
-				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_countSequences.at(0));
-				//std::cout << point << std::endl;
-			}
-			else if (t> _countSequences.at(0)
-				&& t <= (_countSequences.at(0) + _countSequences.at(1)))
-			{
-				/* second */
-				point = _pairedSequence.at(1).first->getPoint(
-					(double)(t - _countSequences.at(0)) / (double)_countSequences.at(1));
-			}
-			else if (t>(_countSequences.at(0) + _countSequences.at(1)))
-			{
-				/* just return last point */
-				point = _pairedSequence.at(1).first->getPoint(1.0);
-			}
-			else
-			{
-				/* error  return the origin points */
-				std::cout << "negetive counts " << t << std::endl;
-				point = _pairedSequence.front().first->getPoint(0.0);
-			}
-			return point;
-		}
-
-		virtual Eigen::Vector3d getPoint(double t)
-		{
-			Eigen::Vector3d point;
-			_currentCurveRatio = t;
-			//std::cout <<"getPoint"<< point << std::endl;
-			if (t <= _ratioSequences.at(0))
-			{
-				/*first*/
-				point = _pairedSequence.at(0).first->getPoint((double)t / (double)_ratioSequences.at(0));
-				//std::cout << point << std::endl;
-			}
-			else if (t> _ratioSequences.at(0)
-				&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1)))
-			{
-				/* second */
-				point = _pairedSequence.at(1).first->getPoint(
-					(double)(t - _ratioSequences.at(0)) / (double)_ratioSequences.at(1));
-			}
-			else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1)))
-			{
-				/* just return last point */
-				point = _pairedSequence.at(1).first->getPoint(1.0);
-			}
-			else
-			{
-				/* error  return the origin points */
-				std::cout << "negetive ratio " << t << std::endl;
-				point = _pairedSequence.front().first->getPoint(0.0);
-			}
-			return point;
-		}
+		//virtual Eigen::Vector3d getPoint(int t)
+		//{
+		//	Eigen::Vector3d point;
+		//	_currentCurveIndex = t;
+		//	//std::cout <<"getPoint"<< point << std::endl;
+		//	if (t <= _countSequences.at(0))
+		//	{
+		//		/*first*/
+		//		point = _pairedSequence.at(0).first->getPoint((double)t / (double)_countSequences.at(0));
+		//		//std::cout << point << std::endl;
+		//	}
+		//	else if (t> _countSequences.at(0)
+		//		&& t <= (_countSequences.at(0) + _countSequences.at(1)))
+		//	{
+		//		/* second */
+		//		point = _pairedSequence.at(1).first->getPoint(
+		//			(double)(t - _countSequences.at(0)) / (double)_countSequences.at(1));
+		//	}
+		//	else if (t>(_countSequences.at(0) + _countSequences.at(1)))
+		//	{
+		//		/* just return last point */
+		//		point = _pairedSequence.at(1).first->getPoint(1.0);
+		//	}
+		//	else
+		//	{
+		//		/* error  return the origin points */
+		//		std::cout << "negetive counts " << t << std::endl;
+		//		point = _pairedSequence.front().first->getPoint(0.0);
+		//	}
+		//	return point;
+		//}
+		//virtual Eigen::Vector3d getPoint(double t)
+		//{
+		//	Eigen::Vector3d point;
+		//	_currentCurveRatio = t;
+		//	//std::cout <<"getPoint"<< point << std::endl;
+		//	if (t <= _ratioSequences.at(0))
+		//	{
+		//		/*first*/
+		//		point = _pairedSequence.at(0).first->getPoint((double)t / (double)_ratioSequences.at(0));
+		//		//std::cout << point << std::endl;
+		//	}
+		//	else if (t> _ratioSequences.at(0)
+		//		&& t <= (_ratioSequences.at(0) + _ratioSequences.at(1)))
+		//	{
+		//		/* second */
+		//		point = _pairedSequence.at(1).first->getPoint(
+		//			(double)(t - _ratioSequences.at(0)) / (double)_ratioSequences.at(1));
+		//	}
+		//	else if (t>(_ratioSequences.at(0) + _ratioSequences.at(1)))
+		//	{
+		//		/* just return last point */
+		//		point = _pairedSequence.at(1).first->getPoint(1.0);
+		//	}
+		//	else
+		//	{
+		//		/* error  return the origin points */
+		//		std::cout << "negetive ratio " << t << std::endl;
+		//		point = _pairedSequence.front().first->getPoint(0.0);
+		//	}
+		//	return point;
+		//}
 
 
 		/* reverse is specially designed for this sequences */
@@ -1322,15 +1338,15 @@ namespace CurvesPlan
 			}
 			rt_printf("%f\n", _total_length);
 		}
-		virtual Eigen::Vector3d getPoint(int t)
-		{
-			this->getTargetPoint((double)t/(double)this->getTotalCounts());
-		};
+		//virtual Eigen::Vector3d getPoint(int t)
+		//{
+		//	this->getTargetPoint((double)t/(double)this->getTotalCounts());
+		//};
 
-		virtual Eigen::Vector3d getPoint(double t)
-		{
-			this->getTargetPoint(t);
-		};
+		//virtual Eigen::Vector3d getPoint(double t)
+		//{
+		//	this->getTargetPoint(t);
+		//};
 
 		virtual void setTotalCounts(int t)
 		{

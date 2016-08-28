@@ -620,13 +620,13 @@
 		    </SDO>
 		</AtiForceSensor>
 		<EK1100 product_code="0x044c2c52" vender_id="0x00000002" alias="0" >
-		    <PDO></PDO>
-		    <SDO></SDO>
-		</EK1100>
-		<EK1122 product_code="0x04622c52" vender_id="0x00000002" alias="0" >
-		    <PDO></PDO>
-		    <SDO></SDO>
-		</EK1122>
+				    <PDO></PDO>
+				    <SDO></SDO>
+				</EK1100>
+				<EK1122 product_code="0x04622c52" vender_id="0x00000002" alias="0" >
+				    <PDO></PDO>
+				    <SDO></SDO>
+				</EK1122>
 	    </SlaveType>
 	    <Slave>
 		<Motion1 type="ElmoSoloWhistle"  min_pos="0.0690" max_pos="10.100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id=" 1"/>
@@ -647,7 +647,16 @@
 		<Motion16 type="ElmoSoloWhistle" min_pos="0.0690" max_pos="10.100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id="10"/>
 		<Motion17 type="ElmoSoloWhistle" min_pos="0.0669" max_pos="10.080" max_vel="0.9481" home_pos="0.669" input2count="9216000" abs_id="9"/>
 		<Motion18 type="ElmoSoloWhistle" min_pos="0.0690" max_pos="10.100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id="11"/>
-	
+		<SlaveStation1 type="EK1100" />
+			       <Junction1 type="EK1122" />
+			       <ForceSensor1 type="AtiForceSensor" abs_id="3"/>
+			       <ForceSensor2 type="AtiForceSensor" abs_id="2"/>
+			       <Junction2 type="EK1122" />
+			       <ForceSensor3 type="AtiForceSensor" abs_id="4"/>
+			       <ForceSensor4 type="AtiForceSensor" abs_id="0"/>
+			       <Junction3 type="EK1122" />
+			       <ForceSensor5 type="AtiForceSensor" abs_id="5"/>
+			       <ForceSensor6 type="AtiForceSensor" abs_id="1"/>
 	    </Slave>
 	</EtherCat>
     </Controller>

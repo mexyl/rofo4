@@ -441,9 +441,12 @@ namespace CurvesPlan
 		{
 			
 			_currentCurveRatio = time;
-			// here we do the mapping 
-			double t = this->timeTrapezoidalVel.getRatio(time,0.5,0.5);
-			Eigen::Vector3d point;
+            // here we do the mapping, choose between following 2
+
+            //double t = this->timeTrapezoidalVel.getRatio(time,0.5,0.5);
+            double t=this->timeTriangleAcc.getRatio(time,0.5,0.5);
+
+            Eigen::Vector3d point;
 //            rt_printf("getTargetPoint %d  %ull\n",this->_sequencesPair.size(),&this->_sequencesPair);
 //                      //,this->_sequencesPair.front().first->_base_refBound->getCurveType());
 

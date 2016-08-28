@@ -345,7 +345,12 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
                 rt_printf("zPos %f\t",i.zPosForceDetector.first->GetData());
 
                 }
+
+            }
+            if(param.count%500==0)
+            {
                 rt_printf("\n");
+
             }
 		}
         else

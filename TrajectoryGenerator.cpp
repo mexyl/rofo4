@@ -88,12 +88,12 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	default:
 		for (int i = 0;i < 6;i++)
 		{
-			legTraj[i].yPosForceDetector.first = NULL;
-			legTraj[i].zPosForceDetector.first = NULL;
-			legTraj[i].zNegForceDetector.first = NULL;
-			legTraj[i].yPosForceDetector.second = NULL;
-			legTraj[i].zPosForceDetector.second = NULL;
-			legTraj[i].zNegForceDetector.second = NULL;
+            legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilterInd;
+            legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilterInd;
+            legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilterInd;
+            legTraj[i].yPosForceDetector.second = &legTraj[i].thrYposInd;
+            legTraj[i].zPosForceDetector.second = &legTraj[i].thrZposInd;
+            legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
 
 		}
 		break;

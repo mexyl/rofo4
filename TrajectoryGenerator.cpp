@@ -475,20 +475,9 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	{
 		// do nothing, other condition controls zero
 	}
-	if (bodyPos.getStage() == INIT)
-	{
-		if (isFirstGroupMove())
-		{
-			initBodyMotion((int)round(legTraj[0].normalSequence._ratioSegment.at(1).second
-                *(double)legTraj[0].normalSequence.getTotalCounts()));
-		}
-		else
-		{
-			initBodyMotion((int)round(legTraj[1].normalSequence._ratioSegment.at(1).second
-                *(double)legTraj[1].normalSequence.getTotalCounts()));
-		}
-	}
-	
+
+
+
 	/* a bunch of functions for init sequences  */
 	auto initSequences = [&](HexapodSingleLeg & leg, MotionID mot)
 	{
@@ -818,6 +807,22 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		}
 	}
 
+    if (bodyPos.getStage() == INIT)
+    {
+        if (isFirstGroupMove())
+        {
+            initBodyMotion((int)round(legTraj[0].normalSequence._ratioSegment.at(1).second
+                *(double)legTraj[0].normalSequence.getTotalCounts()));
+        }
+        else
+        {
+            initBodyMotion((int)round(legTraj[1].normalSequence._ratioSegment.at(1).second
+                *(double)legTraj[1].normalSequence.getTotalCounts()));
+        }
+        //bodyPos.setStage(RUNNING);
+    }
+
+
 	
 	/* this part need to set INIT state */
 	auto gaitTransition = [&](MotionID mot) 
@@ -1090,17 +1095,18 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
     }
 
-	if (bodyPos.getStage() == RUNNING)
-	{
-		/* running stage */
+    if (bodyPos.getStage() == RUNNING)
+    {
+        /* running stage */
 		
-		bodyPosVec = bodyPos.body_position_ref_beginMak+ this->_rot2Bot*this->bodyPos.bodyFirstSequence.getTargetPoint(
-			(param.count - bodyPos.bodyFirstSequence.getStartTime())
-			/ bodyPos.bodyFirstSequence.getTotalCounts());
+        bodyPosVec = bodyPos.body_position_ref_beginMak+ this->_rot2Bot*this->bodyPos.bodyFirstSequence.getTargetPoint(
+            (double)(param.count - bodyPos.bodyFirstSequence.getStartTime())
+            / (double)bodyPos.bodyFirstSequence.getTotalCounts());
 		 
-	}
-	double pEB[6] = { bodyPosVec(0),bodyPosVec(1),bodyPosVec(3),0,0,0 };
+    }
+    double pEB[6] = { bodyPosVec(0),bodyPosVec(1),bodyPosVec(2),0,0,0 };
 
+    //double pEB[6]={0,0,0,0,0,0};
     robot.SetPeb(pEB);
     robot.SetPee(pEE);
 

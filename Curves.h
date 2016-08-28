@@ -290,6 +290,8 @@ namespace CurvesPlan
 			param_vector << t*t*t, t*t, t, 1;
 			Eigen::Vector3d point;
 			point = control_mat.transpose()*_basis.transpose()*param_vector;
+			std::cout << control_mat << std::endl << std::endl<< _basis<<std::endl
+				 << std::endl<<param_vector<<std::endl;
 		};
 
 		virtual double getLength()
@@ -312,9 +314,9 @@ namespace CurvesPlan
 				rt_printf("Spline getLength() %f\t%f\t%f\t%f\t%f\n"
 					,u
 					, length
-				,this->bound._bound_mat(2,0)
-				, this->bound._bound_mat(2, 1)
-				, this->bound._bound_mat(2, 2));
+				,this->bound._bound_mat(1,0)
+				, this->bound._bound_mat(1, 1)
+				, this->bound._bound_mat(1, 2));
 			}
 			rt_printf("Spline getLength() %f\n",length);
 			return length;

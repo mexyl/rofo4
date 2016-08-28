@@ -1264,7 +1264,7 @@ namespace CurvesPlan
 			this->init();
 
 			this->_sequencesPair.push_back(std::make_pair(&this->_cbcLine, &this->_cbcBound));
-			std::cout << "OneSplineConstructor" << _sequencesPair.size();
+			std::cout << "OneSplineConstructor" << _sequencesPair.size()<<std::endl;
 			for (unsigned int i = 0;i < this->_countSequences.size();i++)
 			{
 				this->_ratioSegment.push_back(std::make_pair(0, 0));

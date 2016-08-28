@@ -369,9 +369,9 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 	};
 
-	auto isFirstGroupMove = [&]()
+    auto isFirstGroupMove = [&]()
 	{
-		if (param.count == 0
+        if (stepCount ==totalStepCounts
 			|| (this->stepCount == 1 && this->totalStepCounts != 2)
 			|| (this->stepCount % 2 == 1 && this->stepCount == 2))
 		{
@@ -384,10 +384,17 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		}
 	};
 
+
+    auto initBodyMotion=[&]()
+    {
+
+    };
+
 	// this happened at first time
 	if (currentMotion != motion )
 	{
-		rt_printf("Judge Group %d\n", param.count);
+        rt_printf("Judge Group %d %d %d\n"
+                  , param.count, stepCount, totalStepCounts);
 		/*set start Sequnence*/
 		if (isFirstGroupMove())
 		{
@@ -411,7 +418,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			legTraj.at(LM).currentSequence = &legTraj.at(LM).normalSequence;
 			legTraj.at(RR).currentSequence = &legTraj.at(RR).normalSequence;
 		}
-		
+        this->stepCount--;
+
 
 		for (auto &i : legTraj)
 		{
@@ -434,7 +442,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			leg.foot_position_ref_beginMak[1],
 			leg.foot_position_ref_beginMak[2];
 
-        rt_printf("%d %d\n",param.count,leg.getID());
+        rt_printf("Into initSequences: count: %d leg: %d\n",param.count,leg.getID());
 
         leg.setStage(SequenceStage::RUNNING);
 
@@ -488,7 +496,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				// velocity =0.2 m/s
 				leg.normalSequence.setTotalCounts((int)round((leg.normalSequence.getTotalLength() / 0.2) * 1000));
 
-                rt_printf("ns init %d\n",leg.getID());
+                rt_printf("ns init leg: %d\n",leg.getID());
 			}
 
 				break;
@@ -541,7 +549,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 				//velocity =0.2 m/s
 				leg.obstacleSquence.setTotalCounts((int)round((leg.obstacleSquence.getTotalLength() / 0.2) * 1000));
-                rt_printf("os init %d\n",leg.getID());
+                rt_printf("os init leg: %d\n",leg.getID());
 			}
 				break;
 			case TrajectoryGenerator::BACKWARD:
@@ -595,7 +603,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					// velocity is 0.2
 					leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
 
-                    rt_printf("ts init %d\n",leg.getID());
+                    rt_printf("ts init leg: %d\n",leg.getID());
 				}
 				break;
 					
@@ -642,9 +650,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					// velocity is 0.2
                     //leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
                     leg.tentativeSequence.setTotalCounts(3000);
-                    rt_printf("ts init %d  %f\n",(int)round((leg.currentSequence->getTotalLength() / 0.2) * 1000),leg.tentativeSequence.getTotalLength() );
-                    std::cout<<leg.tentativeSequence._ellTentativeBound._bound_mat<<std::endl
-                               <<std::endl<<leg.tentativeSequence._strDownBound._bound_mat<<std::endl;
+                    rt_printf("ts init leg: %d \n",leg.getID());
 
 
 
@@ -709,7 +715,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 //                           <<leg.retractSequence._ellMidBound._bound_mat
 //                             <<"\nDown\n"<<leg.retractSequence._strBoundDown._bound_mat;
 
-                rt_printf("rs init %d\n",leg.getID());
+                rt_printf("rs init leg: %d\n",leg.getID());
 			}
 			else
 			{
@@ -1020,10 +1026,23 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	if (isAllStandStill() == 6)
 	{
 
-		if (this->stepCount > 1)
+        rt_printf("Transition steps %d %d \n",this->stepCount,this->totalStepCounts);
+        if (this->stepCount >= 1)
 		{
 			currentMotion = IDLE;
-			this->stepCount--;
+            //this->stepCount--;
+            for(int i=0;i<6;i++)
+            {
+
+
+                rt_printf("%f\t%f\t%f\t%d\t%f\n"
+                          ,targetPee(i,0),targetPee(i,1),targetPee(i,2)
+                          ,legTraj[i].currentSequence->getCurrentSequenceType()
+                          ,legTraj[i].foot_position_ref_beginMak[2]);
+            }
+
+
+
 			return 1000;
 
 		}
@@ -1038,10 +1057,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
                           ,legTraj[i].currentSequence->getCurrentSequenceType()
                           ,legTraj[i].foot_position_ref_beginMak[2]);
             }
-            rt_printf("\n");
+
 			return 0;
 		}
-        
+
 	}
 	else
 	{

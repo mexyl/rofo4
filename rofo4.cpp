@@ -97,10 +97,10 @@ auto Rofo::rofoGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamB
     TrajectoryGenerator::MotionID mot=TrajectoryGenerator::MotionID::FORWARD;
     static int ret;
 
-    if(param.count%1000==0)
-    {
-        rt_printf("rofoGait is running\n");
-    }
+//    if(param.count%1000==0)
+//    {
+//        rt_printf("rofoGait is running\n");
+//    }
 
     ret=rofo.generateRobotGait(robot,mot,param);
 

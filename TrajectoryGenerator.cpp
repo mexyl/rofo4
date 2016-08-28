@@ -726,7 +726,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
     auto initBodyMotion=[&](int time)
     {
 		//this function is called when the leg init funtion set this sequence's stage as INIT
-		bodyPos.body_position_ref_beginMak = this->bodyPosVec;
+		//bodyPos.body_position_ref_beginMak = this->bodyPosVec;
 		double bodyStepLength = 0.0;
 		if (stepCount == totalStepCounts || stepCount == 1)
 		{

@@ -1206,7 +1206,12 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
                           ,legTraj[i].currentSequence->getCurrentSequenceType()
                           ,legTraj[i].foot_position_ref_beginMak[2]);
             }
-
+			rt_printf("%f\t%f\t%f\t%f\t%f%tf\n"
+				, bodyPosVec(0)
+				, bodyPosVec(1)
+				, bodyPosVec(2)
+				, bodyPosVec(3)
+				, bodyPosVec(4));
 
 
 			return 1000;

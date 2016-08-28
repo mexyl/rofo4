@@ -46,7 +46,7 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	this->forceMode = mode;
 	switch (forceMode)
 	{
-	case TrajectoryGenerator::HexapodRofoGait::NONE:
+    case TrajectoryGenerator::NONE:
 		for (int i = 0;i < 6;i++)
 		{
 //			legTraj[i].yPosForceDetector.first = NULL;
@@ -63,7 +63,7 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
             legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
 		}
 		break;
-	case TrajectoryGenerator::HexapodRofoGait::INDIRECT:
+    case TrajectoryGenerator::INDIRECT:
 		for (int i = 0;i < 6;i++)
 		{
 			legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilterInd;
@@ -74,7 +74,7 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 			legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
 		}
 		break;
-	case TrajectoryGenerator::HexapodRofoGait::SENSOR:
+    case TrajectoryGenerator::SENSOR:
 		for (int i = 0;i < 6;i++)
 		{
 			legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilter;

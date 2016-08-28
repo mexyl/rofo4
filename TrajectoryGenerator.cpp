@@ -726,7 +726,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
     auto initBodyMotion=[&](int time)
     {
 		//this function is called when the leg init funtion set this sequence's stage as INIT
-		//bodyPos.body_position_ref_beginMak = this->bodyPosVec;
+		bodyPos.body_position_ref_beginMak = this->bodyPosVec;
 		double bodyStepLength = 0.0;
 		if (stepCount == totalStepCounts || stepCount == 1)
 		{
@@ -1172,8 +1172,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	// TBD
 	// clean the varibles, this should be put in the first place of this function
 	auto gaitClean = [&]()
-	{};
-	gaitClean();
+	{
+		this->bodyPosVec << 0, 0, 0;
+	};
+	
 
 	auto isAllStandStill = [&]() 
 	{
@@ -1255,6 +1257,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				, bodyPosVec(3)
 				, bodyPosVec(4));
 			currentMotion = IDLE;
+
+			gaitClean();
 			return 0;
 		}
 

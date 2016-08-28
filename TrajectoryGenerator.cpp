@@ -393,8 +393,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	// this happened at first time
 	if (currentMotion != motion )
 	{
+
         rt_printf("Judge Group %d %d %d\n"
                   , param.count, stepCount, totalStepCounts);
+
 		/*set start Sequnence*/
 		if (isFirstGroupMove())
 		{

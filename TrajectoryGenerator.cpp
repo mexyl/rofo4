@@ -329,13 +329,12 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		/* get threshold result */
 		if (forceMode == INDIRECT || forceMode == SENSOR)
 		{
-            if(param.count%500==0)
-            {
-                rt_printf("\n\n\ncount %d:\n",param.count);
 
-            }
-            int idx=0;
-            idx=0;
+//            if(param.count%500==0)
+//            {
+//                rt_printf("\n");
+
+//            }
 			for (auto &i : legTraj)
 			{
 
@@ -343,20 +342,20 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				i.pthrZpos->threshold(i.pfzFilter->GetData());
 				i.pthrZneg->threshold(i.pfzFilter->GetData());
 
-                if(param.count%500==0)
-                {
-                rt_printf("yPos %f\t",i.fyFilterInd.GetData());
-                rt_printf("zPos %f\t",i.pfzFilter->GetData());
+//                if(param.count%500==0)
+//                {
+//                rt_printf("yPos %f\t",i.fyFilterInd.GetData());
+//                rt_printf("zPos %f\t",i.pfzFilter->GetData());
 
-                }
-                idx++;
+//                }
 
-            }
-            if(param.count%500==0)
-            {
-                rt_printf("\n");
 
             }
+//            if(param.count%500==0)
+//            {
+//                rt_printf("\n");
+
+//            }
 		}
         else
         {
@@ -890,6 +889,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			{
 				switch (i.currentSequence->getCurrentSequenceType())
 				{
+                rt_printf("Transition force  %d yPos %f\t",i.getID(),i.fyFilterInd.GetData());
+                rt_printf("zPos %f\t\n",i.pfzFilter->GetData());
 				case CurvesPlan::SequenceType::NS:
 				{
 					if (i.pthrYpos->is_on())

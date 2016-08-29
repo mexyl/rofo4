@@ -55,9 +55,9 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 //			legTraj[i].yPosForceDetector.second = NULL;
 //			legTraj[i].zPosForceDetector.second = NULL;
 //			legTraj[i].zNegForceDetector.second = NULL;
-            legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilterInd;
-            legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilterInd;
-            legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilterInd;
+            legTraj[i].yPosForceDetector.first = &this->fyFilterInd[i];
+            legTraj[i].zPosForceDetector.first = &this->fzFilterInd[i];
+            legTraj[i].zNegForceDetector.first = &this->fzFilterInd[i];
             legTraj[i].yPosForceDetector.second = &legTraj[i].thrYposInd;
             legTraj[i].zPosForceDetector.second = &legTraj[i].thrZposInd;
             legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
@@ -71,25 +71,25 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 		for (int i = 0;i < 6;i++)
 		{
             rt_printf("INDIRECT\n");
-			legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilterInd;
-			legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilterInd;
-			legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilterInd;
+			legTraj[i].yPosForceDetector.first = &this->fyFilterInd[i];
+			legTraj[i].zPosForceDetector.first = &this->fzFilterInd[i];
+			legTraj[i].zNegForceDetector.first = &this->fzFilterInd[i];
 			legTraj[i].yPosForceDetector.second = &legTraj[i].thrYposInd;
 			legTraj[i].zPosForceDetector.second = &legTraj[i].thrZposInd;
 			legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
 
-            legTraj[i].yPosForceDetector.first->ResetReg();
-            legTraj[i].zPosForceDetector.first->ResetReg();
-            legTraj[i].zNegForceDetector.first->ResetReg();
+			legTraj[i].yPosForceDetector.first->ResetReg();
+			legTraj[i].zPosForceDetector.first->ResetReg();
+			legTraj[i].zNegForceDetector.first->ResetReg();
 		}
 		break;
     case TrajectoryGenerator::SENSOR:
 		for (int i = 0;i < 6;i++)
 		{
             rt_printf("SENSOR\n");
-			legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilter;
-			legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilter;
-			legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilter;
+			legTraj[i].yPosForceDetector.first = &this->fyFilter[i];
+			legTraj[i].zPosForceDetector.first = &this->fzFilter[i];
+			legTraj[i].zNegForceDetector.first = &this->fzFilter[i];
 			legTraj[i].yPosForceDetector.second = &legTraj[i].thrYpos;
 			legTraj[i].zPosForceDetector.second = &legTraj[i].thrZpos;
 			legTraj[i].zNegForceDetector.second = &legTraj[i].thrZneg;
@@ -98,9 +98,9 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	default:
 		for (int i = 0;i < 6;i++)
 		{
-            legTraj[i].yPosForceDetector.first = &legTraj[i].fyFilterInd;
-            legTraj[i].zPosForceDetector.first = &legTraj[i].fzFilterInd;
-            legTraj[i].zNegForceDetector.first = &legTraj[i].fzFilterInd;
+			legTraj[i].yPosForceDetector.first = &this->fyFilterInd[i];
+			legTraj[i].zPosForceDetector.first = &this->fzFilterInd[i];
+			legTraj[i].zNegForceDetector.first = &this->fzFilterInd[i];
             legTraj[i].yPosForceDetector.second = &legTraj[i].thrYposInd;
             legTraj[i].zPosForceDetector.second = &legTraj[i].thrZposInd;
             legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
@@ -324,20 +324,21 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			{
 				for (int i = 0;i < 6;i++)
 				{
-//					legTraj[i].yPosForceDetector.first->FeedData(legTraj[i].foot_force_extern_ref_beginMak[1]);
-//					legTraj[i].zPosForceDetector.first->FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
-//					legTraj[i].zNegForceDetector.first->FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
+					legTraj[i].yPosForceDetector.first->FeedData(sin(param.count / 1300.0 * 2 * M_PI));
+					legTraj[i].zPosForceDetector.first->FeedData(sin(param.count / 1300.0 * 2 * M_PI));
+					
                     //legTraj[i].fyFilterInd.FeedData(legTraj[i].foot_force_extern_ref_beginMak[1]);
                     //legTraj[i].fzFilterInd.FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
-                    legTraj[i].fyFilterInd.FeedData(sin(param.count/100.0*2*M_PI));
-                    legTraj[i].fzFilterInd.FeedData(sin(param.count/100.0*2*M_PI));
-                    this->fyFilter.at(i).FeedData(sin(param.count/100.0*2*M_PI));
+                    //legTraj[i].fyFilterInd.FeedData(sin(param.count/100.0*2*M_PI));
+                    //legTraj[i].fzFilterInd.FeedData(sin(param.count/100.0*2*M_PI));
+                    //this->fyFilter.at(i).FeedData(sin(param.count/100.0*2*M_PI)); //this is OK
 				}
 
                 for(auto &i:legTraj)
                 {
-                    i.fyFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
-                    i.fzFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
+                    //i.fyFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
+                    //i.fzFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
+
                 }
 
 			}
@@ -366,12 +367,16 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
                 //legTraj[i].fyFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
                 //legTraj[i].fzFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
+				legTraj[i].yPosForceDetector.first->FeedData(sin(param.count / 1300.0 * 2 * M_PI));
+				legTraj[i].zPosForceDetector.first->FeedData(sin(param.count / 1300.0 * 2 * M_PI));
+				
+
                 this->fyFilter.at(i).FeedData(sin(param.count/1300.0*2*M_PI));
 			}
             for(auto &i:legTraj)
             {
-                i.fyFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
-                i.fzFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
+                //i.fyFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
+                //i.fzFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
             }
 
 		}
@@ -393,8 +398,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				i.zNegForceDetector.second->threshold(i.zNegForceDetector.first->GetData());
                 if(param.count%500==0)
                 {
-                rt_printf("yPos %f\t",this->fyFilter.at(idx).GetData());
-                rt_printf("zPos %f\t",i.fzFilterInd.GetData());
+                rt_printf("yPos %f\t",i.yPosForceDetector.first->GetData());
+                rt_printf("zPos %f\t", i.zPosForceDetector.first->GetData());
 
                 }
                 idx++;

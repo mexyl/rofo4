@@ -444,8 +444,8 @@ namespace CurvesPlan
             // here we do the mapping, choose between following 2
 			double t = time;
 			/* 0.5 0.5 cause error */
-            t = this->timeTrapezoidalVel.getRatio(time,0.49,0.49);
-            //t=this->timeTriangleAcc.getRatio(time,0.49,0.49);
+            //t = this->timeTrapezoidalVel.getRatio(time,0.49,0.49);
+            t=this->timeTriangleAcc.getRatio(time,0.49,0.49);
 			
             Eigen::Vector3d point;
 //            rt_printf("getTargetPoint %d  %ull\n",this->_sequencesPair.size(),&this->_sequencesPair);

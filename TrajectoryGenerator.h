@@ -99,7 +99,14 @@ namespace TrajectoryGenerator
 		Filter::CFilterFIR_I fyFilterInd;
 		Filter::CFilterFIR_I fzFilterInd;
 
+		Filter::CFilterFIR_I *pfyFilter;
+		Filter::CFilterFIR_I *pfzFilter;
 
+		Filter::Threshold *pthrYpos;
+		Filter::Threshold *pthrZpos;
+		Filter::Threshold *pthrZneg;
+
+		/* buggy */
 		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> yPosForceDetector{nullptr,nullptr};
 		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> zPosForceDetector{ nullptr,nullptr };
 		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> zNegForceDetector{ nullptr,nullptr };

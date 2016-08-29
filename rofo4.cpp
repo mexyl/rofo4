@@ -85,6 +85,14 @@ auto Rofo::rofoParse(const std::string &cmd, const std::map<std::string, std::st
         {
             param.d==std::stoi(i.second);
         }
+		else if (i.first == "height")
+		{
+			param.h = std::stoi(i.second);
+		}
+		else if (i.first=="totalCount")
+		{
+			param.totalCount = std::stoi(i.second);
+		}
 
     }
 

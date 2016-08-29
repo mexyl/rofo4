@@ -538,6 +538,8 @@
 	    <climb default="n">
 		<distance abbreviation="d" type="double" default="0.25"/>
 		<n abbreviation="n" type="int" default="1"/>
+    <height abbreviation="h" type="double" default="0.05"/>
+        <totalCount abbreviation="t" type="int" default="3000"/>
 	    </climb>
 	    <edcl/>
 	    <ay>

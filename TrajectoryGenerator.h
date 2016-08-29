@@ -198,6 +198,7 @@ namespace TrajectoryGenerator
 		int stepCount; // used for 
 		int totalStepCounts;
 		double stepLength = 0.25;
+		double stepHeight = 0.05;
 
 		/* everything for robot body */
 		HexapodBody bodyPos;

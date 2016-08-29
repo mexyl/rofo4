@@ -124,6 +124,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			}
 			this->totalStepCounts = this->stepCount;
             this->stepLength=param.d;
+			this->stepHeight = param.h;
 
 		}
 		// need to add mapping in this for loop
@@ -472,7 +473,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				}
 
 				/* tricky part */
-				strH = 0.05;
+				strH = stepHeight;
 				ellH = 0.03;
 				double H = strH + ellH;
 				if (H + leg.foot_position_ref_body[1] > leg._refSpaceY(1))
@@ -485,7 +486,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					}
 					else
 					{
-						strH = H - ellH;
+						strH = H - ellH-0.01;// add some margin
 					}
 				}
 				leg.normalSequence._strBoundUp._bound_mat << 0, 0, 0,

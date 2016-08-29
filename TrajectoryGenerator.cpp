@@ -303,41 +303,18 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			{
 				for (int i = 0;i < 6;i++)
 				{
-					legTraj[i].fyFilterInd.FeedData(sin(param.count / 1300.0 * 2 * M_PI));
-					legTraj[i].fzFilterInd.FeedData(sin(param.count / 1300.0 * 2 * M_PI));
-					
-                    //legTraj[i].fyFilterInd.FeedData(legTraj[i].foot_force_extern_ref_beginMak[1]);
-                    //legTraj[i].fzFilterInd.FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
-                    //legTraj[i].fyFilterInd.FeedData(sin(param.count/100.0*2*M_PI));
-                    //legTraj[i].fzFilterInd.FeedData(sin(param.count/100.0*2*M_PI));
-                    //this->fyFilter.at(i).FeedData(sin(param.count/100.0*2*M_PI)); //this is OK
+					legTraj[i].fyFilterInd.FeedData(legTraj[i].foot_force_extern_ref_beginMak[1]);
+					legTraj[i].fzFilterInd.FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
 				}
-
-     //           for(auto &i:legTraj)
-     //           {
-     //               //i.fyFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
-     //               //i.fzFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
-					//i.pfyFilter->FeedData(sin(param.count / 1300.0 * 2 * M_PI));
-					//i.pfzFilter->FeedData(sin(param.count / 1300.0 * 2 * M_PI));
-     //           }
-
 			}
 		}
         else if (forceMode == ForceMode::INDIRECT)
 		{
 			for (int i = 0;i < 6;i++)
 			{
-				legTraj[i].fyFilterInd.FeedData(sin(param.count / 1300.0 * 2 * M_PI));
-				legTraj[i].fzFilterInd.FeedData(sin(param.count / 1300.0 * 2 * M_PI));
+				legTraj[i].fyFilterInd.FeedData(legTraj[i].foot_force_extern_ref_beginMak[1]);
+				legTraj[i].fzFilterInd.FeedData(legTraj[i].foot_force_extern_ref_beginMak[2]);
 			}
-			//for (auto &i : legTraj)
-			//{
-			//	//i.fyFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
-			//	//i.fzFilterInd.FeedData(sin(param.count/1300.0*2*M_PI));
-			//	i.pfyFilter->FeedData(sin(param.count / 1300.0 * 2 * M_PI));
-			//	i.pfzFilter->FeedData(sin(param.count / 1300.0 * 2 * M_PI));
-			//}
-
 		}
 
 		/* get threshold result */

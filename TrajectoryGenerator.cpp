@@ -24,9 +24,9 @@ void TrajectoryGenerator::HexapodRofoGait::reset()
 		
 	}
 	// VIII
-    this->forceMode=ForceMode::NONE;
+    //this->forceMode=ForceMode::NONE;
     //this->forceMode=ForceMode::INDIRECT;
-	this->setForceMode(this->forceMode);
+    //this->setForceMode(this->forceMode);
 
 	legTraj[LF].setID(LF);
 	legTraj[LM].setID(LM);
@@ -44,6 +44,7 @@ void TrajectoryGenerator::HexapodRofoGait::reset()
 void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 {
 	this->forceMode = mode;
+    std::cout<<"SET FORCE MODE"<<std::endl;
 	switch (forceMode)
 	{
     case TrajectoryGenerator::NONE:
@@ -400,7 +401,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
                 if(param.count%500==0)
                 {
                 rt_printf("yPos %f\t",i.fyFilterInd.GetData());
-                rt_printf("zPos %f\t", i.fzFilterInd.GetData());
+                rt_printf("zPos %f\t",i.zPosForceDetector.first->GetData());
 
                 }
                 idx++;

@@ -53,7 +53,7 @@ namespace Filter {
 	{
 		memset(this->m_Reg, 0, this->m_FilterLength * sizeof(double));
 		//std::fill_n(m_Reg->begin(), m_Reg->end(), 0);
-
+		std::cout << "reset reg" << std::endl;
 		this->m_CurrentIndex = 0;
 		this->m_InData = 0;
 		this->m_OutData = 0;

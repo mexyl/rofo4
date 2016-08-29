@@ -53,7 +53,6 @@ namespace Filter {
 	{
 		memset(this->m_Reg, 0, this->m_FilterLength * sizeof(double));
 		//std::fill_n(m_Reg->begin(), m_Reg->end(), 0);
-		std::cout << "reset reg" << std::endl;
 		this->m_CurrentIndex = 0;
 		this->m_InData = 0;
 		this->m_OutData = 0;
@@ -116,15 +115,11 @@ namespace Filter {
 	template<int LEN>
 	void CFilterFIR<LEN>::SetCoef(double coef[LEN])
 	{
-        std::cout<<"Coef BEGIN"<<std::endl;
+
 		for (int i = 0;i<LEN;i++)
 		{
 			m_Coef[i] = coef[i];
-            std::cout<<coef[i]<<"  ";
 		}
-        std::cout<<"Coef END"<<std::endl;
-
-
 	}
 
 

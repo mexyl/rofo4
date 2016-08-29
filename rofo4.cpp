@@ -76,18 +76,18 @@ auto Rofo::rofoParse(const std::string &cmd, const std::map<std::string, std::st
 
     for(auto &i:params)
     {
-        if(i.first=="n")
+        if(i.first=="distance")
+        {
+
+            param.d=std::stod(i.second);
+        }
+        else if(i.first=="n")
         {
             param.n=std::stoi(i.second);
-
-        }
-        else if(i.first=="distance")
-        {
-            param.d==std::stoi(i.second);
         }
 		else if (i.first == "height")
 		{
-			param.h = std::stoi(i.second);
+            param.h = std::stod(i.second);
 		}
 		else if (i.first=="totalCount")
 		{

@@ -533,28 +533,6 @@
                 </wk_param>
             </wk>
             <ro/>
-	    <climb default="climb_param">
-		<climb_param type="group">
-			<distance abbreviation="d" type="double" default="0.25"/>
-			<n abbreviation="n" type="int" default="1"/>
-    			<height abbreviation="h" type="double" default="0.05"/>
-        		<totalCount abbreviation="t" type="int" default="3000"/>
-		</climb_param>
-	    </climb>
-	    <edcl/>
-	    <ay>
-	      <param type="group">
-		<param1 type="unique" default="all">
-		  <all abbreviation="a"/>
-		  <first abbreviation="f"/>
-		  <second abbreviation="s"/>
-		</param1>
-		<param2 type="unique" default="dy">
-		  <ay abbreviation="y" type="double" default="-0.85"/>
-		  <dy abbreviation="d" type="double" default="-0.05"/>
-		</param2>
-	      </param>
-	    </ay>
         </Commands>
     </Server>
     <Controller>
@@ -621,14 +599,6 @@
                         <TorqueUnit index="0x2040" subindex="0x32" type="int32" write="false"/>
                     </SDO>
                 </AtiForceSensor>
-		<EK1100 product_code="0x044c2c52" vender_id="0x00000002" alias="0" >
-				    <PDO></PDO>
-				    <SDO></SDO>
-				</EK1100>
-				<EK1122 product_code="0x04622c52" vender_id="0x00000002" alias="0" >
-				    <PDO></PDO>
-				    <SDO></SDO>
-				</EK1122>
             </SlaveType>
             <Slave>
                 <Motion1 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id=" 1"/>
@@ -649,16 +619,7 @@
                 <Motion16 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id="10"/>
                 <Motion17 type="ElmoSoloWhistle" min_pos="0.669" max_pos="1.080" max_vel="0.9481" home_pos="0.669" input2count="9216000" abs_id="9"/>
                 <Motion18 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id="11"/>
-		<SlaveStation1 type="EK1100" />
-			       <Junction1 type="EK1122" />
-			       <ForceSensor1 type="AtiForceSensor" abs_id="3"/>
-			       <ForceSensor2 type="AtiForceSensor" abs_id="2"/>
-			       <Junction2 type="EK1122" />
-			       <ForceSensor3 type="AtiForceSensor" abs_id="4"/>
-			       <ForceSensor4 type="AtiForceSensor" abs_id="0"/>
-			       <Junction3 type="EK1122" />
-			       <ForceSensor5 type="AtiForceSensor" abs_id="5"/>
-			       <ForceSensor6 type="AtiForceSensor" abs_id="1"/>
+                <ForceSensor type="AtiForceSensor"/>
             </Slave>
         </EtherCat>
     </Controller>
@@ -666,5 +627,4 @@
         <IMU active="false" type="xsens_imu" portLinux="/dev/ttyUSB0" baudRate="921600" sampleRate="400" PeImuGround2BodyGound="{0,0,0,0,-PI/2,PI}" PeImu2Body="{0,0,0,0,PI/2,0}"/>
         <Vision type="kinect2.0"/>
     </Sensors>
- <UDP remote_ip="192.168.1.101" remote_port="6661" local_port="6660"/>
 </RobotVIII>

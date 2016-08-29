@@ -20,7 +20,7 @@ void TrajectoryGenerator::HexapodRofoGait::reset()
 	
 	for (auto &i : legTraj)
 	{
-		i._refSpaceY << -1.05,-0.73;
+		i._refSpaceY << -1.00,-0.73;
 		
 	}
 	// VIII
@@ -519,7 +519,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				leg.normalSequence.reset();
 
 				// velocity =0.2 m/s
-				leg.normalSequence.setTotalCounts((int)round((leg.normalSequence.getTotalLength() / 0.2) * 1000));
+				leg.normalSequence.setTotalCounts((int)round((leg.normalSequence.getTotalLength() / 0.1) * 1000));
 
 				rt_printf("ns init leg: %d %f total counts %d\n"
 					, leg.getID()

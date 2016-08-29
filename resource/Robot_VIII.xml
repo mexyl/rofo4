@@ -648,7 +648,7 @@
 		<Motion16 type="ElmoSoloWhistle" min_pos="0.0690" max_pos="10.100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id="10"/>
 		<Motion17 type="ElmoSoloWhistle" min_pos="0.0669" max_pos="10.080" max_vel="0.9481" home_pos="0.669" input2count="9216000" abs_id="9"/>
 		<Motion18 type="ElmoSoloWhistle" min_pos="0.0690" max_pos="10.100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id="11"/>
-		<!--Motion19 type="ElmoSoloWhistle" min_pos="-100" max_pos="100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id="18"/-->
+		<Motion19 type="ElmoSoloWhistle" min_pos="-100" max_pos="100" max_vel="0.9481" home_pos="0.69" input2count="9216000" abs_id="18"/>
 		<SlaveStation1 type="EK1100" />
 			       <Junction1 type="EK1122" />
 			       <ForceSensor1 type="AtiForceSensor" abs_id="3"/>

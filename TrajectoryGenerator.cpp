@@ -45,6 +45,11 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 {
 	this->forceMode = mode;
     std::cout<<"SET FORCE MODE"<<std::endl;
+	for (auto &i : legTraj)
+	{
+		i.thrYposInd.set_threshold(100,800);
+		i.thrZposInd.set_threshold(100,300);
+	}
 	switch (forceMode)
 	{
     case TrajectoryGenerator::NONE:

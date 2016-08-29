@@ -321,7 +321,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		//	}
 		//}
 		
-        if (param.count == 2 && forceMode == ForceMode::INDIRECT)
+        if (param.count == 0 && forceMode == ForceMode::INDIRECT)
 		{
 			for (int j = 0;j < 60;j++)
 			{

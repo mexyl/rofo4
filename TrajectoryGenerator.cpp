@@ -80,6 +80,8 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 			legTraj[i].yPosForceDetector.second = &legTraj[i].thrYposInd;
 			legTraj[i].zPosForceDetector.second = &legTraj[i].thrZposInd;
 			legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
+			legTraj[i].yPosForceDetector = std::make_pair(&this->fyFilterInd[i], &legTraj[i].thrYposInd);
+
 
 			legTraj[i].yPosForceDetector.first->ResetReg();
 			legTraj[i].zPosForceDetector.first->ResetReg();

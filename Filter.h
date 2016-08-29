@@ -33,7 +33,7 @@ namespace Filter {
 	CFilterFIR<LEN>::CFilterFIR()
 	{
         memset(m_Reg, 0, m_FilterLength * sizeof(double));
-		memset(m_Coef,0,m_FilterLength*sizeof(double));
+        //memset(m_Coef,0,m_FilterLength*sizeof(double));
 		//std::fill_n(m_Reg->begin(),m_Reg->end(),0);
 
 		m_CurrentIndex = 0;
@@ -77,6 +77,7 @@ namespace Filter {
 				(m_CurrentIndex - i)<0 ?
 					m_FilterLength + m_CurrentIndex - i :
 					m_CurrentIndex - i] * m_Coef[i];
+
 		}
 		m_OutData = outData;
 		return m_OutData;
@@ -106,18 +107,23 @@ namespace Filter {
 				(m_CurrentIndex - i)<0 ?
 					m_FilterLength + m_CurrentIndex - i :
 					m_CurrentIndex - i] * m_Coef[i];
+//            rt_printf("%f\t",m_OutData);
 		}
-        rt_printf("FeedData %f\n",m_OutData);
+        //rt_printf("FeedData %f\n",m_OutData);
 
 	}
 
 	template<int LEN>
 	void CFilterFIR<LEN>::SetCoef(double coef[LEN])
 	{
+        std::cout<<"Coef BEGIN"<<std::endl;
 		for (int i = 0;i<LEN;i++)
 		{
 			m_Coef[i] = coef[i];
+            std::cout<<coef[i]<<"  ";
 		}
+        std::cout<<"Coef END"<<std::endl;
+
 
 	}
 

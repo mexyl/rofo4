@@ -66,6 +66,12 @@ namespace TrajectoryGenerator
 		Eigen::Vector3d _refPosition;
 		// _refSpace, x,y,z; -neg,+pos
 		Eigen::Matrix<double,1, 2> _refSpaceY;
+
+        Filter::CFilterFIR_I fyFilter;
+        Filter::CFilterFIR_I fzFilter;
+
+        Filter::CFilterFIR_I fyFilterInd;
+        Filter::CFilterFIR_I fzFilterInd;
 		 
 
 		double foot_position_ref_body[3];
@@ -90,11 +96,7 @@ namespace TrajectoryGenerator
 		Filter::Threshold thrZposInd;
 		Filter::Threshold thrZnegInd;
 
-		Filter::CFilterFIR_I fyFilter;
-		Filter::CFilterFIR_I fzFilter;
 
-		Filter::CFilterFIR_I fyFilterInd;
-		Filter::CFilterFIR_I fzFilterInd;
 
 		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> yPosForceDetector;
 		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> zPosForceDetector;
@@ -152,7 +154,7 @@ namespace TrajectoryGenerator
 		void setForceMode(ForceMode mode);
 
 	public:
-		std::vector<HexapodSingleLeg> legTraj = std::vector<HexapodSingleLeg>(6);
+        std::vector<HexapodSingleLeg> legTraj = std::vector<HexapodSingleLeg>(6);
 		
 		ForceMode forceMode = INDIRECT;
 		const int motNum = 18;
@@ -160,6 +162,8 @@ namespace TrajectoryGenerator
 		std::vector<Filter::CFilterFIR_I>  velFilter = std::vector<Filter::CFilterFIR_I>(motNum);
 		std::vector<Filter::CFilterFIR_I>  accFilter = std::vector<Filter::CFilterFIR_I>(motNum);
 		std::vector<Filter::CFilterFIR_I>  torFilter = std::vector<Filter::CFilterFIR_I>(motNum);
+        std::vector<Filter::CFilterFIR_I> fyFilter = std::vector<Filter::CFilterFIR_I>(6);
+
 		const int fceNum = 6;
 		const int legNum = 6;
 

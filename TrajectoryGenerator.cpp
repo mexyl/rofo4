@@ -1056,6 +1056,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 							i.tentativeSequence.reverse(i.currentSequence->getCurrentRatio());
 							i.tentativeSequence.setStartTime(param.count);
 							rt_printf("ts->reverse leg: %d\n", i.getID());
+							i.tentativeSequence.isReversed = true;
 						}
 						
 

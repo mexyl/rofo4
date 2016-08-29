@@ -62,6 +62,9 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
             legTraj[i].zPosForceDetector.second = &legTraj[i].thrZposInd;
             legTraj[i].zNegForceDetector.second = &legTraj[i].thrZnegInd;
 
+			std::cout << "address pointer" << static_cast<void*>(legTraj[i].yPosForceDetector.first) 
+				<< "\t real"<< static_cast<void*>(&this->fyFilterInd[i]) << std::endl;
+
             legTraj[i].yPosForceDetector.first->ResetReg();
             legTraj[i].zPosForceDetector.first->ResetReg();
             legTraj[i].zNegForceDetector.first->ResetReg();

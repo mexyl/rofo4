@@ -6,6 +6,7 @@
 #include <functional>
 #include"Filter.h"
 #include"log.h"
+#include<utility>
 
 extern peripherals::Log robot_log;
 
@@ -67,11 +68,7 @@ namespace TrajectoryGenerator
 		// _refSpace, x,y,z; -neg,+pos
 		Eigen::Matrix<double,1, 2> _refSpaceY;
 
-        //Filter::CFilterFIR_I fyFilter;
-        //Filter::CFilterFIR_I fzFilter;
 
-        Filter::CFilterFIR_I fyFilterInd;
-        Filter::CFilterFIR_I fzFilterInd;
 		 
 
 		double foot_position_ref_body[3];
@@ -96,9 +93,13 @@ namespace TrajectoryGenerator
 		Filter::Threshold thrZposInd;
 		Filter::Threshold thrZnegInd;
 
+		//Filter::CFilterFIR_I fyFilter;
+		//Filter::CFilterFIR_I fzFilter;
 
+		Filter::CFilterFIR_I fyFilterInd;
+		Filter::CFilterFIR_I fzFilterInd;
 
-		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> yPosForceDetector;
+		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> yPosForceDetector(&fyFilterInd,&thrYposInd);
 		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> zPosForceDetector;
 		std::pair<Filter::CFilterFIR_I*, Filter::Threshold*> zNegForceDetector;
 

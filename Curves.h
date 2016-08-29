@@ -35,26 +35,31 @@ namespace CurvesPlan
 			else
 			{
 				double Tcon = 1.0 - Tacc - Tdec;
-				double Racc = pow(Tacc, 2) / pow(Tdec, 2);
-				double Ka = 1.0 / (1 / 3 * Tacc * Tacc * Tacc +
-					1 / 2 * Tacc *Tacc * (1 - Tacc - Tdec) +
-					1 / 3 * Tacc *Tacc * Tdec
+
+                double Racc = Tacc*Tacc / Tdec/Tdec;
+
+                double Ka = 1.0 / (1.0 / 3.0 * Tacc * Tacc * Tacc +
+                    1.0 / 2.0 * Tacc *Tacc * (1.0 - Tacc - Tdec) +
+                    1.0 / 3.0 * Tacc *Tacc * Tdec
 					);
 				double Kd = Ka*Racc;
+
+                //rt_printf("Acc: %f,%f,%f\n",Ka,Tacc,Tratio);
+
 				if (Tratio <= Tacc)
 				{
-					Pratio = 1 / 2 * Ka*Tacc*pow(Tratio, 2) - 1 / 6 * Ka*pow(Tratio, 3);
+                    Pratio = 1.0 / 2.0 * Ka*Tacc*Tratio*Tratio - 1.0 / 6.0 * Ka*Tratio*Tratio*Tratio;
 				}
 				else if (Tratio>Tacc + Tcon)
 				{
-					Pratio = 1 / 3 * pow(Tacc, 3) * Ka
-						+ 1 / 2 * pow(Tacc, 2) * (1 - Tacc - Tdec)*Ka
-						- (Ka*pow(Tacc, 2) * (-1 + Tratio + Tdec)*(1 + pow(Tratio, 2) + 2 * Tratio*(-1 + Tdec) - 2 * Tdec*(1 + Tdec))) / (6 * pow(Tdec, 2));
+                    Pratio = 1.0 / 3.0 * pow(Tacc, 3.0) * Ka
+                        + 1.0 / 2.0 * pow(Tacc, 2.0) * (1 - Tacc - Tdec)*Ka
+                        - (Ka*pow(Tacc, 2.0) * (-1.0 + Tratio + Tdec)*(1.0 + pow(Tratio, 2.0) + 2.0 * Tratio*(-1.0 + Tdec) - 2.0 * Tdec*(1.0 + Tdec))) / (6.0 * pow(Tdec, 2));
 				}
 				else
 				{
-					Pratio = 1 / 2 * Ka*Tacc*pow(Tacc, 2) - 1 / 6 * Ka*pow(Tacc, 3)
-						+ 1 / 2 * Ka*pow(Tacc, 2) * (Tratio - Tacc);
+                    Pratio = 1.0 / 2.0 * Ka*Tacc*pow(Tacc, 2.0) - 1.0 / 6.0 * Ka*pow(Tacc, 3.0)
+                        + 1.0 / 2.0 * Ka*pow(Tacc, 2.0) * (Tratio - Tacc);
 				}
 				return Pratio;
 			}
@@ -444,7 +449,7 @@ namespace CurvesPlan
             // here we do the mapping, choose between following 2
 			double t = time;
 			/* 0.5 0.5 cause error */
-            //t = this->timeTrapezoidalVel.getRatio(time,0.49,0.49);
+            t = this->timeTrapezoidalVel.getRatio(time,0.49,0.49);
             t=this->timeTriangleAcc.getRatio(time,0.49,0.49);
 			
             Eigen::Vector3d point;

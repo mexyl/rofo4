@@ -1126,6 +1126,7 @@ namespace CurvesPlan
 				_total_length += *j;
 				j++;
 			}
+			isReversed = false;
 			///* redistribute time counts */
 			//this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 			//this->_countSequences.at(1) = this->_total_counts - this->_countSequences.at(0);
@@ -1278,6 +1279,7 @@ namespace CurvesPlan
 		std::vector<CurveBase*> _curveSequences = std::vector<CurveBase*>(sectionsNum);
 		std::vector<BoundBase*> _curveBounds = std::vector<BoundBase*>(sectionsNum);
         std::vector<std::pair<CurveBase*, BoundBase*>> _pairedSequence;
+		bool isReversed = false;
 	};
 	class RetractSequence :public NormalSequence
 	{

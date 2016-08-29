@@ -909,7 +909,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				{
 					if (i.pthrYpos->is_on())
 					{
-						if (i.currentSequence->getCurrentRatio()<i.currentSequence->_ratioSegment.at(0).second)
+						if (i.currentSequence->getCurrentRatio()<i.currentSequence->_ratioSegment.at(1).second)
 						{
 							continue;
 						}

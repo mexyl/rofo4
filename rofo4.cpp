@@ -65,7 +65,7 @@ auto Rofo::rofoEndGait(aris::dynamic::Model &model, const aris::dynamic::PlanPar
 
 int Rofo::RofoWalkInit()
 {
-	//rofo.setTentative(false);
+    rofo.setTentative(false);
     rofo.reset();
     rofo.setForceMode(TrajectoryGenerator::ForceMode::INDIRECT);
 }

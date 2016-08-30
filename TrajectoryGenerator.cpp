@@ -411,7 +411,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		if (isFirstGroupMove())
 		{
 			// 0 2 4
-			if (stepCount == totalStepCounts || stepCount == 1;)
+			if (stepCount == totalStepCounts || stepCount == 1)
 			{
 				return false;
 			}

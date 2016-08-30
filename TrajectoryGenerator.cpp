@@ -48,9 +48,9 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	for (auto &i : legTraj)
 	{
         i.thrYposInd.set_threshold(100,1000);
-		i.thrZposInd.set_threshold(100,500);
+		i.thrZposInd.set_threshold(100,800);
         i.thrYpos.set_threshold(100,1000);
-        i.thrZpos.set_threshold(100,500);
+        i.thrZpos.set_threshold(100,800);
 	}
 	//legTraj[3].thrYposInd.set_threshold(100, 1000);
 	//legTraj[3].thrZposInd.set_threshold(100, 300);
@@ -580,6 +580,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				leg.obstacleSquence.setTotalCounts((int)round((leg.obstacleSquence.getTotalLength() / 0.2) * 1000));
 				rt_printf("os init leg: %d %d %d\n", leg.getID()
 					,leg.obstacleSquence.getTotalCounts(),param.count);
+				leg.pthrZpos->reset();
 			}
 			break;
 			case TrajectoryGenerator::BACKWARD:

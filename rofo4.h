@@ -24,10 +24,7 @@ namespace Rofo {
 
 
 
-struct CLIMB_PARAM: public aris::server::GaitParamBase
-{
-    int step;
-};
+
 
 
 struct Ay_Param: public aris::server::GaitParamBase

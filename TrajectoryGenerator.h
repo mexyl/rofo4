@@ -8,6 +8,18 @@
 #include"log.h"
 #include<utility>
 
+struct CLIMB_PARAM: public aris::server::GaitParamBase
+{
+    double yt{1000.0};
+    double zt{800.0};
+    std::int32_t totalCount{ 3000 };
+    std::int32_t n{ 2 };
+    double d{ 0.5 };
+    double h{ 0.05 };
+    double alpha{ 0.3 };
+    double beta{ 0.3 };
+};
+
 extern peripherals::Log robot_log;
 
 namespace TrajectoryGenerator
@@ -157,7 +169,7 @@ namespace TrajectoryGenerator
 		
 	public:
 		virtual void reset();
-		int generateRobotGait(Robots::RobotBase& rbt,MotionID motion,const Robots::WalkParam &param);
+        int generateRobotGait(Robots::RobotBase& rbt,MotionID motion,const aris::dynamic::PlanParamBase &param_in);
 
 		void setTentative(bool b) { this->isTentative = b; };
 		void setForceMode(ForceMode mode);

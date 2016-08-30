@@ -109,9 +109,10 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	}
 }
 
-int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& rbt,MotionID motion, const Robots::WalkParam &param)
+int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& rbt,MotionID motion, const aris::dynamic::PlanParamBase &param_in)
 {
 	auto &robot = static_cast<Robots::RobotTypeI &>(rbt);
+    auto &param = static_cast<const CLIMB_PARAM&>(param_in);
 	static aris::dynamic::FloatMarker beginMak{robot.ground()};
 
 
@@ -145,6 +146,13 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
             this->stepHeight = param.h;
             rt_printf("The real param.h value: %f %f %d\n",param.h,param.d,param.n);
 
+            for (auto &i : legTraj)
+            {
+                i.thrYposInd.set_threshold(100,param.yt);
+                i.thrZposInd.set_threshold(100,param.zt);
+                i.thrYpos.set_threshold(100,1000);
+                i.thrZpos.set_threshold(100,800);
+            }
 		}
 		// need to add mapping in this for loop
 		for (int i = 0;i < 6;i++)

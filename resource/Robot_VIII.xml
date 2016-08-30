@@ -535,6 +535,8 @@
             <ro/>
 	    <climb default="climb_param">
 		<climb_param type="group">
+			<zthr abbreviation="zt" type="double" default="800">
+			<ythr abbreviation="yt" type="double" default="1000">
 			<distance abbreviation="d" type="double" default="0.25"/>
 			<n abbreviation="n" type="int" default="1"/>
     			<height abbreviation="h" type="double" default="0.05"/>

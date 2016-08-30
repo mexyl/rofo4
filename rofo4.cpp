@@ -72,7 +72,7 @@ int Rofo::RofoWalkInit()
 
 auto Rofo::rofoParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
 {
-    Robots::WalkParam  param;
+    CLIMB_PARAM param;
 
     for(auto &i:params)
     {
@@ -93,6 +93,14 @@ auto Rofo::rofoParse(const std::string &cmd, const std::map<std::string, std::st
 		{
 			param.totalCount = std::stoi(i.second);
 		}
+        else if(i.first=="zthr")
+        {
+            param.zt=std::stod(i.second);
+        }
+        else if(i.first=="ythr")
+        {
+            param.yt=std::stod(i.second);
+        }
 
     }
 
@@ -106,7 +114,7 @@ auto Rofo::rofoGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamB
 {
 
     auto &robot = static_cast<Robots::RobotBase &>(model);
-    auto &param = static_cast<const Robots::WalkParam &>(param_in);
+    auto &param = static_cast<const CLIMB_PARAM &>(param_in);
 
 
     TrajectoryGenerator::MotionID mot=TrajectoryGenerator::MotionID::FORWARD;

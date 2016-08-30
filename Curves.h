@@ -559,6 +559,8 @@ namespace CurvesPlan
 		{
 			this->_sequencesPair.at(0).first->setBound(*this->_sequencesPair.at(0).second);
             this->_stsBound._bound_mat<<0,0,0;
+			this->_currentCurveRatio = 0;
+			this->getCurrentIndex = 0;
 		}
 
         virtual void setTotalCounts(int t) { this->_total_counts = t; }
@@ -670,6 +672,8 @@ namespace CurvesPlan
 				_total_length += *j;
 				j++;
 			}
+			this->_currentCurveRatio = 0;
+			this->getCurrentIndex = 0;
 			///* redistribute time counts */
 			//this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 			//this->_countSequences.at(1) = (int)round(_length[1] / _total_length*(double)this->_total_counts);
@@ -718,7 +722,7 @@ namespace CurvesPlan
 			this->_ratioSegment.at(2).first = this->_ratioSegment.at(1).second;
 			this->_ratioSegment.at(2).second = 1;
 
-
+			this->_currentCurveRatio = 0;
 			_overall_vel_ref = _total_length / (double)_total_counts * 1000; // m/s
 
 		};
@@ -908,7 +912,8 @@ namespace CurvesPlan
 				_total_length += *j;
 				j++;
 			}
-			
+			this->_currentCurveRatio = 0;
+			this->getCurrentIndex = 0;
 			///* redistribute time counts */
 			//this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 			//this->_countSequences.at(1) = (int)round(_length[1] / _total_length*(double)this->_total_counts);
@@ -1129,6 +1134,8 @@ namespace CurvesPlan
 				j++;
 			}
 			isReversed = false;
+			this->_currentCurveRatio = 0;
+			this->getCurrentIndex = 0;
 			///* redistribute time counts */
 			//this->_countSequences.at(0) = (int)round(_length[0] / _total_length*(double)this->_total_counts);
 			//this->_countSequences.at(1) = this->_total_counts - this->_countSequences.at(0);
@@ -1351,6 +1358,8 @@ namespace CurvesPlan
 			}
 			rt_printf("%f\n", _total_length);
 		}
+		this->_currentCurveRatio = 0;
+		this->getCurrentIndex = 0;
 		//virtual Eigen::Vector3d getPoint(int t)
 		//{
 		//	this->getTargetPoint((double)t/(double)this->getTotalCounts());

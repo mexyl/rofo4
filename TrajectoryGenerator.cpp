@@ -917,23 +917,27 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 						{
 							continue;
 						}
-						
-
-						if (this->isTentative)
-						{
-							i.lastSequence = &i.normalSequence;
-							i.currentSequence = &i.tentativeSequence;
-							i.setStage(SequenceStage::INIT);
-							i.tentativeCounts = 1;
-							rt_printf("yPosFroce on ns -> ts (t on)  leg: %d %d\n",i.getID(),param.count);
-						}
 						else
 						{
-                            i.lastSequence = &i.normalSequence;
-							i.currentSequence = &i.standstillSequence;
-							i.setStage(SequenceStage::INIT);
-							rt_printf("yPosFroce on ns -> ss (t off) leg: %d %d\n", i.getID(),param.count);
+							if (this->isTentative)
+							{
+								i.lastSequence = &i.normalSequence;
+								i.currentSequence = &i.tentativeSequence;
+								i.setStage(SequenceStage::INIT);
+								i.tentativeCounts = 1;
+								rt_printf("yPosFroce on ns -> ts (t on)  leg: %d %d\n", i.getID(), param.count);
+							}
+							else
+							{
+								i.lastSequence = &i.normalSequence;
+								i.currentSequence = &i.standstillSequence;
+								i.setStage(SequenceStage::INIT);
+								rt_printf("yPosForce on ns -> ss (t off) leg: %d %d\n", i.getID(), param.count);
+							}
+
 						}
+
+						
 						
 
 					}

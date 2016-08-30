@@ -1107,7 +1107,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 						// add time protect TBD 
 						if (!i.tentativeSequence.isReversed)
 						{
-							i.tentativeSequence.reverse(i.currentSequence->getCurrentRatio());
+							i.tentativeSequence.reverse(i.currentSequence->getCurrentRatio(),param.count);
 							i.tentativeSequence.setStartTime(param.count);
 							rt_printf("ts->reverse leg: %d %d\n", i.getID(),param.count);
 							i.tentativeSequence.isReversed = true;

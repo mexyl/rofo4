@@ -390,54 +390,48 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 	};
 	evalModel();
 
-	auto isFullStep = [&](int legID)
-	{
-		if (legID % 2 == 0)
-		{
-			/* LF RM LR 0 2 4  first */
-			// first points and last one
-			if (stepCount == totalStepCounts // first step
-                || (this->stepCount == 1) // last count while steps>2
-                || (this->totalStepCounts==2 && this->stepCount==2)) // first step of steps2
-			{
-				return false;
-			}
-            else //if (this->stepCount%2==1&&this->totalStepCounts!=2) // middle steps
-			{
-				return true;
-			}
-			
-		}
-		else
-		{
-			/* LM RF RR 1 3 5  second */
-			if (stepCount % 2 == 0 && stepCount!=2) // other steps
-			{
-				return true;
-			}
-			else if(stepCount==1)// last step while step==2
-			{
-				return false;
-			}
 
-		}
-
-	};
 
     auto isFirstGroupMove = [&]()
 	{
         if (stepCount ==totalStepCounts
                    || (this->stepCount%2 == 1 && this->totalStepCounts != 2)
-                   || (this->stepCount == 2&& totalStepCounts == 2))
+                   )
                {
                    return true;
                }
-               //else if((stepCount % 2 == 0 && stepCount != 2)
-               //	|| stepCount == 1)
                else
                {
                    return false;
                }
+	};
+
+	auto isFullStep = [&](int legID)
+	{
+		if (isFirstGroupMove())
+		{
+			// 0 2 4
+			if (stepCount == totalStepCounts || stepCount == 1;)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		else
+		{
+			// 1 3 5
+			if (stepCount==1)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
 	};
 
 	/* a bunch of functions for init sequences  */

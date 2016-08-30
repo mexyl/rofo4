@@ -554,7 +554,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 			case TrajectoryGenerator::FORWARD:
 			{
 				/* tricky part */
-				double stepLengthIncrement = 0.5;//Parameters that can be tweaked
+				double stepLengthIncrement = 0.05;//Parameters that can be tweaked
 				ellH1 = 0.04;//Parameters that can be tweaked
 				if (ellH1 * 2.0 + leg.foot_position_ref_body[1] > leg._refSpaceY(1))
 				{
@@ -1013,6 +1013,12 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					{
 						// obstacle
 						// change to OS
+
+						if (i.currentSequence->getCurrentRatio()<i.currentSequence->_ratioSegment.at(0).second)
+						{
+							continue;
+						}
+
 						i.lastSequence = &i.obstacleSquence;
 						i.currentSequence = &i.obstacleSquence;
 						i.setStage(SequenceStage::INIT);

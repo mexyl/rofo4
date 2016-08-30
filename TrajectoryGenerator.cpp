@@ -48,9 +48,9 @@ void TrajectoryGenerator::HexapodRofoGait::setForceMode(ForceMode mode)
 	for (auto &i : legTraj)
 	{
         i.thrYposInd.set_threshold(100,1000);
-		i.thrZposInd.set_threshold(100,300);
+		i.thrZposInd.set_threshold(100,500);
         i.thrYpos.set_threshold(100,1000);
-        i.thrZpos.set_threshold(100,300);
+        i.thrZpos.set_threshold(100,500);
 	}
 	//legTraj[3].thrYposInd.set_threshold(100, 1000);
 	//legTraj[3].thrZposInd.set_threshold(100, 300);

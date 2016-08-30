@@ -521,10 +521,11 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				// velocity =0.2 m/s
 				leg.normalSequence.setTotalCounts((int)round((leg.normalSequence.getTotalLength() / 0.1) * 1000));
 
-				rt_printf("ns init leg: %d %f total counts %d\n"
+				rt_printf("ns init leg: %d %f total counts %d time:%d\n"
 					, leg.getID()
 					, stepLengthActual
-					,leg.normalSequence.getTotalCounts());
+					,leg.normalSequence.getTotalCounts()
+				,param.count);
 			}
 
 			break;
@@ -577,7 +578,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 				//velocity =0.2 m/s
 				leg.obstacleSquence.setTotalCounts((int)round((leg.obstacleSquence.getTotalLength() / 0.2) * 1000));
-				rt_printf("os init leg: %d %d\n", leg.getID(),leg.obstacleSquence.getTotalCounts());
+				rt_printf("os init leg: %d %d %d\n", leg.getID()
+					,leg.obstacleSquence.getTotalCounts(),param.count);
 			}
 			break;
 			case TrajectoryGenerator::BACKWARD:
@@ -631,7 +633,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					// velocity is 0.2
 					leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
 
-					rt_printf("ts init leg: %d %d\n", leg.getID(),leg.tentativeSequence.getTotalCounts());
+					rt_printf("ts init leg: %d %d %d\n", leg.getID()
+						,leg.tentativeSequence.getTotalCounts(),param.count);
 				}
 				break;
 
@@ -678,7 +681,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					// velocity is 0.2
 					//leg.tentativeSequence.setTotalCounts((int)round((leg.tentativeSequence.getTotalLength() / 0.2) * 1000));
 					leg.tentativeSequence.setTotalCounts(3000);
-					rt_printf("ts init leg: %d \n", leg.getID());
+					rt_printf("ts init leg: %d %d\n", leg.getID(),param.count);
 
 
 
@@ -707,7 +710,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		case CurvesPlan::SequenceType::SS:
 			leg.standstillSequence._stsBound._bound_mat << 0, 0, 0;
 			leg.standstillSequence.reset();
-			rt_printf("ss init %d\n", leg.getID());
+			rt_printf("ss init %d %d\n", leg.getID(),param.count);
 			break;
 		case CurvesPlan::SequenceType::RS:
 		{
@@ -743,7 +746,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				//                           <<leg.retractSequence._ellMidBound._bound_mat
 				//                             <<"\nDown\n"<<leg.retractSequence._strBoundDown._bound_mat;
 
-				rt_printf("rs init leg: %d\n", leg.getID());
+				rt_printf("rs init leg: %d %d\n", leg.getID(),param.count);
 			}
 			else
 			{
@@ -921,26 +924,26 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 							i.currentSequence = &i.tentativeSequence;
 							i.setStage(SequenceStage::INIT);
 							i.tentativeCounts = 1;
-							rt_printf("yPosFroce on ns -> ts (t on)  leg: %d\n",i.getID());
+							rt_printf("yPosFroce on ns -> ts (t on)  leg: %d %d\n",i.getID(),param.count);
 						}
 						else
 						{
                             i.lastSequence = &i.normalSequence;
 							i.currentSequence = &i.standstillSequence;
 							i.setStage(SequenceStage::INIT);
-							rt_printf("yPosFroce on ns -> ss (t off) leg: %d\n", i.getID());
+							rt_printf("yPosFroce on ns -> ss (t off) leg: %d %d\n", i.getID(),param.count);
 						}
 						
 
 					}
-					else if (i.pthrYpos->is_on())
+					else if (i.pthrZpos->is_on())
 					{
 						// obstacle
 						// change to OS
 						i.lastSequence = &i.normalSequence;
 						i.currentSequence =&i.obstacleSquence;
 						i.setStage(SequenceStage::INIT);
-						rt_printf("zPosFroce on ns -> os leg: %d\n", i.getID());
+						rt_printf("zPosFroce on ns -> os leg: %d %d\n", i.getID(),param.count);
 						
 
 					}
@@ -956,7 +959,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
                             i.currentSequence = &i.tentativeSequence;
                             i.setStage(SequenceStage::INIT);
                             i.tentativeCounts = 1;
-							rt_printf("time is up ns -> ts (t on) leg: %d\n", i.getID());
+							rt_printf("time is up ns -> ts (t on) leg: %d %d\n", i.getID(),param.count);
 
                         }
                         else
@@ -964,8 +967,8 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
                             i.lastSequence = &i.normalSequence;
                             i.currentSequence = &i.standstillSequence;
                             i.setStage(SequenceStage::INIT);
-							rt_printf("time is up ns -> ss (t off) leg: %d  total counts: %d\n"
-								, i.getID(), i.currentSequence->getTotalCounts());
+							rt_printf("time is up ns -> ss (t off) leg: %d  total counts: %d %d\n"
+								, i.getID(), i.currentSequence->getTotalCounts(),param.count);
 
                         }
 
@@ -995,14 +998,14 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 							i.currentSequence = &i.tentativeSequence;
 							i.setStage(SequenceStage::INIT);
 							i.tentativeCounts = 1;
-							rt_printf("yPosFroce on os -> ts (t on)  leg: %d\n", i.getID());
+							rt_printf("yPosFroce on os -> ts (t on)  leg: %d %d\n", i.getID(),param.count);
 						}
 						else
 						{
 							i.lastSequence = &i.obstacleSquence;
 							i.currentSequence = &i.standstillSequence;
 							i.setStage(SequenceStage::INIT);
-							rt_printf("yPosFroce on os -> ss (t off) leg: %d\n", i.getID());
+							rt_printf("yPosFroce on os -> ss (t off) leg: %d %d\n", i.getID(),param.count);
 						}
 
 					}
@@ -1013,7 +1016,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 						i.lastSequence = &i.obstacleSquence;
 						i.currentSequence = &i.obstacleSquence;
 						i.setStage(SequenceStage::INIT);
-						rt_printf("zPosFroce on os -> os leg: %d\n", i.getID());
+						rt_printf("zPosFroce on os -> os leg: %d %d\n", i.getID(),param.count);
 
 					}
 					else if ((param.count - i.currentSequence->getStartTime()) >= i.currentSequence->getTotalCounts())
@@ -1026,7 +1029,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 							i.currentSequence = &i.tentativeSequence;
 							i.setStage(SequenceStage::INIT);
 							i.tentativeCounts = 1;
-							rt_printf("time is up os -> ts (t on) leg: %d\n", i.getID());
+							rt_printf("time is up os -> ts (t on) leg: %d %d\n", i.getID(),param.count);
 
 						}
 						else
@@ -1034,7 +1037,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 							i.lastSequence = &i.obstacleSquence;
 							i.currentSequence = &i.standstillSequence;
 							i.setStage(SequenceStage::INIT);
-							rt_printf("time is up os -> ss (t off) leg: %d\n", i.getID());
+							rt_printf("time is up os -> ss (t off) leg: %d %d\n", i.getID(),param.count);
 
 						}
 
@@ -1059,7 +1062,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 							i.currentSequence = &i.tentativeSequence;
 							i.setStage(SequenceStage::INIT);
 							i.tentativeCounts = 2;
-							rt_printf("yPosFroce on ts -> ts (t on)  leg: %d\n", i.getID());
+							rt_printf("yPosFroce on ts -> ts (t on)  leg: %d %d\n", i.getID(),param.count);
 						}
 						else if (i.tentativeCounts == 2)
 						{
@@ -1068,7 +1071,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 							i.currentSequence = &i.standstillSequence;
 							i.setStage(SequenceStage::INIT);
 							i.tentativeCounts = 0;
-                            rt_printf("yPosFroce on ts -> ss (t on) leg: %d\n", i.getID());
+                            rt_printf("yPosFroce on ts -> ss (t on) leg: %d %d\n", i.getID(),param.count);
 
 						}
 					}
@@ -1080,7 +1083,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 						{
 							i.tentativeSequence.reverse(i.currentSequence->getCurrentRatio());
 							i.tentativeSequence.setStartTime(param.count);
-							rt_printf("ts->reverse leg: %d\n", i.getID());
+							rt_printf("ts->reverse leg: %d %d\n", i.getID(),param.count);
 							i.tentativeSequence.isReversed = true;
 						}
 						
@@ -1094,7 +1097,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 							i.lastSequence = &i.tentativeSequence;
 							i.currentSequence = &i.retractSequence;
 							i.setStage(SequenceStage::INIT);
-							rt_printf("yPosFroce off ts -> rs leg: %d\n", i.getID());
+							rt_printf("yPosFroce off ts -> rs leg: %d %d\n", i.getID(),param.count);
 						}
 						else
 						{
@@ -1115,10 +1118,16 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 						{
 							continue;
 						}
-                            i.lastSequence = &i.retractSequence;
-                            i.currentSequence = &i.standstillSequence;
-                            i.setStage(SequenceStage::INIT);
-                            i.tentativeCounts = 0;
+						else
+						{
+							i.lastSequence = &i.retractSequence;
+							i.currentSequence = &i.standstillSequence;
+							i.setStage(SequenceStage::INIT);
+							i.tentativeCounts = 0;
+							rt_printf("thrYpos rs->ss: %d %d ",i.getID(),param.count);
+
+						}
+                            
 
 
                     }
@@ -1128,6 +1137,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
                         i.currentSequence = &i.standstillSequence;
                         i.setStage(SequenceStage::INIT);
                         i.tentativeCounts = 0;
+						rt_printf("thrYpos rs->ss: %d %d ", i.getID(), param.count);
 
                     }
 //                    rt_printf("%d %d \n",i.currentSequence->getTotalCounts()

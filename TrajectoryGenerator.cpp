@@ -913,6 +913,9 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				{
 					if (i.pthrYpos->is_on())
 					{
+						rt_printf("Time Control ns: %f %f \n"
+							, i.currentSequence->getCurrentRatio()
+							, i.currentSequence->_ratioSegment.at(1).second);
 						if (i.currentSequence->getCurrentRatio()<i.currentSequence->_ratioSegment.at(1).second)
 						{
 							continue;

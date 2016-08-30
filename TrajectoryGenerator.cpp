@@ -463,7 +463,18 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				break;
 			case TrajectoryGenerator::FORWARD:
 			{
-				// this line 
+				// this line
+				double bodyStepLength=0.0;
+				if (stepCount == totalStepCounts || stepCount == 1)
+				{
+					bodyStepLength = 0.5*this->stepLength*0.5;
+				}
+				else
+				{
+					bodyStepLength = this->stepLength*0.5;
+				}
+
+
 				double z_offset = 0;
 				double stepLengthActual = 0.0;
 				//                std::cout<<"leg.ref pos"<<leg.foot_position_ref_body[2]<<"\t"<<leg._refPosition(2);
@@ -473,7 +484,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				{
                     rt_printf("full\n");
 					z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
-					stepLengthActual = stepLength - z_offset;
+					stepLengthActual = stepLength - z_offset + bodyStepLength;
 				}
 				else
 				{
@@ -482,12 +493,12 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 					{
                         rt_printf("half 1\n");
 						z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
-						stepLengthActual = 0.0 - z_offset;
+						stepLengthActual = 0.0 - z_offset + bodyStepLength;;
 					}
 					else// first step;
 					{
                         rt_printf("half 2\n");
-						stepLengthActual = 0.5*stepLength;
+						stepLengthActual = 0.5*stepLength + bodyStepLength;;
 
 					}
 				}
@@ -776,6 +787,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		{
 			bodyStepLength = this->stepLength*0.5;
 		}
+		
 		/* may add body posture adjustment here */
 		this->bodyPos.bodyFirstSequence._cbcBound._bound_mat << 0, 0, 0,
 			bodyStepLength, 0, 0,

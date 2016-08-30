@@ -1240,10 +1240,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 
 			rt_printf("%f\t%f\t%f\t%d\t%f\n"
 				, targetPee(i, 0), targetPee(i, 1), targetPee(i, 2)
-				, legTraj[i].currentSequence->getCurrentSequenceType()
-				, legTraj[i].foot_position_ref_beginMak[2]);
+				, i
+				, legTraj[i]._trajStartPoint[2]);
 		}
-		rt_printf("%f\t%f\t%f\t%f\t%f%tf\n"
+		rt_printf("lastBody\n%f\t%f\t%f\t%f\t%f%tf\n"
 			, bodyPosVec(0)
 			, bodyPosVec(1)
 			, bodyPosVec(2)
@@ -1266,10 +1266,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
             {
 
 
-                rt_printf("%f\t%f\t%f\t%d\t%f\n"
-                          ,targetPee(i,0),targetPee(i,1),targetPee(i,2)
-                          ,legTraj[i].currentSequence->getCurrentSequenceType()
-                          ,legTraj[i].foot_position_ref_beginMak[2]);
+				rt_printf("%f\t%f\t%f\t%d\t%f\n"
+					, targetPee(i, 0), targetPee(i, 1), targetPee(i, 2)
+					, i
+					, legTraj[i]._trajStartPoint[2]);
             }
 			rt_printf("%f\t%f\t%f\t%f\t%f%tf\n"
 				, bodyPosVec(0)
@@ -1289,10 +1289,10 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
             {
 
 
-                rt_printf("%f\t%f\t%f\t%d\t%f\n"
-                          ,targetPee(i,0),targetPee(i,1),targetPee(i,2)
-                          ,legTraj[i].currentSequence->getCurrentSequenceType()
-                          ,legTraj[i].foot_position_ref_beginMak[2]);
+				rt_printf("%f\t%f\t%f\t%d\t%f\n"
+					, targetPee(i, 0), targetPee(i, 1), targetPee(i, 2)
+					, i
+					, legTraj[i]._trajStartPoint[2]);
             }
 			rt_printf("%f\t%f\t%f\t%f\t%f%tf\n"
 				, bodyPosVec(0)

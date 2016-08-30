@@ -1239,7 +1239,7 @@ namespace CurvesPlan
 
 
 		/* reverse is specially designed for this sequences */
-		void reverse(double t)
+		void reverse(double t,int startTime)
 		{
 			/* set new bounds */
 			this->_ellTentativeBound._bound_mat.row(1) = this->_ellTentativeBound._bound_mat.row(0);
@@ -1249,11 +1249,21 @@ namespace CurvesPlan
 			// change start theta to end theta, then calculate the start theta
 			if (t < this->_ratioSequences[0])
 			{
+				//double current_theta = this->_ellTentativeBound._parameters(2)
+				//	+ (t / this->_ratioSequences[0]) // this t is not right, cause we have a mapping here
+				//	*(this->_ellTentativeBound._parameters(3) - this->_ellTentativeBound._parameters(2));
+
 				double current_theta = this->_ellTentativeBound._parameters(2)
-					+ (t / this->_ratioSequences[0])
+					+ (this->timeTriangleAcc.getRatio(t, 0.49, 0.49) / this->_ratioSequences[0])
 					*(this->_ellTentativeBound._parameters(3) - this->_ellTentativeBound._parameters(2));
+
+				double previous_end_theta = this->_ellTentativeBound._parameters(3);
+
 				this->_ellTentativeBound._parameters(3) = this->_ellTentativeBound._parameters(2);
 				this->_ellTentativeBound._parameters(2) = current_theta;
+				//this part is the init
+				this->setStartTime(startTime);
+				this->_currentCurveRatio = 0;
 			}
 			else
 			{
@@ -1270,7 +1280,11 @@ namespace CurvesPlan
 			{
 				i.first->setBound(*i.second);
 			}
-			/*  */
+			/* after set bound */
+			this->reset();
+			double vel = 0.05;
+			this->setTotalCounts((int)round(this->getTotalLength()/vel*1000));
+
 		}
 		EllipseBound _ellTentativeBound;
 		Ellipse _ellTentative;

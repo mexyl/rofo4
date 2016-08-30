@@ -484,7 +484,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				{
                     rt_printf("full\n");
 					z_offset = leg.foot_position_ref_body[2] - leg._refPosition(2);
-					stepLengthActual = stepLength - z_offset + bodyStepLength;
+					stepLengthActual =0.5*stepLength - z_offset + bodyStepLength;
 				}
 				else
 				{

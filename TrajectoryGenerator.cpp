@@ -787,7 +787,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 		{
 			bodyStepLength = this->stepLength*0.5;
 		}
-		
+		rt_printf("BodyStepLength:%f stepCount %d totalStepCounts %d\n", bodyStepLength,stepCount,totalStepCounts);
 		/* may add body posture adjustment here */
 		this->bodyPos.bodyFirstSequence._cbcBound._bound_mat << 0, 0, 0,
 			bodyStepLength, 0, 0,

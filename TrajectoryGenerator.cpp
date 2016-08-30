@@ -519,7 +519,7 @@ int TrajectoryGenerator::HexapodRofoGait::generateRobotGait(Robots::RobotBase& r
 				leg.normalSequence.reset();
 
 				// velocity =0.2 m/s
-				leg.normalSequence.setTotalCounts((int)round((leg.normalSequence.getTotalLength() / 0.1) * 1000));
+				leg.normalSequence.setTotalCounts((int)round((leg.normalSequence.getTotalLength() / 0.05) * 1000));
 
 				rt_printf("ns init leg: %d %f total counts %d time:%d\n"
 					, leg.getID()

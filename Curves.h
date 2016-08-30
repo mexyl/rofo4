@@ -1264,6 +1264,7 @@ namespace CurvesPlan
 				//this part is the init
 				this->setStartTime(startTime);
 				this->_currentCurveRatio = 0;
+				this->_currentCurveIndex = 0;
 			}
 			else
 			{
